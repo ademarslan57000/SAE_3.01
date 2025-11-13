@@ -1,0 +1,110 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #f3f4f6;
+    color: #111827;
+}
+
+h1 {
+    font-size: 38px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #1e40af; 
+    letter-spacing: 1px;
+}
+
+section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 40px 50px;
+    width: 380px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+fieldset {
+    border-radius: 15%; 
+    border: 1px solid #cbd5e1; 
+    padding: 20px;
+}
+
+
+
+/* sous-titre ("se connecter")*/
+h2 {
+    text-align: center;
+    color: #1e3a8a;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+/* textes descriptifs */
+p {
+    font-size: 14px;
+    color: #4b5563;
+    margin-bottom: 6px;
+}
+
+/*champs de saisie */
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+    outline: none;
+}
+
+/*bouton de connexion*/
+input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background: #4879e1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+input[type="submit"]:hover {
+    background: rgb(58, 84, 167);
+}
+
+
+/*lien*/
+a {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #839ce3;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #6282dc;
+    text-decoration: underline;
+}
