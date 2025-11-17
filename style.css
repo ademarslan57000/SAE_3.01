@@ -1,28 +1,43 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
 }
 
-header {
-  background-color: #4bb6c9;
-  color: white;
-  padding: 10px;
-  text-align: center;
+#map {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index:0;
 }
 
 .search-container {
-  margin-top: 5px;
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  width: 90%;
+  max-width: 500px;
+  z-index:1000;
 }
 
 #search {
+  flex: 1;
+  min-width: 160px;
   padding: 8px;
-  width: 60%;
   border-radius: 8px;
-  border: none;
-  outline: none;
+  border: 1px solid #ccc;
 }
 
 button {
@@ -34,15 +49,25 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #0067ac;
+#btn-annuler-itineraire {
+  background: #e53935;
+  color:white;
 }
 
-title {
-  font-family: "Candara", "Segoe UI", "Calibri", "Arial", sans-serif;
-}
+@media (max-width: 600px) {
+  .search-container {
+    top: auto;
+    bottom: 15px;
+    /* flex-direction: column; */
+    align-items: stretch;
+    transform: translateX(-50%);
+  }
 
-#map {
-  flex-grow: 1;
-  width: 100%;
+  button {
+    width: 100%;
+  }
+
+  #search{
+    margin: 0;
+  }
 }
