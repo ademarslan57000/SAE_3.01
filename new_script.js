@@ -1,5 +1,5 @@
 // Initialisation carte
-const map = L.map("map").setView([49.1193, 6.1757], 14);
+const map = L.map("map").setView([49.1193, 6.1757], 13);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap contributors",
@@ -50,6 +50,7 @@ function clearRoute() {
   if (!routingControl) return;
   map.removeControl(routingControl);
   routingControl = null;
+
   const btn = document.getElementById("btn-annuler-itineraire");
   if (btn) btn.style.display = "none";
 }
@@ -62,29 +63,38 @@ window.afficherItineraireSurCarte = async function (lat, lon, nom) {
   try {
     const [userLat, userLon] = await getLocation();
     clearRoute();
+
     routingControl = L.Routing.control({
       waypoints: [L.latLng(userLat, userLon), L.latLng(lat, lon)],
       lineOptions: { styles: [{ color: "#004cbe", weight: 6 }] },
       routeWhileDragging: false,
       addWaypoints: false,
       showAlternatives: false,
-      createMarker: (i, wp) =>
-        L.marker(wp.latLng, {
-          icon: i === 0 ? ICONS.user : ICONS.destination,
-        }).bindPopup(i === 0 ? "📍 Départ" : "🎯 " + nom),
+
+      createMarker: function(i, wp){
+        return L.marker(wp.latLng, {
+          icon: i === 0 ? ICONS.user : ICONS.destination
+        }).bindPopup(i === 0 ? "📍 Départ" : "🎯 " + nom);
+    },
     }).addTo(map);
-    document.getElementById("btn-annuler-itineraire").style.display = "block";
+
+    const btn = document.getElementById("btn-annuler-itineraire");
+    if (btn) btn.style.display = "inline-block";
   } catch (e) {
     alert("Impossible d'obtenir votre position : " + e);
   }
 };
 
 window.ouvrirItineraire = async function (lat, lon) {
+  const destination = `${lat},${lon}`;
   try {
     const [latU, lonU] = await getLocation();
-    window.open(`https://www.google.com/maps/dir/${latU},${lonU}/${lat},${lon}`, "_blank");
+    const origin = `${latU},${lonU}`;
+    const mapUrl = `https://www.google.com/maps/dir/${origin}/${destination}`;
+    window.open(mapUrl, "_blank");
   } catch {
-    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`, "_blank");
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${destination}`;
+    window.open(mapsUrl, "_blank");
   }
 };
 
@@ -115,7 +125,7 @@ const popup = `
     <b>${p.name || "Parking sans nom"}</b><br>
 
     ${p.adresse ? `📍 ${p.adresse}<br>` : ""}
-    ${p.places ? `🚗 ${p.places} places<br>` : ""}
+    ${p.places ? `🚗 ${p.place_libre !== null ? `<br>${p.place_libre}</b> / ` : ''}${p.places} places<br>` : ""}
     ${p.pmr ? `♿ ${p.pmr} PMR<br>` : ""}
     ${p.electrique ? `🔌 ${p.electrique} bornes<br>` : ""}
     ${p.gratuit ? "💚 <b>Gratuit</b><br>" : "💰 Payant<br>"}
@@ -136,6 +146,11 @@ const popup = `
 `;
 
     marker.bindPopup(popup);
+
+    marker.on("click", function () {
+      this.openPopup();
+    });
+
     markerClusterGroup.addLayer(marker);
     markers.push(marker);
   });
@@ -147,35 +162,34 @@ const popup = `
 }
 
 // -----------------------------------------------------------------------------
-// Chargement CSV — VERSION FINALE
+// Chargement Json GeoJSON
 // -----------------------------------------------------------------------------
 
 async function loadParkings() {
   try {
-    const url = "https://si.eurometropolemetz.eu/fiches/opendata/agd/stationnement_eurometropolemetz.csv";
+    const url = "https://maps.eurometropolemetz.eu/public/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=public:pub_tsp_sta&srsName=EPSG:4326&outputFormat=application%2Fjson&cql_Ëlter=id%20is%20not%20null";
     const res = await fetch(url);
 
     if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
 
-    const csvText = await res.text();
-    const rows = csvText.split("\n").map(r => r.split(";"));
-    const headers = rows[0];
-    const items = rows.slice(1);
+    const json = await res.json();
+    const features = json.features || [];
 
-    parkings = items
-      .map(cols => {
-        const obj = {};
-        headers.forEach((h, i) => obj[h.trim()] = cols[i]);
+    parkings = features
+      .map(feature => {
+        const props = feature.properties;
+        const coords = feature.geometry.coordinates;
 
         return {
-          name: obj.nom || "Parking",
-          lat: obj.Ylat ? Number(obj.Ylat) : null,
-          lon: obj.Xlong ? Number(obj.Xlong) : null,
-          adresse: obj.adresse || "",
-          pmr: Number(obj.pmr || 0),
-          electrique: Number(obj.bornes || 0),
-          gratuit: obj.gratuit === "1",
-          places: obj.places ? Number(obj.places) : null,
+          name: props.lib || "Parking",
+          lat: coords[1],
+          lon: coords[0],
+          adresse: "",
+          pmr: 0,
+          electrique: 0,
+          gratuit: props.cout !== "payant",
+          places: props.places_total ? Number(props.place_total) : null,
+          place_libre : props.place_libre ? Number(props.place_libre) : null,
         };
       })
       .filter(p => p.lat && p.lon); // IMPORTANT : évite l'erreur .lat undefined
