@@ -90,6 +90,7 @@ window.ouvrirItineraire = async function (lat, lon) {
   try {
     const [latU, lonU] = await getLocation();
     const origin = `${latU},${lonU}`;
+
     const mapUrl = `https://www.google.com/maps/dir/${origin}/${destination}`;
     window.open(mapUrl, "_blank");
   } catch {
@@ -118,32 +119,34 @@ function afficherParkings(data) {
       weight: 2,
     });
 
-    const nomSafe = (p.name || "Parking").replace(/'/g, "&#39;");
+    const nomSafe = (p.name || "Parking").replace(/'/g, "\\'").replace(/"/g, "");
 
 const popup = `
-  <div style="min-width:220px; font-size:14px;">
-    <b>${p.name || "Parking sans nom"}</b><br>
+  <div style="min-width:240px; font-size:14px;">
+    <b>${p.name}</b><br>
 
-    ${p.adresse ? `📍 ${p.adresse}<br>` : ""}
-    ${p.places ? `🚗 ${p.place_libre !== null ? `<br>${p.place_libre}</b> / ` : ''}${p.places} places<br>` : ""}
-    ${p.pmr ? `♿ ${p.pmr} PMR<br>` : ""}
-    ${p.electrique ? `🔌 ${p.electrique} bornes<br>` : ""}
-    ${p.gratuit ? "💚 <b>Gratuit</b><br>" : "💰 Payant<br>"}
+    ${p.nature ? `🏷️ Nature : ${p.nature}<br>` : ""}
+    ${p.statut ? `📌 Statut : ${p.statut}<br>` : ""}
+    ${p.domaine ? `📁 Domaine : ${p.domaine}<br>` : ""}
+    ${p.gestion ? `🏛️ Gestion : ${p.gestion}<br>` : ""}
 
-    ${p.tarif_1h ? `1h : ${p.tarif_1h}€<br>` : ""}
-    ${p.tarif_24h ? `24h : ${p.tarif_24h}€<br>` : ""}
-    ${p.url ? `<a href="${p.url}" target="_blank">Plus d'infos</a><br>` : ""}
+    ${p.place_total != null ? 
+      `🚗 Places : <b>${p.place_libre ?? "?"}</b> / ${p.place_total}<br>` : ""
+    }
 
-    <br>
-    <button onclick="afficherItineraireSurCarte(${p.lat},${p.lon},'${nomSafe}')">
-      🗺️ Itinéraire
-    </button>
+    ${p.gratuit ? "💚 Gratuit<br>" : "💰 Payant<br>"}
 
-    <button onclick="ouvrirItineraire(${p.lat},${p.lon})">
-      📱 Maps
-    </button>
+    ${p.observ ? `📝 ${p.observ}<br>` : ""}
+
+    <hr>
+    <button onclick="afficherItineraireSurCarte(${p.lat},${p.lon},'${nomSafe}')">🗺️ Itinéraire</button>
+    <button onclick="ouvrirItineraire(${p.lat},${p.lon})">📱 Maps</button>
   </div>
 `;
+
+
+
+
 
     marker.bindPopup(popup);
 
@@ -167,39 +170,46 @@ const popup = `
 
 async function loadParkings() {
   try {
-    const url = "https://maps.eurometropolemetz.eu/public/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=public:pub_tsp_sta&srsName=EPSG:4326&outputFormat=application%2Fjson&cql_Ëlter=id%20is%20not%20null";
-    const res = await fetch(url);
+    const url =
+      "https://maps.eurometropolemetz.eu/public/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=public:pub_tsp_sta&srsName=EPSG:4326&outputFormat=application%2Fjson&cql_filter=id%20is%20not%20null";
 
+    const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
 
     const json = await res.json();
     const features = json.features || [];
 
-    parkings = features
-      .map(feature => {
-        const props = feature.properties;
-        const coords = feature.geometry.coordinates;
+    // Mapping des parkings
+    parkings = features.map((feature) => {
+      const props = feature.properties;
+      const coords = feature.geometry?.coordinates || [];
 
-        return {
-          name: props.lib || "Parking",
-          lat: coords[1],
-          lon: coords[0],
-          adresse: "",
-          pmr: 0,
-          electrique: 0,
-          gratuit: props.cout !== "payant",
-          places: props.places_total ? Number(props.place_total) : null,
-          place_libre : props.place_libre ? Number(props.place_libre) : null,
-        };
-      })
-      .filter(p => p.lat && p.lon); // IMPORTANT : évite l'erreur .lat undefined
+      return {
+        name: props.lib || "Parking",
+        lat: coords[1] != null ? coords[1] : 49.1193, // fallback si pas de lat
+        lon: coords[0] != null ? coords[0] : 6.1757,  // fallback si pas de lon
 
-    afficherParkings(parkings);
+        gratuit: props.cout !== "payant",
 
+        nature: props.nature || "",
+        statut: props.statut || "",
+        domaine: props.domaine || "",
+        gestion: props.gestion || "",
+        observ: props.observ || "",
+
+        place_total:
+          props.place_total != null ? Number(props.place_total) : null,
+        place_libre:
+          props.place_libre != null ? Number(props.place_libre) : null,
+      };
+    });
+
+    afficherParkings(parkings); // Affiche tous les parkings
   } catch (err) {
     console.error("Erreur chargement parkings :", err);
   }
 }
+
 
 loadParkings();
 
@@ -237,12 +247,22 @@ async function trierParProximite() {
       (a, b) => dist(latU, lonU, a.lat, a.lon) - dist(latU, lonU, b.lat, b.lon)
     );
 
-    afficherParkings(sorted);
+    const plusProche = sorted[0];
 
-    map.fitBounds([
-      [latU, lonU],
-      [sorted[0].lat, sorted[0].lon]
-    ].map(p => L.latLng(p[0], p[1])).reduce((acc, cur) => acc.extend(cur), L.latLngBounds()));
+    if(!plusProche) {
+      alert("Aucun parking disponible pour le moment.");
+      return;
+    }
+
+    map.setView([plusProche.lat, plusProche.lon], 15);
+
+    const marker = markers.find(m=>
+      m.getLatLng().lat === plusProche.lat && m.getLatLng().lng === plusProche.lon
+    );
+
+    if(marker) {
+      marker.openPopup();
+    }
     
   } catch (e) {
     alert("Impossible d'obtenir votre position : " + e);
