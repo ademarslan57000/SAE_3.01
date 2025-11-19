@@ -274,18 +274,39 @@ async function trierParProximite() {
 // -----------------------------------------------------------------------------
 
 async function localiserUtilisateur() {
-  try {
-    const [lat, lon] = await getLocation();
-    L.marker([lat, lon], { icon: ICONS.user })
-      .addTo(map)
-      .bindPopup("📍 Vous êtes ici")
-      .openPopup();
-
-    map.setView([lat, lon], 15);
-  } catch (e) {
-    alert("Impossible d'obtenir votre position : " + e);
+  if(!navigator.geolocation){
+    alert("geolocalisation non prise en compte.")
+    return;
   }
-}
+  
+  navigator.geolocation.watchPosition(
+    (pos)=>{
+      const lat=pos.coords.latitude;
+      const lon=pos.coords.longitude;
+      
+      if(userMarker){
+        userMarker.setLatLng([lat,lon]);
+      }else{
+        userMarker=L.marker([lat,lon], {icon: ICONS.user})
+        .addTo(map)
+        .bindPopup("📍 Vous êtes ici")
+        .openPopup();
+
+        map.setView([lat,lon], 15)
+      }
+    },
+    (error)=>{
+      console.error(error)
+      alert("Impossible d'obtenir votre position : "+error.message)
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge:0,
+      timeout:5000
+    }
+  );
+
+    }
 
 window.supprimerItineraire = clearRoute;
 window.trierParProximite = trierParProximite;
