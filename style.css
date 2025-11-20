@@ -1,3 +1,6 @@
+/* ------------------------- */
+/*  🌍 Style global           */
+/* ------------------------- */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -5,31 +8,54 @@ body {
   display: flex;
   flex-direction: column;
 }
-
+h1{
+  text-align: center;
+}
 #map {
   flex-grow: 1;
   width: 100%;
   height: 100%;
   position: relative;
-  z-index:0;
+  z-index: 0;
 }
 
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #004cbe;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#btn-annuler-itineraire,
+#btn-stop-guidage {
+  background: #e53935;
+  color: white;
+  font-weight: bold;
+}
+
+/* ------------------------- */
+/*  Barre de recherche       */
+/* ------------------------- */
 .search-container {
   position: absolute;
   top: 15px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(255, 255, 255, 0.9);
-  padding: 10px;
+  padding: 10px 15px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
   width: 90%;
   max-width: 500px;
-  z-index:1000;
+  box-sizing: border-box; /* ← correction */
+  z-index: 1000;
 }
 
 #search {
@@ -40,34 +66,81 @@ body {
   border: 1px solid #ccc;
 }
 
-button {
-  padding: 8px 12px;
-  border: none;
+/* Groupe de boutons principaux */
+.search-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ------------------------- */
+/*  Popups Leaflet           */
+/* ------------------------- */
+.leaflet-popup-content-wrapper {
+  max-width: 95vw;
+  box-sizing: border-box;
+}
+
+.popup-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.popup-buttons button {
+  width: 100%;
+  padding: 8px;
   border-radius: 8px;
-  background: #004cbe;
+  background-color: #004cbe;
   color: white;
   cursor: pointer;
+  font-size: 14px;
 }
 
-#btn-annuler-itineraire {
-  background: #e53935;
-  color:white;
-}
-
+/* ------------------------- */
+/*  Responsive mobile         */
+/* ------------------------- */
 @media (max-width: 600px) {
+  /* Barre de recherche en bas */
   .search-container {
     top: auto;
     bottom: 15px;
-    /* flex-direction: column; */
-    align-items: stretch;
     transform: translateX(-50%);
+    width: 90%;
+    max-width: calc(100% - 20px); /* ← correction */
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-sizing: border-box; /* ← s'assure que padding ne déborde pas */
   }
 
-  button {
+  #search {
     width: 100%;
+    font-size: 16px;
+    margin-bottom: 8px;
+    flex: 1 1 45%;
   }
 
-  #search{
-    margin: 0;
+  /* Boutons Ma position / Parking proche côte à côte */
+  .search-buttons {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .search-buttons button {
+    flex: 1 1 48%;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  /* Boutons d'itinéraire */
+  #btn-stop-guidage,
+  #btn-annuler-itineraire {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
   }
 }
