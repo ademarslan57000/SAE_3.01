@@ -349,18 +349,46 @@ async function trierParProximite() {
 
 // Localisation utilisateur
 async function localiserUtilisateur() {
-  try {
-    const [lat, lon] = await getLocation();
-    L.marker([lat, lon], { icon: ICONS.user })
-      .addTo(map)
-      .bindPopup("📍 Vous êtes ici")
-      .openPopup();
-
-    map.setView([lat, lon], 15);
-  } catch (e) {
-    alert("Impossible d'obtenir votre position : " + e);
+  if (!navigator.geolocation) {
+    alert("La géolocalisation n'est pas supportée.");
+    return;
   }
-}
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+
+      userMarker=L.marker([lat, lon], {icon: ICONS.user})
+          .addTo(map)
+          .bindPopup("📍 Vous êtes ici")
+          .openPopup();
+           map.setView([lat, lon], 15);
+
+           navigator.geolocation.watchPosition(
+            (position)=>{
+              const lat=position.coords.latitude;
+              const lon=position.coords.longitude;
+
+              userMarker.setLatLng([lat,lon]);
+            },
+            (error)=>{
+              console.error("Geolocalisation impossible: ", error);
+            },
+            {
+              enableHighAccuracy: true,
+              maximumAge: 0,
+              timeout: 10000,
+            }
+           );
+          },
+          (error)=>{
+            alert("IMpossible d'obtenir la position: "+error.message)
+          },
+          {enableHighAccuracy:true}
+        );
+      }
+     
 
 window.supprimerItineraire = clearRoute;
 window.trierParProximite = trierParProximite;
