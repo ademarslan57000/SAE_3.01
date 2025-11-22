@@ -58,17 +58,17 @@ export class MapController {
       const popup = `
   <div style="min-width:240px; font-size:14px;">
     <b>${p.name}</b><br>
-    ${p.nature ? `🏷️ Nature : ${p.nature}<br>` : ""}
-    ${p.statut ? `📌 Statut : ${p.statut}<br>` : ""}
-    ${p.domaine ? `📁 Domaine : ${p.domaine}<br>` : ""}
-    ${p.gestion ? `🏛️ Gestion : ${p.gestion}<br>` : ""}
-    ${p.place_total != null ? `🚗 Places : <b>${p.place_libre ?? "?"}</b> / ${p.place_total}<br>` : ""}
-    ${p.gratuit ? "💚 Gratuit<br>" : "💰 Payant<br>"}
-    ${p.observ ? `📝 ${p.observ}<br>` : ""}
+    ${p.nature ? `Nature : ${p.nature}<br>` : ""}
+    ${p.statut ? `Statut : ${p.statut}<br>` : ""}
+    ${p.domaine ? `Domaine : ${p.domaine}<br>` : ""}
+    ${p.gestion ? `Gestion : ${p.gestion}<br>` : ""}
+    ${p.place_total != null ? `Places : <b>${p.place_libre ?? "?"}</b> / ${p.place_total}<br>` : ""}
+      Prix : 1.60 € / heure<br>
+    ${p.gratuit ? "Gratuit<br>" : "Payant<br>"}
+    ${p.observ ? `${p.observ}<br>` : ""}
     <hr>
     <div class="popup-buttons">
-      <button onclick="window.mapController.routingService.afficherItineraireTempsReel(${p.lat}, ${p.lon}, '${nomSafe}', window.getLocation)">▶️ Guidage</button>
-      <button onclick="window.mapController.ouvrirItineraire(${p.lat}, ${p.lon})">📱 Maps</button>
+      <button onclick="window.mapController.routingService.afficherItineraireTempsReel(${p.lat}, ${p.lon}, '${nomSafe}', window.getLocation)">Itinéraire</button>
     </div>
   </div>
 `;
@@ -107,7 +107,7 @@ export class MapController {
   async localiserUtilisateur() {
     try {
       const [lat, lon] = await getLocation();
-      L.marker([lat, lon], { icon: this.ICONS.user }).addTo(this.map).bindPopup("📍 Vous êtes ici").openPopup();
+      L.marker([lat, lon], { icon: this.ICONS.user }).addTo(this.map).bindPopup("Vous êtes ici").openPopup();
       this.map.setView([lat, lon], 15);
     } catch (e) {
       alert("Impossible d'obtenir votre position : " + e);

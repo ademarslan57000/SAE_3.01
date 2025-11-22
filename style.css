@@ -29,6 +29,11 @@ button {
   font-size: 14px;
 }
 
+button:hover {
+  background: #2c5fad;
+  cursor: pointer;
+}
+
 #btn-annuler-itineraire,
 #btn-stop-guidage {
   background: #e53935;
@@ -83,7 +88,6 @@ button {
 
 .popup-buttons {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
 }
 
