@@ -1,4 +1,4 @@
-import { distanceGPS } from "./utils.js";
+import { distanceGPS } from "../utils/Utils.js";
 
 export class RoutingService {
   constructor(map, icons) {
@@ -8,19 +8,39 @@ export class RoutingService {
     this.watchId = null;
     this.lastPosition = null;
   }
+  hideSearchButtons() {
+    const buttons = document.querySelectorAll('.search-buttons button');
+    buttons.forEach(btn => btn.style.display = "none");
+  }
+
+  showSearchButtons() {
+    const buttons = document.querySelectorAll('.search-buttons button');
+    buttons.forEach(btn => btn.style.display = "inline-block");
+  }
+
+  hideSearchInputs() {
+    const inputs = document.getElementById('search-inputs');
+    if (inputs) inputs.style.display = "none";
+  }
+
+  showSearchInputs() {
+    const inputs = document.getElementById('search-inputs');
+    if (inputs) inputs.style.display = "flex";
+  }
+
   clearRoute() {
     if (!this.routingControl) return;
     this.map.removeControl(this.routingControl);
     this.routingControl = null;
-    const btn = document.getElementById("btn-annuler-itineraire");
-    if (btn) btn.style.display = "none";
+    this.showSearchInputs();
   }
 
-  afficherItineraireTempsReel(latDest, lonDest, nom) {
+  demarrerGuidage(latDest, lonDest, nom) {
     const DISTANCE_RECALCUL = 0.015;
     let firstUpdate = true;
     this.lastPosition = null;
 
+    this.hideSearchInputs();
     document.getElementById("btn-stop-guidage").style.display = "inline-block";
 
     this.watchId = navigator.geolocation.watchPosition(
@@ -55,11 +75,12 @@ export class RoutingService {
     );
   }
 
-  stopGuidage() {
+  arreterGuidage() {
     if (this.watchId !== null) navigator.geolocation.clearWatch(this.watchId);
     this.lastPosition = null;
     this.clearRoute();
     document.getElementById("btn-stop-guidage").style.display = "none";
-    alert("Guidage stoppé.");
+    this.showSearchInputs();
+    alert("Guidage arrêté.");
   }
 }

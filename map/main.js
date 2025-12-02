@@ -1,13 +1,10 @@
-import { MapController } from './map.js';
-import { getLocation } from './utils.js';
-
-window.getLocation = getLocation(); // pour passer aux boutons
+import { MapController } from './controller/MapController.js';
 
 window.mapController = new MapController();
 window.mapController.init();
 
-window.rechercheParking = () => window.mapController.rechercheParking();
-window.trierParProximite = () => window.mapController.trierParProximite();
-window.localiserUtilisateur = () => window.mapController.localiserUtilisateur();
-window.supprimerItineraire = () => window.mapController.supprimerItineraire();
-window.stopGuidage = () => window.mapController.routingService.stopGuidage();
+window.rechercheParking = () => mapController.rechercheParking();
+window.trierParProximite = () => mapController.trierParProximite();
+window.localiserUtilisateur = () => mapController.localiserUtilisateur();
+window.supprimerItineraire = () => mapController.supprimerItineraire();
+window.arreterGuidage = () => mapController.routingService.arreterGuidage();

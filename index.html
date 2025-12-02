@@ -20,13 +20,14 @@
 </header>
 
 <div class="search-container">
-  <input type="text" id="search" placeholder="Rechercher un parking..." oninput="rechercheParking()">
-  <div class="search-buttons">
-    <button onclick="localiserUtilisateur()">Ma position</button>
-    <button onclick="trierParProximite()">Parking proche</button>
+  <div id="search-inputs">
+    <input type="text" id="search" placeholder="Rechercher un parking..." oninput="rechercheParking()">
+    <div class="search-buttons">
+      <button onclick="localiserUtilisateur()">Ma position</button>
+      <button onclick="trierParProximite()">Parking proche</button>
+    </div>
   </div>
-  <button id="btn-annuler-itineraire" onclick="supprimerItineraire()" style="display:none">Annuler l'itinéraire</button>
-  <button id="btn-stop-guidage" onclick="stopGuidage()" style="display:none">Stop guidage</button>
+  <button id="btn-stop-guidage" onclick="arreterGuidage()" style="display:none">Stop guidage</button>
 </div>
 
 <div id="map"></div>
