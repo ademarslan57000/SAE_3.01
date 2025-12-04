@@ -1,4 +1,4 @@
-import { ParkingService } from "../service/parkingService.js";
+import { ParkingService } from "../service/ParkingService.js";
 import { RoutingService } from "../service/RoutingService.js";
 import { ParkingRenderer } from "../views/ParkingRenderer.js";
 import { UserLocationService } from "../service/UserLocationService.js";
