@@ -1,0 +1,9 @@
+{
+    "seConnecter": "Login",
+    "Email": "Write your email",
+    "MotDePasse": "Write your password",
+    "Login": "Login",
+    "signupLink": "No account yet ?",
+    "identifiantPlaceholder": "Your email",
+    "passwordtPlaceholder": "Your password"
+}

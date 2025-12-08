@@ -14,25 +14,31 @@
 
     <div class="container">
         <section>
-            <h2>Se connecter</h2>
+            <h2 data-i18n="seConnecter" ></h2>
 
             <form action="connexion.php" method="post" class="form">
 
-                <p>Email</p>
-                <input type="email" name="email" placeholder="Entrez votre email" required>
+                <p data-i18n="Email" ></p>
+                <input type="email" name="identifiant" data-i18n-placeholder="identifiantPlaceholder" required>
 
-                <p>Mot de passe</p>
-                <input type="password" name="password" placeholder="Entrez votre mot de passe" required>
+                <p data-i18n="MotDePasse"></p>
+                <input type="password" name="password" data-i18n-placeholder="passwordtPlaceholder" required>
 
-                <input type="submit" name="login" value="Se connecter">
+                
+                <input type="submit" name="login" data-i18n="Login">
 
-                <a href="inscription.view.php">Pas encore de compte ?</a>
+                <a href="inscription.view.php" data-i18n="signupLink">Pas encore de compte ?</a>
             </form>
+             <select id="lang-selector">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+            </select>
 
         </section>
     </div>
 
     <script src="connexion.js"></script>
+    <script src="connexion.translation.js"></script>
 </body>
 
 </html>
