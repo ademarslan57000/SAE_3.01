@@ -174,4 +174,12 @@ body.dark #lang-selector {
   transition: 0.25s;
   display: block;
   text-align: center;
+  /*fleche menu deroulant*/
+  background-image: url("data:image/svg+xml;utf8,\
+        <svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='black'>\
+            <polygon points='5,7 15,7 10,13'/>\
+        </svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
 }

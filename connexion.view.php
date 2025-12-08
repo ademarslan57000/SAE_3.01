@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <title data-i18n ="titleConnexion" ></title>
     <link rel="stylesheet" href="connexion.css">
 </head>
 
@@ -29,7 +29,7 @@
 
                 <a href="inscription.view.php" data-i18n="signupLink">Pas encore de compte ?</a>
             </form>
-             <select id="lang-selector">
+             <select id="lang-selector" class="dropdown-btn">
                 <option value="fr">Français</option>
                 <option value="en">English</option>
             </select>
