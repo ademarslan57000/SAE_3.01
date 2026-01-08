@@ -1,13 +1,17 @@
 {
     "TitleInscription": "Sign up",
+    "rejoindre": "Join Smart Parking",
+    "retourAccueil":"Back to the site",
     "Inscription": "Sign up",
-    "creerCompte": "Create an account",
+    "creerCompte": "Create your account in a few seconds.",
     "Nom": "Name",
     "Prenom": "First name",
     "Adresse": "Address",
     "Telephone": "Phone number",
-    "Email": "Email",
+    "Email": "Mail",
     "MotDePasse": "Password",
-    "Sinscrire": "Sign up",
-    "CompteExistant": "Already have an account ?"
+    "seConnecter": "Log in",
+    "CompteExistant": "Already have an account ?",
+    "placeholderAdresse": "Your complete address",
+    "placeholderEmail": "mail@example.com"
 }

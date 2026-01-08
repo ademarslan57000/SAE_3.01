@@ -8,31 +8,11 @@ export class RoutingService {
     this.watchId = null;
     this.lastPosition = null;
   }
-  hideSearchButtons() {
-    const buttons = document.querySelectorAll('.search-buttons button');
-    buttons.forEach(btn => btn.style.display = "none");
-  }
-
-  showSearchButtons() {
-    const buttons = document.querySelectorAll('.search-buttons button');
-    buttons.forEach(btn => btn.style.display = "inline-block");
-  }
-
-  hideSearchInputs() {
-    const inputs = document.getElementById('search-inputs');
-    if (inputs) inputs.style.display = "none";
-  }
-
-  showSearchInputs() {
-    const inputs = document.getElementById('search-inputs');
-    if (inputs) inputs.style.display = "flex";
-  }
 
   clearRoute() {
     if (!this.routingControl) return;
     this.map.removeControl(this.routingControl);
     this.routingControl = null;
-    this.showSearchInputs();
   }
 
   demarrerGuidage(latDest, lonDest, nom) {
@@ -40,8 +20,11 @@ export class RoutingService {
     let firstUpdate = true;
     this.lastPosition = null;
 
-    this.hideSearchInputs();
-    document.getElementById("btn-stop-guidage").style.display = "inline-block";
+    if(window.innerWidth < 768) {
+      document.getElementById("btn-stop-guidage-mobile").style.display = "block";
+    } else {
+      document.getElementById("btn-stop-guidage").style.display = "block";
+    }
 
     this.watchId = navigator.geolocation.watchPosition(
       pos => {
@@ -57,7 +40,6 @@ export class RoutingService {
         this.lastPosition = { lat: userLat, lon: userLon };
 
         if (this.routingControl) {
-          this.routingControl.getPlan().setWaypoints([]);
           this.map.removeControl(this.routingControl);
         }
 
@@ -80,7 +62,7 @@ export class RoutingService {
     this.lastPosition = null;
     this.clearRoute();
     document.getElementById("btn-stop-guidage").style.display = "none";
-    this.showSearchInputs();
+    document.getElementById("btn-stop-guidage-mobile").style.display = "none";
     alert("Guidage arrêté.");
   }
 }

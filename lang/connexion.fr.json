@@ -1,10 +1,15 @@
 {
     "titleConnexion": "Connexion",
+    "bonRetour" :"Bon retour",
+    "introduction": "Connectez-vous pour accéder à votre espace.",
+    "oublieMdp": "Oublié ?",
     "seConnecter": "Se connecter",
     "Email": "Entrez votre email",
     "MotDePasse": "Entrez votre mot de passe",
     "Login": "Se connecter",
-    "signupLink": "Pas encore de compte ?",
-    "identifiantPlaceholder": "Votre email",
-    "passwordtPlaceholder": "Votre mot de passe"
+    "pasDeCompte": "Pas encore de compte ?",
+    "creerCompte": "Créer un compte",
+    "retourAccueil": "Retour sur le site",
+    "placeholderEmail": "email@exemple.com"
+    
 }

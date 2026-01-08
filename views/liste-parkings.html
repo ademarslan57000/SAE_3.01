@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Liste des Parkings</title>
+        <link rel="stylesheet" href="../css/liste-parkings.css">
+    </head>
+    <body>
+        <header>
+            <img src="../image/logo.png" alt="Logo" class="header-logo">
+            <h1>Liste des Parkings</h1>
+            <a href="../index.html" class="btn-retour">Retour à la carte</a>
+        </header>
+
+        <div class="container">
+            <div class="filters">
+                <input
+                    type="text"
+                    id="searchParking"
+                    placeholder="Rechercher un parking..."
+                >
+                <select id="filterZone">
+                    <option value="all">Toutes les zones</option>
+                    <option value="france">France (Metz)</option>
+                    <option value="uk">Royaume-Uni (Londres)</option>
+                </select>
+                <select id="filterType">
+                    <option value="all">Tous les parkings</option>
+                    <option value="gratuit">Gratuits uniquement</option>
+                    <option value="payant">Payants uniquement</option>
+                    <option value="pmr">Avec places PMR</option>
+                    <option value="electrique">Avec bornes électriques</option>
+                    <option value="velo">Avec places vélo</option>
+                </select>
+                <select id="sortBy">
+                    <option value="name">Trier par nom</option>
+                    <option value="places">Places disponibles</option>
+                    <option value="capacity">Capacité totale</option>
+                    <option value="pmr">Places PMR</option>
+                    <option value="electrique">Bornes électriques</option>
+                    <option value="velo">Places vélo</option>
+                </select>
+            </div>
+
+            <div id="parkingCount" class="count-info">Chargement...</div>
+
+            <div id="parkingList" class="parking-grid">
+                <div class="loader">Chargement des parkings...</div>
+            </div>
+        </div>
+
+        <script src="../js/liste-parkings.js"></script>
+    </body>
+</html>

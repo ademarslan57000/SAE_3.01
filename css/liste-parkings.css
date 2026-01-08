@@ -1,0 +1,502 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background:  linear-gradient(90deg, #00d0ff, #006aff);
+    min-height: 100vh;
+    padding-bottom: 40px;
+}
+
+header {
+    background: white;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header-logo {
+    height: 50px;
+    width: auto;
+}
+
+header h1 {
+    flex: 1;
+    text-align: center;
+    color: #333;
+    font-size: 28px;
+}
+
+.btn-retour {
+    padding: 10px 20px;
+    background: linear-gradient(90deg, #00d0ff, #006aff);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-retour:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    background: #2c5fad;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.filters {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+#searchParking {
+    flex: 1;
+    min-width: 250px;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+#searchParking:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.filters select {
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    background: white;
+}
+
+.filters select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.count-info {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.parking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.parking-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.parking-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.parking-card.gratuit::before {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.parking-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.parking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 15px;
+}
+
+.parking-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.parking-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-gratuit {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-payant {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.parking-address {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.parking-info {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #555;
+}
+
+.info-value {
+    color: #333;
+    font-weight: 500;
+}
+
+.info-value.disponible {
+    color: #28a745;
+    font-weight: 700;
+}
+
+.info-value.complet {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+.tarifs-section {
+    background: #e7f3ff;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.tarifs-title {
+    font-weight: 600;
+    color: #004085;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.tarif-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 13px;
+}
+
+.parking-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #004cbe 0%, #0066ff 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 76, 190, 0.4);
+}
+
+.btn-itineraire {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.btn-itineraire:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+.btn-secondary {
+    grid-column: 1 / -1;
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.parking-update {
+    font-size: 12px;
+    color: #999;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.loader {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: white;
+}
+
+.no-results {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 12px;
+    color: #666;
+    font-size: 18px;
+}
+
+.zone-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.zone-france {
+    background: linear-gradient(135deg, #002395 0%, #ed2939 100%);
+    color: white;
+}
+
+.zone-uk {
+    background: linear-gradient(135deg, #012169 0%, #c8102e 100%);
+    color: white;
+}
+
+.parking-london {
+    border-left: 5px solid #c8102e;
+}
+
+.parking-france {
+    border-left: 5px solid #002395;
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .header-logo {
+        height: 50px;
+        margin-bottom: 10px;
+    }
+
+    header h1 {
+        font-size: 20px;
+        margin: 10px 0;
+        order: 1;
+    }
+
+    .btn-retour {
+        order: 2;
+        width: 100%;
+        text-align: center;
+        padding: 12px 20px;
+        font-size: 15px;
+    }
+
+    .container {
+        padding: 0 10px;
+        margin: 20px auto;
+    }
+
+    .filters {
+        flex-direction: column;
+        padding: 15px;
+        gap: 12px;
+    }
+
+    #searchParking {
+        min-width: 100%;
+        font-size: 16px;
+        padding: 14px;
+    }
+
+    .filters select {
+        width: 100%;
+        font-size: 16px;
+        padding: 14px 15px;
+    }
+
+    .count-info {
+        font-size: 14px;
+        padding: 12px 15px;
+    }
+
+    .parking-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .parking-card {
+        padding: 15px;
+    }
+
+    .parking-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .parking-badge {
+        align-self: flex-start;
+    }
+
+    .parking-name {
+        font-size: 17px;
+        word-break: break-word;
+    }
+
+    .parking-address {
+        font-size: 13px;
+    }
+
+    .info-row {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .tarifs-section {
+        padding: 10px;
+    }
+
+    .tarifs-title {
+        font-size: 13px;
+    }
+
+    .tarif-item {
+        font-size: 12px;
+        padding: 6px 0;
+    }
+
+    .parking-actions {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .btn {
+        padding: 12px;
+        font-size: 15px;
+        width: 100%;
+    }
+
+    .parking-update {
+        font-size: 11px;
+    }
+
+    .no-results {
+        font-size: 16px;
+        padding: 30px 20px;
+    }
+
+    .loader {
+        font-size: 16px;
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-bottom: 20px;
+    }
+
+    header h1 {
+        font-size: 18px;
+    }
+
+    .header-logo {
+        height: 45px;
+    }
+
+    .parking-grid {
+        gap: 12px;
+    }
+
+    .parking-card {
+        padding: 12px;
+    }
+
+    .parking-name {
+        font-size: 16px;
+    }
+
+    .info-row {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .btn {
+        padding: 10px;
+        font-size: 14px;
+    }
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réserver un Stationnement</title>
+    <link rel="stylesheet" href="../css/reservation.css">
+</head>
+<body>
+
+    <div class="booking-card">
+        <h2>Réserver une place</h2>
+        
+        <div id="cityBadge" class="city-badge" style="background: #eee; color: #333;">Sélectionnez une ville</div>
+
+        <form id="bookingForm">
+            <div class="form-group">
+                <label for="citySelect">Destination</label>
+                <select id="citySelect">
+                    <option value="" disabled selected>Choisir un parking...</option>
+                    <option value="metz">🇫🇷 Metz - Centre Pompidou (2.50€ / h)</option>
+                    <option value="londres">🇬🇧 Londres - Soho (6.00£ / h)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="vehicle">Véhicule</label>
+                <select id="vehicle">
+                    <option>Ma Twingo (AB-123-CD)</option>
+                    <option>Ajouter un nouveau véhicule...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="startTime">Arrivée prévue</label>
+                <input type="datetime-local" id="startTime">
+            </div>
+
+            <div class="form-group">
+                <label for="endTime">Départ prévu</label>
+                <input type="datetime-local" id="endTime">
+                <div id="dateError" class="error-msg">La date de fin doit être après la date de début.</div>
+            </div>
+
+            <div class="price-summary">
+                <div class="price-row">
+                    <span>Durée :</span>
+                    <span id="durationDisplay">0h 00m</span>
+                </div>
+                <div class="price-row">
+                    <span>Tarif horaire :</span>
+                    <span id="rateDisplay">-</span>
+                </div>
+                <div class="total-row">
+                    <span>Total estimé :</span>
+                    <span id="totalDisplay">0.00 €</span>
+                </div>
+            </div>
+
+            <button type="button" id="submitBtn" class="btn-reserve" disabled>Confirmer et Payer</button>
+        </form>
+    </div>
+
+    <script src ="../js/reservation.js">
+       
+    </script>
+</body>
+</html>

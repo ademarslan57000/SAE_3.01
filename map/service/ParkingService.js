@@ -19,6 +19,11 @@ export class ParkingService {
         console.error("Erreur HTTP SQL :", res.status, text);
         return [];
       }
+
+      if (!text.trim().startsWith('{') && !text.trim().startsWith('[')) {
+      console.error("Réponse SQL non JSON :", text);
+      return [];
+    }
       
       return JSON.parse(text);
     } catch (e) {

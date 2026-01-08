@@ -1,0 +1,129 @@
+:root {
+            --primary: #2c3e50;
+            --accent: #27ae60; /* Vert pour la validation/argent */
+            --london-color: #c0392b; /* Rouge bus anglais */
+            --metz-color: #2980b9; /* Bleu */
+            --bg: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .booking-card {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        /* Indicateur visuel de la ville */
+        .city-badge {
+            display: block;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin: 0 auto 20px auto;
+            width: fit-content;
+            transition: all 0.3s;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box; /* Important pour les padding */
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        /* Zone de prix */
+        .price-summary {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid var(--accent);
+            margin-bottom: 25px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        /* Bouton */
+        .btn-reserve {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-reserve:hover {
+            background-color: #1a252f;
+        }
+
+        .btn-reserve:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Message d'erreur */
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            display: none;
+            margin-top: 5px;
+        }

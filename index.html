@@ -1,37 +1,154 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Parkings Metz</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"/>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 </head>
+
 <body>
+  <header>
+    <img src="image/logo.png" alt="Logo" class="header-logo" />
+    <div class="header-right">
+      <div class="search-buttons-desktop">
+        <button onclick="localiserUtilisateur()" data-i18n="maPosition">
+          Ma position
+        </button>
+        <button onclick="trierParProximite()" data-i18n="parkingProche">
+          Parking proche
+        </button>
+        <button id="btn-stop-guidage" onclick="arreterGuidage()" data-i18n="arreterGuidage" style="display: none">
+          Stop guidage
+        </button>
+      </div>
 
-<header>
-  <h1>Parkings Metz</h1>
-</header>
+      <div class="dropdown-menu">
+        <button class="btn-menu" id="btnMenu">☰</button>
+        <div class="dropdown-content" id="dropdownContent">
+          <a href="#" onclick="afficherListeParkings()">📋 Liste des parkings</a>
+          <a href="views/compte.view.php" onclick="afficherInfosCompte()">👤 Mon compte</a>
+          <a href="views/FAQ.html" onclick="afficherFAQ()">❓ FAQ</a>
+          <a href="views/reservation.html" onclick="afficherReservation()">Réservation</a>
+          <a href="#" onclick="changerLangue()">FR->EN</a>
+          <hr />
+          <a href="logout.php" class="logout-link">🚪 Déconnexion</a>
+        </div>
+      </div>
+    </div>
+  </header>
 
-<div class="search-container">
-  <input type="text" id="search" placeholder="Rechercher un parking..." oninput="rechercheParking()">
-  <div class="search-buttons">
-    <button onclick="localiserUtilisateur()">Ma position</button>
-    <button onclick="trierParProximite()">Parking proche</button>
+  <div class="search-container">
+    <div class="search-buttons">
+      <button onclick="localiserUtilisateur()" data-i18n="maPosition">
+        Ma position
+      </button>
+      <button onclick="trierParProximite()" data-i18n="parkingProche">
+        Parking proche
+      </button>
+    </div>
+    <button id="btn-stop-guidage-mobile" onclick="arreterGuidage()" data-i18n="arreterGuidage" style="display: none">
+      Stop guidage
+    </button>
   </div>
-  <button id="btn-annuler-itineraire" onclick="supprimerItineraire()" style="display:none">Annuler l'itinéraire</button>
-  <button id="btn-stop-guidage" onclick="arreterGuidage()" style="display:none">Stop guidage</button>
-</div>
 
-<div id="map"></div>
+  <!-- Nouvelle sidebar pour la liste des parkings -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3 data-i18n="parkingDisponibles">Parkings disponibles</h3>
+    </div>
 
-<script type="module" src="map/main.js"></script>
+    <!-- Nouveaux filtres -->
+    <div class="sidebar-filters">
+      <input type="text" id="sidebarSearch" data-i18n="rechercher" placeholder="🔍 Rechercher..."
+        oninput="filterSidebarParkings()" />
 
+      <select id="filterZoneSidebar" onchange="filterSidebarParkings()">
+        <option value="all" data-i18n="allZone">🌍 Toutes les zones</option>
+        <option value="france" data-i18n="france">🇫🇷 France (Metz)</option>
+        <option value="uk" data-i18n="uk">🇬🇧 Royaume-Uni (Londres)</option>
+      </select>
+
+      <select id="filterTypeSidebar" onchange="filterSidebarParkings()">
+        <option value="all" data-i18n="allType">💰 Tous les types</option>
+        <option value="gratuit" data-i18n="gratuit">
+          Gratuits uniquement
+        </option>
+        <option value="payant" data-i18n="payant">Payants uniquement</option>
+      </select>
+
+      <select id="filterEquipements" onchange="filterSidebarParkings()">
+        <option value="all" data-i18n="allEquip">🔧 Tous équipements</option>
+        <option value="pmr" data-i18n="pmr">♿ Places PMR</option>
+        <option value="electrique" data-i18n="electrique">
+          🔌 Bornes électriques
+        </option>
+        <option value="velo" data-i18n="velo">🚲 Places vélo</option>
+      </select>
+
+      <select id="sortSidebar" onchange="filterSidebarParkings()">
+        <option value="name" data-i18n="name">📝 Trier par nom</option>
+        <option value="price_asc" data-i18n="prixAsc">
+          💰 Prix croissant
+        </option>
+        <option value="price_desc" data-i18n="prixDesc">
+          💰 Prix décroissant
+        </option>
+        <option value="places_desc" data-i18n="placesDisponibles">
+          🅿️ Places disponibles ↓
+        </option>
+        <option value="capacity_desc" data-i18n="capaciteTotale">
+          📊 Capacité totale ↓
+        </option>
+        <option value="distance" data-i18n="distance">
+          📍 Distance (si localisé)
+        </option>
+      </select>
+
+      <button class="btn-reset-filters" onclick="resetSidebarFilters()" data-i18n="reset">
+        ↺ Réinitialiser
+      </button>
+    </div>
+
+    <div class="sidebar-content" id="sidebarContent">
+      <div class="loader" data-i18n="chargement">Chargement...</div>
+    </div>
+  </div>
+
+  <button class="btn-toggle-sidebar" id="toggleSidebarBtn" onclick="toggleSidebar()">
+    ▶
+  </button>
+
+  <div id="map"></div>
+
+  <script type="module">
+    fetch("auth/check_session.php")
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.authenticated) {
+          window.location.href = "views/connexion.view.php";
+        } else {
+          import("./map/main.js").catch((error) => {
+            console.error("Erreur chargement map:", error);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur session :", error);
+        window.location.href = "views/connexion.view.php";
+      });
+  </script>
+  <script src="js/menu.js"></script>
+  <script src="js/index.translation.js"></script>
+  <script src="js/sidebar.js"></script>
 </body>
+
 </html>

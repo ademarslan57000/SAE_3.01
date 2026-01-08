@@ -1,0 +1,179 @@
+:root {
+    --primary-color: #2c3e50; /* Bleu Nuit (Comme avant) */
+    --accent-color: #3498db;  /* Bleu clair pour les actions */
+    --bg-color: #f4f6f9;      /* Fond gris clair (Comme avant) */
+    --text-color: #333;
+    
+    /* Le dégradé Violet pour le bouton uniquement */
+    --btn-gradient: linear-gradient(90deg, #00d0ff, #006aff);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* --- EN-TÊTE (Comme avant : Bleu foncé) --- */
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 30px 20px;
+    display: flex;
+    justify-content: space-between; /* Écarte le titre et le bouton */
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+}
+
+/* --- LE BOUTON RETOUR (Style "Liste Parking") --- */
+.btn-retour {
+    padding: 10px 25px;
+    background: var(--btn-gradient); /* Le dégradé violet */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    white-space: nowrap;
+}
+
+.btn-retour:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+    color: white;
+}
+
+/* --- BARRE DE RECHERCHE --- */
+.search-container {
+    max-width: 600px;
+    margin: 30px auto; /* Centré avec de la marge */
+    padding: 0 20px;
+    position: relative;
+}
+
+#searchBar {
+    width: 100%;
+    padding: 15px 20px;
+    border-radius: 30px;
+    border: none;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    outline: none;
+    transition: transform 0.2s;
+}
+
+#searchBar:focus {
+    transform: scale(1.01);
+}
+
+/* --- CONTENEUR FAQ --- */
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px 60px 20px;
+}
+
+.faq-category {
+    margin-bottom: 30px;
+}
+
+.category-title {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--accent-color);
+    display: inline-block;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    font-size: 1.5rem;
+}
+
+/* --- ACCORDÉON (Cartes blanches) --- */
+.faq-item {
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-question {
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    background-color: #fff;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-size: 1.1rem;
+    color: #444;
+}
+
+.faq-question:hover {
+    background-color: #fafafa;
+    color: var(--accent-color);
+}
+
+.icon {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 20px;
+    background-color: #fff;
+    color: #666;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+/* État Actif */
+.faq-item.active .faq-answer {
+    max-height: 300px;
+    padding-bottom: 20px;
+}
+
+.faq-item.active .icon {
+    transform: rotate(45deg);
+    color: var(--accent-color);
+}
+
+/* --- PIED DE PAGE --- */
+.contact-support {
+    text-align: center;
+    margin-top: 40px;
+    color: #888;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    .btn-retour {
+        width: 100%;
+        text-align: center;
+    }
+}

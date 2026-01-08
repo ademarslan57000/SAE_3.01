@@ -1,0 +1,24 @@
+{
+    "trouverPlace":"Trouvez votre place,",
+    "sinscrire": "S'inscrire",
+    "accueilTitle": "Smart Parking Metz - Stationnement Facile",
+    "application": "L'application",
+    "fonctionnalites": "Fonctionnalités",
+    "connexion": "Connexion",
+    "nouveauMetz":"Nouveau à Metz",
+    "sloganCourt":"respirez l'air libre.",
+    "slogan":"La solution de stationnement la plus simple de la ville. Localisation en temps réel et guidage GPS gratuit.",
+    "placeholderOuAller": "Où souhaitez-vous aller ?",
+    "cestParti":"C'est parti",
+    "gratuit":"Gratuit",
+    "tempsReel":"Temps réel",
+    "libre":"Libre",
+    "nbPlaces":"35 places",
+    "rapide":"Rapide",
+    "trouverPlaceRapide":"Ne tournez plus en rond pour trouver une place.",
+    "intuitif":"Intuitif",
+    "interfacePourMobile":"Une interface claire pensée pour le mobile.",
+    "precis":"Précis",
+    "donneesOfficielle":"Données officielles de la ville de Metz."
+
+}
