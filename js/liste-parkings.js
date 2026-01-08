@@ -44,32 +44,26 @@ function renderParkings(parkings) {
 function createParkingCard(p) {
     const gratuit = p.gratuit || p.gratuit === 1;
     const disponibilite = getDisponibilite(p);
-    const tarifs = getTarifs(p);
+    const tarifs = getTarifs(p); // Utilise la fonction unique ci-dessous
     const encodedId = encodeURIComponent(p.id);
 
-    // Déterminer la zone géographique
     const isLondon = String(p.id).startsWith("LONDON_");
     const zoneBadge = isLondon
         ? '<span class="zone-badge zone-uk">🇬🇧 Londres</span>'
         : '<span class="zone-badge zone-france">🇫🇷 Metz</span>';
 
+    const hasVelo = p.nb_velo > 0 || (isLondon && p.info && p.info.toLowerCase().includes('cycle'));
+    const hasElec = p.nb_voitures_electriques > 0 || (isLondon && p.info && p.info.toLowerCase().includes('charging'));
+
     return `
-    <div class="parking-card ${gratuit ? "gratuit" : "payant"} ${
-        isLondon ? "parking-london" : "parking-france"
-    }">
+    <div class="parking-card ${gratuit ? "gratuit" : "payant"} ${isLondon ? "parking-london" : "parking-france"}">
       <div class="parking-header">
         <div>
           <div class="parking-name">${p.name || "Parking"}</div>
-          ${
-        p.adresse ? `<div class="parking-address">📍 ${p.adresse}</div>` : ""
-    }
+          ${p.adresse ? `<div class="parking-address">📍 ${p.adresse}</div>` : ""}
           ${zoneBadge}
         </div>
-        <span class="parking-badge ${
-        gratuit ? "badge-gratuit" : "badge-payant"
-    }">
-          ${gratuit ? "Gratuit" : "Payant"}
-        </span>
+        <span class="parking-badge ${gratuit ? "badge-gratuit" : "badge-payant"}">${gratuit ? "Gratuit" : "Payant"}</span>
       </div>
       
       <div class="parking-info">
@@ -77,80 +71,52 @@ function createParkingCard(p) {
           <span class="info-label">Capacité totale</span>
           <span class="info-value">${p.nb_places || "N/A"} places</span>
         </div>
-        
         ${disponibilite}
-        
-        ${
-        p.nb_pmr
-            ? `
-          <div class="info-row">
-            <span class="info-label">Places PMR</span>
-            <span class="info-value">${p.nb_pmr}</span>
-          </div>
-        `
-            : ""
-    }
-        
-        ${
-        p.nb_velo
-            ? `
-          <div class="info-row">
-            <span class="info-label">Places vélo</span>
-            <span class="info-value">${p.nb_velo}</span>
-          </div>
-        `
-            : ""
-    }
-        
-        ${
-        p.nb_voitures_electriques
-            ? `
-          <div class="info-row">
-            <span class="info-label">Bornes électriques</span>
-            <span class="info-value">${p.nb_voitures_electriques}</span>
-          </div>
-        `
-            : ""
-    }
+        ${p.nb_pmr ? `<div class="info-row"><span class="info-label">♿ Places PMR</span><span class="info-value">${p.nb_pmr}</span></div>` : ""}
+        ${hasVelo ? `<div class="info-row"><span class="info-label">🚲 Places vélo</span><span class="info-value">${p.nb_velo || "Disponible"}</span></div>` : ""}
+        ${hasElec ? `<div class="info-row"><span class="info-label">⚡ Bornes électriques</span><span class="info-value">${p.nb_voitures_electriques || "Oui"}</span></div>` : ""}
       </div>
       
       ${tarifs}
       
       ${p.info ? `<div class="parking-update">ℹ️ ${p.info}</div>` : ""}
-      
-      ${
-        p.place_update
-            ? `
-        <div class="parking-update">
-          Dernière mise à jour : ${
-                new Date(p.place_update).toLocaleString("fr-FR")
-            }
-        </div>
-      `
-            : ""
-    }
+      ${p.place_update ? `<div class="parking-update">Dernière mise à jour : ${new Date(p.place_update).toLocaleString("fr-FR")}</div>` : ""}
       
       <div class="parking-actions">
-        <button class="btn btn-primary" onclick="voirSurCarte('${encodedId}')">
-          🗺️ Voir sur la carte
-        </button>
-        <button class="btn btn-itineraire" onclick="lancerItineraire(${p.lat}, ${p.lon}, '${
-        p.name.replace(/'/g, "\\'")
-    }')">
-          🧭 Itinéraire
-        </button>
-        ${
-        p.url
-            ? `
-          <a href="${p.url}" target="_blank" class="btn btn-secondary">
-            ℹ️ Plus d'infos
-          </a>
-        `
-            : ""
-    }
+        <button class="btn btn-primary" onclick="voirSurCarte('${encodedId}')">🗺️ Voir sur la carte</button>
+        <button class="btn btn-itineraire" onclick="lancerItineraire(${p.lat}, ${p.lon}, '${p.name.replace(/'/g, "\\'")}')">🧭 Itinéraire</button>
+        ${p.url ? `<a href="${p.url}" target="_blank" class="btn btn-secondary">ℹ️ Plus d'infos</a>` : ""}
       </div>
-    </div>
-  `;
+    </div>`;
+}
+
+// FONCTION UNIQUE POUR LES TARIFS
+function getTarifs(p) {
+    if (p.gratuit || p.gratuit === 1) {
+        return `<div class="tarifs-section"><div class="tarifs-title">💰 Tarifs</div><div style="text-align: center; color: #28a745; font-weight: 700; padding: 10px;">PARKING GRATUIT ✓</div></div>`;
+    }
+
+    const isLondon = String(p.id).startsWith("LONDON_");
+    const currency = isLondon ? "£" : "€";
+    
+    let displayTarif = p.tarif_24h;
+
+    // Secours Londres : si tarif_24h est vide, on cherche un prix dans la chaîne "info"
+    if (!displayTarif && isLondon && p.info) {
+        const match = p.info.match(/(?:\|\s*|^)(\d+(?:\.\d{1,2})?)/);
+        if (match) displayTarif = match[1];
+    }
+
+    if (p.tarif_1h || p.tarif_2h || displayTarif) {
+        return `
+            <div class="tarifs-section">
+                <div class="tarifs-title">💰 Tarifs</div>
+                ${p.tarif_1h ? `<div class="tarif-item"><span>1 heure</span><span>${p.tarif_1h} ${currency}</span></div>` : ""}
+                ${p.tarif_2h ? `<div class="tarif-item"><span>2 heures</span><span>${p.tarif_2h} ${currency}</span></div>` : ""}
+                ${displayTarif ? `<div class="tarif-item"><span>Tarif Jour (dès)</span><span>${displayTarif} ${currency}</span></div>` : ""}
+            </div>`;
+    }
+    return "";
 }
 
 function getDisponibilite(p) {
@@ -183,23 +149,25 @@ function getTarifs(p) {
     `;
     }
 
+    const currency = String(p.id).startsWith("LONDON_") ? "£" : "€";
+
     if (p.tarif_1h || p.tarif_2h || p.tarif_24h) {
         return `
       <div class="tarifs-section">
         <div class="tarifs-title">💰 Tarifs</div>
         ${
             p.tarif_1h
-                ? `<div class="tarif-item"><span>1 heure</span><span>${p.tarif_1h} €</span></div>`
+                ? `<div class="tarif-item"><span>1 heure</span><span>${p.tarif_1h} ${currency}</span></div>`
                 : ""
         }
         ${
             p.tarif_2h
-                ? `<div class="tarif-item"><span>2 heures</span><span>${p.tarif_2h} €</span></div>`
+                ? `<div class="tarif-item"><span>2 heures</span><span>${p.tarif_2h} ${currency}</span></div>`
                 : ""
         }
         ${
             p.tarif_24h
-                ? `<div class="tarif-item"><span>24 heures</span><span>${p.tarif_24h} €</span></div>`
+                ? `<div class="tarif-item"><span>24 heures</span><span>${p.tarif_24h} ${currency}</span></div>`
                 : ""
         }
       </div>
