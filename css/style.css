@@ -6,6 +6,44 @@ body {
   flex-direction: column;
 }
 
+/* Bouton d'installation PWA */
+.install-pwa-btn {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 1000;
+  padding: 15px 25px;
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+.install-pwa-btn:hover {
+  background: linear-gradient(135deg, #229954 0%, #27ae60 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.6);
+}
+
+.install-pwa-btn:active {
+  transform: translateY(-1px);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(39, 174, 96, 0.7);
+  }
+}
+
 h1 {
   text-align: center;
 }
@@ -176,7 +214,7 @@ header {
 }
 
 .btn-menu:hover {
-  background:  #2c5fad;
+  background: #2c5fad;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
 }
@@ -257,15 +295,13 @@ header {
   z-index: 999;
 }
 
-
-
 .sidebar.open {
   transform: translateX(0);
 }
 
 .btn-toggle-sidebar {
   position: fixed;
-  left:0;
+  left: 0;
   top: 50%;
   transform: translateY(-50%);
   width: 40px;
@@ -429,7 +465,6 @@ header {
   transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
-
 /* .sidebar.collapsed ~ #map {
   margin-left: 0;
   width: 100%;
@@ -451,7 +486,7 @@ header {
 }
 
 .price-label.gratuit {
- border-color: #28a745;
+  border-color: #28a745;
   color: #28a745;
 }
 
@@ -466,28 +501,28 @@ header {
     height: calc(100vh - 60px);
   }
 
- /* .sidebar.collapsed {
-    transform: translateX(-100%);
-    width: 0;
-    overflow: hidden;
-  } */
+  /* .sidebar.collapsed {
+     transform: translateX(-100%);
+     width: 0;
+     overflow: hidden;
+   } */
 
-  .sidebar.open{
+  .sidebar.open {
     transform: translateX(0);
   }
 
   .sidebar.open ~ .btn-toggle-sidebar {
-  left: 350px;
-}
+    left: 350px;
+  }
 
   .sidebar-filters input,
   .sidebar-filters select {
-   font-size: 16px;
+    font-size: 16px;
     padding: 5px;
   }
 
   .parking-item-image {
-   height: 80px !important;
+    height: 80px !important;
     max-height: 80px !important;
   }
 
@@ -496,7 +531,7 @@ header {
   }
 
   #map {
-   margin-left: 0 !important;
+    margin-left: 0 !important;
     width: 100% !important;
   }
 
@@ -515,14 +550,13 @@ header {
     margin-top: 8px;
   }
 
-  .search-container{
+  .search-container {
     flex-direction: column;
     align-items: stretch;
   }
 }
 
 @media (min-width: 769px) {
-
   #map {
     margin-left: 350px;
     width: calc(100% - 350px);
@@ -539,25 +573,25 @@ header {
   }
 
   .header-right {
-  position: relative; /* pour que les boutons se positionnent par rapport au header */
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+    position: relative; /* pour que les boutons se positionnent par rapport au header */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-.search-buttons-desktop {
-  position: relative;
-  top: 0;   /* en haut du header-right */
-  display: flex;
-  gap: 8px;
-  z-index: 101; /* au-dessus du dropdown */
-}
+  .search-buttons-desktop {
+    position: relative;
+    top: 0; /* en haut du header-right */
+    display: flex;
+    gap: 8px;
+    z-index: 101; /* au-dessus du dropdown */
+  }
 
-.search-buttons-desktop button {
-  padding: 6px 12px;
-  font-size: 14px;
-  white-space: nowrap;
-}
+  .search-buttons-desktop button {
+    padding: 6px 12px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 600px) {
@@ -576,7 +610,7 @@ header {
     right: 0; /* s'assurer que le menu déroulant reste attaché au bouton */
   }
 
-  .header-right{
+  .header-right {
     position: absolute;
     top: 50%;
     right: 15px;

@@ -1,113 +1,168 @@
 <!DOCTYPE html>
 <html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="titre">Centre d'Aide - Parking App</title>
+    <link rel="stylesheet" href="../css/FAQ.css" />
+  </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centre d'Aide - Parking App</title>
-    <link rel="stylesheet" href="../css/FAQ.css">
-</head>
-
-<body>
-
+  <body>
     <header>
-        <h1>Besoin d'aide ?</h1>
-        <a href="../index.html" class="btn-retour" data-i18n="Retour">Retour à la carte</a>
+      <h1 data-i18n="besoinAide">Besoin d'aide ?</h1>
+      <button
+        id="btn-langue"
+        onclick="changerLangue()"
+        style="
+          background: #2196f3;
+          border: none;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          cursor: pointer;
+          font-size: 14px;
+          margin: 0 10px;
+          transition: all 0.3s;
+        "
+      >
+        🇬🇧 English
+      </button>
+      <a href="../index.html" class="btn-retour" data-i18n="retour"
+        >Retour à la carte</a
+      >
     </header>
 
     <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Rechercher une question...">
+      <input
+        type="text"
+        id="searchBar"
+        placeholder="Rechercher une question..."
+        data-i18n-placeholder="rechercher"
+      />
     </div>
 
     <div class="faq-container">
+      <div class="faq-category">
+        <h2 class="category-title" data-i18n="categorieReservations">
+          Réservations & Compte
+        </h2>
 
-        <div class="faq-category">
-            <h2 class="category-title">Réservations & Compte</h2>
-
-            <div class="faq-item">
-                <button class="faq-question">
-                    Comment annuler ma réservation ?
-                    <span class="icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>Vous pouvez annuler sans frais jusqu'à 1 heure avant l'heure d'arrivée prévue. Rendez-vous dans
-                        l'onglet "Mes Réservations" et cliquez sur "Annuler".</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question">
-                    Puis-je modifier ma plaque d'immatriculation ?
-                    <span class="icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>Oui. Allez dans "Mon Profil" > "Mes Véhicules". Vous pouvez ajouter, supprimer ou modifier une
-                        plaque. Assurez-vous que la modification est faite avant d'arriver au parking.</p>
-                </div>
-            </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="questionAnnuler"
+              >Comment annuler ma réservation ?</span
+            >
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n="reponseAnnuler">
+              Vous pouvez annuler sans frais jusqu'à 1 heure avant l'heure
+              d'arrivée prévue. Rendez-vous dans l'onglet "Mes Réservations" et
+              cliquez sur "Annuler".
+            </p>
+          </div>
         </div>
 
-        <div class="faq-category">
-            <h2 class="category-title">Info Metz & Londres</h2>
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="questionPlaque"
+              >Puis-je modifier ma plaque d'immatriculation ?</span
+            >
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n="reponsePlaque">
+              Oui. Allez dans "Mon Profil" > "Mes Véhicules". Vous pouvez
+              ajouter, supprimer ou modifier une plaque. Assurez-vous que la
+              modification est faite avant d'arriver au parking.
+            </p>
+          </div>
+        </div>
+      </div>
 
-            <div class="faq-item">
-                <button class="faq-question">
-                    Londres : La Congestion Charge est-elle incluse ?
-                    <span class="icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>Non. Le prix payé sur l'application ne concerne que le stationnement. Vous devez régler la
-                        Congestion Charge et l'ULEZ séparément sur le site officiel de Transport for London (TfL).</p>
-                </div>
-            </div>
+      <div class="faq-category">
+        <h2 class="category-title" data-i18n="categorieInfos">
+          Info Metz & Londres
+        </h2>
 
-            <div class="faq-item">
-                <button class="faq-question">
-                    Metz : Les parkings sont-ils ouverts la nuit ?
-                    <span class="icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>Oui, nos parkings Centre Pompidou et Gare sont accessibles 24h/24 et 7j/7 grâce à votre
-                        réservation via l'application.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question">
-                    Dans quelle devise vais-je payer ?
-                    <span class="icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>Si vous réservez un parking à Metz, vous serez débité en Euros (€). Pour Londres, le débit se
-                        fera en Livres Sterling (£). Votre banque peut appliquer des frais de change.</p>
-                </div>
-            </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="questionCongestion"
+              >Londres : La Congestion Charge est-elle incluse ?</span
+            >
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n="reponseCongestion">
+              Non. Le prix payé sur l'application ne concerne que le
+              stationnement. Vous devez régler la Congestion Charge et l'ULEZ
+              séparément sur le site officiel de Transport for London (TfL).
+            </p>
+          </div>
         </div>
 
-        <div class="faq-category">
-            <h2 class="category-title">Accès & Problèmes</h2>
-
-            <div class="faq-item">
-                <button class="faq-question">
-                    La barrière ne s'ouvre pas, que faire ?
-                    <span class="icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>Ne paniquez pas. Vérifiez que vous êtes bien devant la barrière d'entrée. Si la lecture de plaque
-                        échoue, utilisez le QR Code disponible dans votre réservation sur l'application ou sonnez à
-                        l'interphone.</p>
-                </div>
-            </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="questionNuit"
+              >Metz : Les parkings sont-ils ouverts la nuit ?</span
+            >
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n="reponseNuit">
+              Oui, nos parkings Centre Pompidou et Gare sont accessibles 24h/24
+              et 7j/7 grâce à votre réservation via l'application.
+            </p>
+          </div>
         </div>
 
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="questionDevise"
+              >Dans quelle devise vais-je payer ?</span
+            >
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n="reponseDevise">
+              Si vous réservez un parking à Metz, vous serez débité en Euros
+              (€). Pour Londres, le débit se fera en Livres Sterling (£). Votre
+              banque peut appliquer des frais de change.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-category">
+        <h2 class="category-title" data-i18n="accesProblemes">
+          Accès & Problèmes
+        </h2>
+
+        <div class="faq-item">
+          <button class="faq-question" data-i18n="barriereQuestion">
+            La barrière ne s'ouvre pas, que faire ?
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n="barriereReponse">
+              Ne paniquez pas. Vérifiez que vous êtes bien devant la barrière
+              d'entrée. Si la lecture de plaque échoue, utilisez le QR Code
+              disponible dans votre réservation sur l'application ou sonnez à
+              l'interphone.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="contact-support">
-        <p>Vous ne trouvez pas votre réponse ?</p>
-        <a href="#" class="btn-retour">Contacter le Support</a>
+      <p data-i18n="pasDeReponse">Vous ne trouvez pas votre réponse ?</p>
+      <a href="#" class="btn-retour" data-i18n="contacter"
+        >Contacter le Support</a
+      >
     </div>
 
     <script src="../js/FAQ.js"></script>
-</body>
-
+    <script src="../js/faq.translation.js"></script>
+  </body>
 </html>

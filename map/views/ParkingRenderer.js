@@ -1,3 +1,5 @@
+import { traduire } from "./PopUp.translation.js";
+
 export class ParkingRenderer {
   constructor(map, destinationIcon, routingService) {
     this.map = map;
@@ -63,15 +65,18 @@ export class ParkingRenderer {
 
   createPriceLabel(parking) {
     if (parking.gratuit) {
-      return "GRATUIT";
+      return traduire("free");
     }
     if (parking.tarif_1h) {
       return `${parking.tarif_1h}€/h`;
     }
-    return "Payant";
+    if (parking.tarif_24h) {
+      return `${parking.tarif_24h}€/24h`;
+    }
+    return traduire("paid");
   }
 
-    renderSidebar(parkings) {
+  renderSidebar(parkings) {
     const container = document.getElementById("sidebarContent");
     if (!container) return;
 
@@ -86,22 +91,22 @@ export class ParkingRenderer {
       "",
     );
 
-    const items = container.querySelectorAll('.sidebar-parking-item');
+    const items = container.querySelectorAll(".sidebar-parking-item");
     items.forEach((item) => {
-        const lat = parseFloat(item.dataset.lat);
-        const lon = parseFloat(item.dataset.lon);
+      const lat = parseFloat(item.dataset.lat);
+      const lon = parseFloat(item.dataset.lon);
 
-        const onSelect = (e) => {
-            e.preventDefault();
-            window.mapController.zoomToParking(lat, lon);
+      const onSelect = (e) => {
+        e.preventDefault();
+        window.mapController.zoomToParking(lat, lon);
 
-            const sidebar = document.getElementById('sidebar');
-            if (!sidebar.classList.contains('collapsed')) {
-                toggleSidebar();
-            }
-        };
+        const sidebar = document.getElementById("sidebar");
+        if (!sidebar.classList.contains("collapsed")) {
+          toggleSidebar();
+        }
+      };
 
-        item.addEventListener('pointerup', onSelect); // PC + mobile + tablette
+      item.addEventListener("pointerup", onSelect); // PC + mobile + tablette
     });
   }
 
@@ -109,7 +114,9 @@ export class ParkingRenderer {
     const gratuit = p.gratuit || p.gratuit === 1;
     const prix = gratuit
       ? "GRATUIT"
-      : (p.tarif_1h ? `${p.tarif_1h}€/h` : "Payant");
+      : (p.tarif_1h
+        ? `${p.tarif_1h}€/h`
+        : (p.tarif_24h ? `${p.tarif_24h}€/24h` : "Payant"));
     const dispo = p.place_libre != null
       ? `${p.place_libre}/${p.place_total_rt || p.nb_places} places`
       : "N/A";
@@ -125,7 +132,9 @@ export class ParkingRenderer {
              onerror="this.src='${this.getDefaultImage(p)}'">
         <div class="parking-item-header">
           <div class="parking-item-name">${p.name || "Parking"}</div>
-          <div class="parking-item-price ${gratuit ? "gratuit" : ""}">${prix}</div>
+          <div class="parking-item-price ${
+      gratuit ? "gratuit" : ""
+    }">${prix}</div>
         </div>
         <div class="parking-item-info">
           <div>📍 ${p.adresse || "Adresse non disponible"}</div>
@@ -133,7 +142,6 @@ export class ParkingRenderer {
         </div>
       </div>
     `;
-
   }
 
   getParkingImage(parking) {
@@ -161,7 +169,6 @@ export class ParkingRenderer {
     // ✅ Utiliser un SVG en Data URI au lieu de via.placeholder.com
     return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='350' height='180'%3E%3Crect fill='%23667eea' width='350' height='180'/%3E%3Ctext fill='white' x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-size='20' font-family='Arial' font-weight='bold'%3E${encodedName}%3C/text%3E%3C/svg%3E`;
   }
-
 
   clearMarkers() {
     if (this.markerClusterGroup) this.map.removeLayer(this.markerClusterGroup);

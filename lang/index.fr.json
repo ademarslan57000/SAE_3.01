@@ -1,8 +1,10 @@
 {
     
     "listeParking": "📋 Liste des parkings",
+    "serviceMobilite":"🚇 Services de mobilité",
     "monCompte": "👤 Mon compte",
-    "Faq": "❓ FAQ",
+    "FAQ": "❓ FAQ",
+    "reservation":"☑️ Réservation",
     "deconnexion": "🚪 Déconnexion",
     "RechercheParking": "Rechercher un parking...",
     "maPosition": "Ma position",
@@ -28,5 +30,6 @@
     "capaciteTotale":"📊 Capacité totale ↓",
     "distance": "📍 Distance (si localisé)",
     "reset": "↺ Réinitialiser",
-    "chargement": "Chargement..."
+    "chargement": "Chargement...",
+    "installerApp":"📱 Installer l'application"
 }

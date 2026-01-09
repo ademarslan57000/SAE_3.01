@@ -1,0 +1,23 @@
+{
+    "titre": "Liste des Parkings",
+    "listeParkings": "Liste des Parkings",
+    "retour": "Retour à la carte",
+    "rechercher": "Rechercher un parking...",
+    "toutesZones": "Toutes les zones",
+    "france": "France (Metz)",
+    "uk": "Royaume-Uni (Londres)",
+    "tousLesParkings": "Tous les parkings",
+    "gratuitsUniquement": "Gratuits uniquement",
+    "payantsUniquement": "Payants uniquement",
+    "avecPMR": "Avec places PMR",
+    "avecElectrique": "Avec bornes électriques",
+    "avecVelo": "Avec places vélo",
+    "trierNom": "Trier par nom",
+    "placesDispo": "Places disponibles",
+    "capaciteTotale": "Capacité totale",
+    "placesPMR": "Places PMR",
+    "bornesElectriques": "Bornes électriques",
+    "placesVelo": "Places vélo",
+    "chargement": "Chargement...",
+    "chargementParkings": "Chargement des parkings..."
+}

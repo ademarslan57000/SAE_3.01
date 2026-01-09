@@ -1,0 +1,26 @@
+{
+    "titre": "Help Centre - Parking App",
+    "besoinAide": "Need some help?",
+    "retour": "Back to the map",
+    "rechercher": "Search for a question...",
+    "categorieReservations": "Bookings & Account",
+    "questionAnnuler": "How do I cancel my booking?",
+    "reponseAnnuler": "You can cancel free of charge up to 1 hour before your scheduled arrival time. Go to the \"My Bookings\" tab and click \"Cancel\".",
+    "questionPlaque": "Can I edit my registration plate?",
+    "reponsePlaque": "Yes. Go to \"My Profile\" > \"My Vehicles\". You can add, delete or edit a registration plate. Make sure the edit is made before arriving at the car park.",
+    "categorieInfos": "Metz & London Info",
+    "questionCongestion": "London: Is the Congestion Charge included?",
+    "reponseCongestion": "No. The price paid on the app is for parking only. You must pay the Congestion Charge and ULEZ separately on the official Transport for London (TfL) website.",
+    "questionNuit": "Metz: Are car parks open at night?",
+    "reponseNuit": "Yes, our Centre Pompidou and Gare car parks are accessible 24/7 thanks to your booking via the app.",
+    "questionDevise": "What currency will I pay in?",
+    "reponseDevise": "Car parks in Metz are charged in Euros (€). As for London, the charge will be in Sterling Pounds (£). Your bank may apply currency exchange fees.",
+    "accesProblemes":"Access & Troubles",
+    "barriereQuestion":"The barrier won't open, what should I do ?",
+    "barriereReponse":"Do not panic. Check that you are right in front of the entrance barrier. If the license plate's reading fails, use the QR code available on your reservation on the app or you can call on the entryphone.",
+    "pasDeReponse":"Can't find any answer ?",
+    "contacter":"Contact us"
+
+}
+
+

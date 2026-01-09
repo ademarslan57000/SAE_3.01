@@ -3,14 +3,24 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Liste des Parkings</title>
+        <title data-i18n="titre">Liste des Parkings</title>
         <link rel="stylesheet" href="../css/liste-parkings.css">
     </head>
     <body>
-        <header>
+        <header
+            style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap"
+        >
             <img src="../image/logo.png" alt="Logo" class="header-logo">
-            <h1>Liste des Parkings</h1>
-            <a href="../index.html" class="btn-retour">Retour à la carte</a>
+            <h1 data-i18n="listeParkings">Liste des Parkings</h1>
+            <button
+                id="btn-langue"
+                onclick="changerLangue()"
+                style="background: #2196f3; border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.3s"
+            >
+                🇬🇧 English
+            </button>
+            <a href="../index.html" class="btn-retour" data-i18n="retour"
+            >Retour à la carte</a>
         </header>
 
         <div class="container">
@@ -19,37 +29,73 @@
                     type="text"
                     id="searchParking"
                     placeholder="Rechercher un parking..."
+                    data-i18n-placeholder="rechercher"
                 >
                 <select id="filterZone">
-                    <option value="all">Toutes les zones</option>
-                    <option value="france">France (Metz)</option>
-                    <option value="uk">Royaume-Uni (Londres)</option>
+                    <option value="all" data-i18n="toutesZones">
+                        Toutes les zones
+                    </option>
+                    <option value="france" data-i18n="france">
+                        France (Metz)
+                    </option>
+                    <option value="uk" data-i18n="uk">
+                        Royaume-Uni (Londres)
+                    </option>
                 </select>
                 <select id="filterType">
-                    <option value="all">Tous les parkings</option>
-                    <option value="gratuit">Gratuits uniquement</option>
-                    <option value="payant">Payants uniquement</option>
-                    <option value="pmr">Avec places PMR</option>
-                    <option value="electrique">Avec bornes électriques</option>
-                    <option value="velo">Avec places vélo</option>
+                    <option value="all" data-i18n="tousLesParkings">
+                        Tous les parkings
+                    </option>
+                    <option value="gratuit" data-i18n="gratuitsUniquement">
+                        Gratuits uniquement
+                    </option>
+                    <option value="payant" data-i18n="payantsUniquement">
+                        Payants uniquement
+                    </option>
+                    <option value="pmr" data-i18n="avecPMR">
+                        Avec places PMR
+                    </option>
+                    <option value="electrique" data-i18n="avecElectrique">
+                        Avec bornes électriques
+                    </option>
+                    <option value="velo" data-i18n="avecVelo">
+                        Avec places vélo
+                    </option>
                 </select>
                 <select id="sortBy">
-                    <option value="name">Trier par nom</option>
-                    <option value="places">Places disponibles</option>
-                    <option value="capacity">Capacité totale</option>
-                    <option value="pmr">Places PMR</option>
-                    <option value="electrique">Bornes électriques</option>
-                    <option value="velo">Places vélo</option>
+                    <option value="name" data-i18n="trierNom">
+                        Trier par nom
+                    </option>
+                    <option value="places" data-i18n="placesDispo">
+                        Places disponibles
+                    </option>
+                    <option value="capacity" data-i18n="capaciteTotale">
+                        Capacité totale
+                    </option>
+                    <option value="pmr" data-i18n="placesPMR">
+                        Places PMR
+                    </option>
+                    <option value="electrique" data-i18n="bornesElectriques">
+                        Bornes électriques
+                    </option>
+                    <option value="velo" data-i18n="placesVelo">
+                        Places vélo
+                    </option>
                 </select>
             </div>
 
-            <div id="parkingCount" class="count-info">Chargement...</div>
+            <div id="parkingCount" class="count-info" data-i18n="chargement">
+                Chargement...
+            </div>
 
             <div id="parkingList" class="parking-grid">
-                <div class="loader">Chargement des parkings...</div>
+                <div class="loader" data-i18n="chargementParkings">
+                    Chargement des parkings...
+                </div>
             </div>
         </div>
 
         <script src="../js/liste-parkings.js"></script>
+        <script src="../js/liste-parkings.translation.js"></script>
     </body>
 </html>

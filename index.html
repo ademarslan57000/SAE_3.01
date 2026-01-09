@@ -1,154 +1,327 @@
 <!DOCTYPE html>
 <html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ParkGuide</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Parkings Metz</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-</head>
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json" />
 
-<body>
-  <header>
-    <img src="image/logo.png" alt="Logo" class="header-logo" />
-    <div class="header-right">
-      <div class="search-buttons-desktop">
+    <!-- Métadonnées pour Android Auto et CarPlay -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Smart Parking" />
+    <meta name="theme-color" content="#27ae60" />
+    <meta name="msapplication-navbutton-color" content="#27ae60" />
+
+    <!-- Icons pour différents appareils -->
+    <link rel="apple-touch-icon" href="image/logo.png" />
+    <link rel="icon" type="image/png" href="image/logo.png" />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+  </head>
+
+  <body>
+    <!-- Bouton d'installation PWA (Android Auto / CarPlay) -->
+    <button id="installBtn" class="install-pwa-btn" data-i18n="installerApp">
+      📱 Installer l'application
+    </button>
+
+    <header>
+      <img src="image/logo.png" alt="Logo" class="header-logo" />
+      <div class="header-right">
+        <div class="search-buttons-desktop">
+          <button onclick="localiserUtilisateur()" data-i18n="maPosition">
+            Ma position
+          </button>
+          <button onclick="trierParProximite()" data-i18n="parkingProche">
+            Parking proche
+          </button>
+          <button
+            id="btn-stop-guidage"
+            onclick="arreterGuidage()"
+            data-i18n="arreterGuidage"
+            style="display: none"
+          >
+            Stop guidage
+          </button>
+        </div>
+
+        <div class="dropdown-menu">
+          <button class="btn-menu" id="btnMenu">☰</button>
+          <div class="dropdown-content" id="dropdownContent">
+            <a
+              href="#"
+              onclick="afficherListeParkings()"
+              data-i18n="listeParking"
+              >📋 Liste des parkings</a
+            >
+            <a href="views/mobilite.html" data-i18n="serviceMobilite"
+              >🚇 Services de mobilité</a
+            >
+            <a
+              href="views/compte.view.php"
+              onclick="afficherInfosCompte()"
+              data-i18n="monCompte"
+              >👤 Mon compte</a
+            >
+            <a href="views/FAQ.html" onclick="afficherFAQ()" data-i18n="FAQ"
+              >❓ FAQ</a
+            >
+            <a
+              href="views/reservation.html"
+              onclick="afficherReservation()"
+              data-i18n="reservation"
+              >☑️ Réservation</a
+            >
+            <a href="#" onclick="changerLangue()">FR->EN</a>
+            <hr />
+            <a href="logout.php" class="logout-link" data-i18n="deconnexion"
+              >🚪 Déconnexion</a
+            >
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="search-container">
+      <div class="search-buttons">
         <button onclick="localiserUtilisateur()" data-i18n="maPosition">
           Ma position
         </button>
         <button onclick="trierParProximite()" data-i18n="parkingProche">
           Parking proche
         </button>
-        <button id="btn-stop-guidage" onclick="arreterGuidage()" data-i18n="arreterGuidage" style="display: none">
-          Stop guidage
+      </div>
+      <button
+        id="btn-stop-guidage-mobile"
+        onclick="arreterGuidage()"
+        data-i18n="arreterGuidage"
+        style="display: none"
+      >
+        Stop guidage
+      </button>
+    </div>
+
+    <!-- Nouvelle sidebar pour la liste des parkings -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h3 data-i18n="parkingDisponibles">Parkings disponibles</h3>
+      </div>
+
+      <!-- Nouveaux filtres -->
+      <div class="sidebar-filters">
+        <input
+          type="text"
+          id="sidebarSearch"
+          placeholder="🔍 Rechercher..."
+          data-i18n-placeholder="rechercher"
+          oninput="filterSidebarParkings()"
+        />
+
+        <select id="filterZoneSidebar" onchange="filterSidebarParkings()">
+          <option value="all" data-i18n="allZone">🌍 Toutes les zones</option>
+          <option value="france" data-i18n="france">🇫🇷 France (Metz)</option>
+          <option value="uk" data-i18n="uk">🇬🇧 Royaume-Uni (Londres)</option>
+        </select>
+
+        <select id="filterTypeSidebar" onchange="filterSidebarParkings()">
+          <option value="all" data-i18n="allType">💰 Tous les types</option>
+          <option value="gratuit" data-i18n="gratuit">
+            Gratuits uniquement
+          </option>
+          <option value="payant" data-i18n="payant">Payants uniquement</option>
+        </select>
+
+        <select id="filterEquipements" onchange="filterSidebarParkings()">
+          <option value="all" data-i18n="allEquip">🔧 Tous équipements</option>
+          <option value="pmr" data-i18n="pmr">♿ Places PMR</option>
+          <option value="electrique" data-i18n="electrique">
+            🔌 Bornes électriques
+          </option>
+          <option value="velo" data-i18n="velo">🚲 Places vélo</option>
+        </select>
+
+        <select id="sortSidebar" onchange="filterSidebarParkings()">
+          <option value="name" data-i18n="name">📝 Trier par nom</option>
+          <option value="price_asc" data-i18n="prixAsc">
+            💰 Prix croissant
+          </option>
+          <option value="price_desc" data-i18n="prixDesc">
+            💰 Prix décroissant
+          </option>
+          <option value="places_desc" data-i18n="placesDisponibles">
+            🅿️ Places disponibles ↓
+          </option>
+          <option value="capacity_desc" data-i18n="capaciteTotale">
+            📊 Capacité totale ↓
+          </option>
+          <option value="distance" data-i18n="distance">
+            📍 Distance (si localisé)
+          </option>
+        </select>
+
+        <button
+          class="btn-reset-filters"
+          onclick="resetSidebarFilters()"
+          data-i18n="reset"
+        >
+          ↺ Réinitialiser
         </button>
       </div>
 
-      <div class="dropdown-menu">
-        <button class="btn-menu" id="btnMenu">☰</button>
-        <div class="dropdown-content" id="dropdownContent">
-          <a href="#" onclick="afficherListeParkings()">📋 Liste des parkings</a>
-          <a href="views/compte.view.php" onclick="afficherInfosCompte()">👤 Mon compte</a>
-          <a href="views/FAQ.html" onclick="afficherFAQ()">❓ FAQ</a>
-          <a href="views/reservation.html" onclick="afficherReservation()">Réservation</a>
-          <a href="#" onclick="changerLangue()">FR->EN</a>
-          <hr />
-          <a href="logout.php" class="logout-link">🚪 Déconnexion</a>
-        </div>
+      <div class="sidebar-content" id="sidebarContent">
+        <div class="loader" data-i18n="chargement">Chargement...</div>
       </div>
     </div>
-  </header>
 
-  <div class="search-container">
-    <div class="search-buttons">
-      <button onclick="localiserUtilisateur()" data-i18n="maPosition">
-        Ma position
-      </button>
-      <button onclick="trierParProximite()" data-i18n="parkingProche">
-        Parking proche
-      </button>
-    </div>
-    <button id="btn-stop-guidage-mobile" onclick="arreterGuidage()" data-i18n="arreterGuidage" style="display: none">
-      Stop guidage
+    <button
+      class="btn-toggle-sidebar"
+      id="toggleSidebarBtn"
+      onclick="toggleSidebar()"
+    >
+      ▶
     </button>
-  </div>
 
-  <!-- Nouvelle sidebar pour la liste des parkings -->
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <h3 data-i18n="parkingDisponibles">Parkings disponibles</h3>
-    </div>
+    <div id="map"></div>
 
-    <!-- Nouveaux filtres -->
-    <div class="sidebar-filters">
-      <input type="text" id="sidebarSearch" data-i18n="rechercher" placeholder="🔍 Rechercher..."
-        oninput="filterSidebarParkings()" />
-
-      <select id="filterZoneSidebar" onchange="filterSidebarParkings()">
-        <option value="all" data-i18n="allZone">🌍 Toutes les zones</option>
-        <option value="france" data-i18n="france">🇫🇷 France (Metz)</option>
-        <option value="uk" data-i18n="uk">🇬🇧 Royaume-Uni (Londres)</option>
-      </select>
-
-      <select id="filterTypeSidebar" onchange="filterSidebarParkings()">
-        <option value="all" data-i18n="allType">💰 Tous les types</option>
-        <option value="gratuit" data-i18n="gratuit">
-          Gratuits uniquement
-        </option>
-        <option value="payant" data-i18n="payant">Payants uniquement</option>
-      </select>
-
-      <select id="filterEquipements" onchange="filterSidebarParkings()">
-        <option value="all" data-i18n="allEquip">🔧 Tous équipements</option>
-        <option value="pmr" data-i18n="pmr">♿ Places PMR</option>
-        <option value="electrique" data-i18n="electrique">
-          🔌 Bornes électriques
-        </option>
-        <option value="velo" data-i18n="velo">🚲 Places vélo</option>
-      </select>
-
-      <select id="sortSidebar" onchange="filterSidebarParkings()">
-        <option value="name" data-i18n="name">📝 Trier par nom</option>
-        <option value="price_asc" data-i18n="prixAsc">
-          💰 Prix croissant
-        </option>
-        <option value="price_desc" data-i18n="prixDesc">
-          💰 Prix décroissant
-        </option>
-        <option value="places_desc" data-i18n="placesDisponibles">
-          🅿️ Places disponibles ↓
-        </option>
-        <option value="capacity_desc" data-i18n="capaciteTotale">
-          📊 Capacité totale ↓
-        </option>
-        <option value="distance" data-i18n="distance">
-          📍 Distance (si localisé)
-        </option>
-      </select>
-
-      <button class="btn-reset-filters" onclick="resetSidebarFilters()" data-i18n="reset">
-        ↺ Réinitialiser
-      </button>
-    </div>
-
-    <div class="sidebar-content" id="sidebarContent">
-      <div class="loader" data-i18n="chargement">Chargement...</div>
-    </div>
-  </div>
-
-  <button class="btn-toggle-sidebar" id="toggleSidebarBtn" onclick="toggleSidebar()">
-    ▶
-  </button>
-
-  <div id="map"></div>
-
-  <script type="module">
-    fetch("auth/check_session.php")
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data.authenticated) {
+    <script type="module">
+      fetch("auth/check_session.php")
+        .then((response) => response.json())
+        .then((data) => {
+          if (!data.authenticated) {
+            window.location.href = "views/connexion.view.php";
+          } else {
+            import("./map/main.js").catch((error) => {
+              console.error("Erreur chargement map:", error);
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Erreur session :", error);
           window.location.href = "views/connexion.view.php";
-        } else {
-          import("./map/main.js").catch((error) => {
-            console.error("Erreur chargement map:", error);
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Erreur session :", error);
-        window.location.href = "views/connexion.view.php";
-      });
-  </script>
-  <script src="js/menu.js"></script>
-  <script src="js/index.translation.js"></script>
-  <script src="js/sidebar.js"></script>
-</body>
+        });
+    </script>
+    <script src="js/menu.js"></script>
+    <script src="js/index.translation.js"></script>
+    <script src="js/sidebar.js"></script>
 
+    <!-- Service Worker pour PWA et support Android Auto/CarPlay -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .then((registration) => {
+              console.log("✅ Service Worker enregistré:", registration.scope);
+
+              // Vérifier les mises à jour
+              registration.addEventListener("updatefound", () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener("statechange", () => {
+                  if (
+                    newWorker.state === "installed" &&
+                    navigator.serviceWorker.controller
+                  ) {
+                    console.log("🔄 Nouvelle version disponible");
+                  }
+                });
+              });
+            })
+            .catch((error) => {
+              console.error("❌ Erreur Service Worker:", error);
+            });
+        });
+      }
+
+      // Support des notifications pour les rappels
+      if ("Notification" in window && "serviceWorker" in navigator) {
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            console.log("✅ Notifications activées");
+          }
+        });
+      }
+
+      // Gestion de l'installation PWA (Android Auto / CarPlay)
+      let deferredPrompt;
+      const installBtn = document.getElementById("installBtn");
+
+      // MODE TEST : Bouton toujours visible
+      installBtn.style.display = "block";
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        // Empêcher l'affichage automatique de la bannière
+        e.preventDefault();
+        deferredPrompt = e;
+
+        // Bouton déjà visible en mode test
+        console.log("📱 Installation PWA disponible");
+      });
+
+      installBtn.addEventListener("click", async () => {
+        if (!deferredPrompt) {
+          // Mode test : afficher un message si l'installation n'est pas disponible
+          alert(
+            "ℹ️ MODE TEST\n\nL'installation PWA n'est pas disponible dans ce contexte.\n\nPour tester l'installation complète :\n\n1. Android : Ouvrez dans Chrome\n2. iOS : Ouvrez dans Safari\n3. Déployez en HTTPS\n\nLe bouton fonctionne et l'interface est prête pour Android Auto et CarPlay !"
+          );
+          return;
+        }
+
+        // Afficher le prompt d'installation
+        deferredPrompt.prompt();
+
+        // Attendre la réponse de l'utilisateur
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`Résultat installation: ${outcome}`);
+
+        if (outcome === "accepted") {
+          installBtn.style.display = "none";
+          alert(
+            "✅ Application installée ! Vous pouvez maintenant l'utiliser avec Android Auto ou CarPlay."
+          );
+        }
+
+        deferredPrompt = null;
+      });
+
+      // Détecter si l'app est déjà installée
+      window.addEventListener("appinstalled", () => {
+        console.log("✅ PWA installée");
+        installBtn.style.display = "none";
+      });
+
+      // Pour iOS (Safari)
+      if (
+        navigator.standalone ||
+        window.matchMedia("(display-mode: standalone)").matches
+      ) {
+        console.log("✅ Application lancée en mode standalone");
+      }
+    </script>
+  </body>
 </html>

@@ -1,0 +1,28 @@
+{
+    "titre": "Centre d'Aide - Parking App",
+    "besoinAide": "Besoin d'aide ?",
+    "retour": "Retour à la carte",
+    "rechercher": "Rechercher une question...",
+    "categorieReservations": "Réservations & Compte",
+    "questionAnnuler": "Comment annuler ma réservation ?",
+    "reponseAnnuler": "Vous pouvez annuler sans frais jusqu'à 1 heure avant l'heure d'arrivée prévue. Rendez-vous dans l'onglet \"Mes Réservations\" et cliquez sur \"Annuler\".",
+    "questionPlaque": "Puis-je modifier ma plaque d'immatriculation ?",
+    "reponsePlaque": "Oui. Allez dans \"Mon Profil\" > \"Mes Véhicules\". Vous pouvez ajouter, supprimer ou modifier une plaque. Assurez-vous que la modification est faite avant d'arriver au parking.",
+    "categorieInfos": "Info Metz & Londres",
+    "questionCongestion": "Londres : La Congestion Charge est-elle incluse ?",
+    "reponseCongestion": "Non. Le prix payé sur l'application ne concerne que le stationnement. Vous devez régler la Congestion Charge et l'ULEZ séparément sur le site officiel de Transport for London (TfL).",
+    "questionNuit": "Metz : Les parkings sont-ils ouverts la nuit ?",
+    "reponseNuit": "Oui, nos parkings Centre Pompidou et Gare sont accessibles 24h/24 et 7j/7 grâce à votre réservation via l'application.",
+    "questionDevise": "Dans quelle devise vais-je payer ?",
+    "reponseDevise": "Les parkings à Metz sont facturés en euros (€), ceux à Londres en livres sterling (£). Le paiement s'effectue dans la devise locale du parking.",
+    "accesProblemes":"Accès & Problèmes",
+    "barriereQuestion":"La barrière ne s'ouvre pas, que faire ?",
+    "barriereReponse":"Ne paniquez pas. Vérifiez que vous êtes bien devant la barrière d'entrée. Si la lecture de plaque échoue, utilisez le QR Code disponible dans votre réservation sur l'application ou sonnez à l'interphone.",
+    "pasDeReponse":"Vous ne trouvez pas votre réponse ?",
+    "contacter":"Contacter le support"
+
+
+}
+
+
+

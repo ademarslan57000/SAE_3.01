@@ -1,0 +1,83 @@
+{
+    "name": "Smart Parking Metz",
+    "short_name": "SmartParking",
+    "description": "Trouvez et réservez votre place de parking à Metz et Londres en temps réel",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#2c3e50",
+    "theme_color": "#27ae60",
+    "icons": [
+        {
+            "src": "image/logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "image/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["navigation", "travel", "parking"],
+    "scope": "/",
+    "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+    "prefer_related_applications": false,
+    "related_applications": [
+        {
+            "platform": "play",
+            "url": "https://play.google.com/store/apps/details?id=com.smartparking.metz",
+            "id": "com.smartparking.metz"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Trouver un parking",
+            "short_name": "Parking",
+            "description": "Rechercher un parking disponible",
+            "url": "/index.html",
+            "icons": [{ "src": "image/logo.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Mes réservations",
+            "short_name": "Réservations",
+            "description": "Voir mes réservations en cours",
+            "url": "/views/compte.view.php",
+            "icons": [{ "src": "image/logo.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Réserver",
+            "short_name": "Réserver",
+            "description": "Réserver une place de parking",
+            "url": "/views/reservation.html",
+            "icons": [{ "src": "image/logo.png", "sizes": "192x192" }]
+        }
+    ],
+    "screenshots": [],
+    "share_target": {
+        "action": "/share",
+        "method": "GET",
+        "enctype": "application/x-www-form-urlencoded",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url"
+        }
+    },
+    "android_auto": {
+        "enabled": true,
+        "categories": ["navigation", "parking"],
+        "navigation": {
+            "voice_commands": true,
+            "turn_by_turn": true,
+            "search_enabled": true
+        }
+    },
+    "carplay": {
+        "enabled": true,
+        "templates": ["navigation", "search", "list"],
+        "voice_enabled": true
+    }
+}

@@ -1,0 +1,645 @@
+:root {
+    --primary: #2c3e50;
+    --secondary: #27ae60;
+    --accent-metz: #2980b9;
+    --accent-london: #c0392b;
+    --bg: #f4f7f6;
+    --card-bg: #ffffff;
+    --border: #e0e0e0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--primary);
+    line-height: 1.6;
+}
+
+/* Header */
+.mobility-header {
+    background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#btn-langue {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#btn-langue:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    transform: translateY(-2px);
+}
+
+.header-logo {
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.mobility-header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.btn-retour {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.btn-retour:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    flex: 1;
+    min-width: 200px;
+    padding: 15px 25px;
+    background: var(--card-bg);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tab-btn:hover {
+    border-color: var(--secondary);
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    background: var(--secondary);
+    color: white;
+    border-color: var(--secondary);
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* City Section */
+.city-section {
+    margin-bottom: 40px;
+}
+
+.city-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--secondary);
+}
+
+/* Service Card */
+.service-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    gap: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.service-icon {
+    font-size: 4rem;
+    flex-shrink: 0;
+}
+
+.service-info {
+    flex: 1;
+}
+
+.service-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.service-info p {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.service-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.badge {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.service-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-service {
+    display: inline-block;
+    padding: 10px 20px;
+    background: var(--secondary);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.btn-service:hover {
+    background: #229954;
+}
+
+/* Alert & Info Boxes */
+.alert-box, .info-box {
+    background: var(--card-bg);
+    border-left: 5px solid;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.alert-box {
+    border-color: #e74c3c;
+    background: #fef5f5;
+}
+
+.info-box {
+    border-color: var(--accent-metz);
+    background: #f0f8ff;
+}
+
+.alert-box strong, .info-box h4 {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.info-box ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.info-box li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.info-box li:last-child {
+    border-bottom: none;
+}
+
+.btn-alert {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: #e74c3c;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* Multimodal Section */
+.multimodal-hero {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.multimodal-hero h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.multimodal-tips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.tip-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s;
+}
+
+.tip-card:hover {
+    transform: translateY(-5px);
+}
+
+.tip-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.tip-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--secondary);
+}
+
+.tip-card ul {
+    text-align: left;
+    list-style: none;
+    padding-left: 0;
+    margin-top: 15px;
+}
+
+.tip-card li {
+    padding: 5px 0;
+    color: #666;
+}
+
+.tip-card li::before {
+    content: "✓ ";
+    color: var(--secondary);
+    font-weight: bold;
+}
+
+/* Journey Planner */
+.journey-planner {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.journey-planner h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.planner-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.planner-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #f8f9fa;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--primary);
+    transition: all 0.3s;
+}
+
+.planner-card:hover {
+    border-color: var(--secondary);
+    background: white;
+    transform: translateY(-3px);
+}
+
+.planner-icon {
+    font-size: 2.5rem;
+}
+
+.planner-card strong {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.planner-card p {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .service-card {
+        padding: 20px;
+    }
+
+    .multimodal-tips {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .mobility-header {
+        padding: 15px;
+    }
+
+    .mobility-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+
+    .header-logo {
+        height: 40px;
+        margin-bottom: 8px;
+    }
+
+    .btn-retour {
+        position: static;
+        display: inline-block;
+        margin: 10px auto 0;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    .container {
+        margin: 20px auto;
+        padding: 0 10px;
+    }
+
+    .tabs {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .tab-btn {
+        min-width: 100%;
+        padding: 12px 20px;
+        font-size: 0.95rem;
+    }
+
+    .city-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .service-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px 15px;
+        gap: 15px;
+    }
+
+    .service-icon {
+        font-size: 3rem;
+    }
+
+    .service-info h3 {
+        font-size: 1.3rem;
+    }
+
+    .service-features {
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .badge {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+    }
+
+    .service-links {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-service {
+        width: 100%;
+        text-align: center;
+    }
+
+    .alert-box, .info-box {
+        padding: 15px;
+        font-size: 0.9rem;
+    }
+
+    .multimodal-hero {
+        padding: 30px 15px;
+    }
+
+    .multimodal-hero h2 {
+        font-size: 1.5rem;
+    }
+
+    .multimodal-hero p {
+        font-size: 0.95rem;
+    }
+
+    .multimodal-tips {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .tip-card {
+        padding: 20px;
+    }
+
+    .tip-icon {
+        font-size: 2.5rem;
+    }
+
+    .tip-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .journey-planner {
+        padding: 20px;
+    }
+
+    .journey-planner h3 {
+        font-size: 1.3rem;
+    }
+
+    .planner-links {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .planner-card {
+        padding: 15px;
+    }
+
+    .planner-icon {
+        font-size: 2rem;
+    }
+
+    .planner-card strong {
+        font-size: 1rem;
+    }
+
+    .planner-card p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobility-header h1 {
+        font-size: 1.2rem;
+    }
+
+    .header-logo {
+        height: 35px;
+    }
+
+    .btn-retour {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    .tab-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .city-section h2 {
+        font-size: 1.3rem;
+    }
+
+    .service-card {
+        padding: 15px 10px;
+    }
+
+    .service-icon {
+        font-size: 2.5rem;
+    }
+
+    .service-info h3 {
+        font-size: 1.1rem;
+    }
+
+    .service-info p {
+        font-size: 0.9rem;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+    }
+
+    .btn-service {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    .multimodal-hero {
+        padding: 20px 10px;
+    }
+
+    .multimodal-hero h2 {
+        font-size: 1.3rem;
+    }
+
+    .tip-card {
+        padding: 15px;
+    }
+
+    .tip-icon {
+        font-size: 2rem;
+    }
+
+    .tip-card h3 {
+        font-size: 1.1rem;
+    }
+
+    .tip-card ul {
+        font-size: 0.9rem;
+    }
+
+    .journey-planner {
+        padding: 15px;
+    }
+
+    .journey-planner h3 {
+        font-size: 1.1rem;
+    }
+
+    .planner-card {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .planner-icon {
+        font-size: 1.8rem;
+    }
+}
+        grid-template-columns: 1fr;
+    }
+
+    .planner-links {
+        grid-template-columns: 1fr;
+    }
+}

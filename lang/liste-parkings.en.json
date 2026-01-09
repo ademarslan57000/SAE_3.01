@@ -1,0 +1,23 @@
+{
+    "titre": "Car Parks List",
+    "listeParkings": "Car Parks List",
+    "retour": "Back to map",
+    "rechercher": "Search for a car park...",
+    "toutesZones": "All zones",
+    "france": "France (Metz)",
+    "uk": "United Kingdom (London)",
+    "tousLesParkings": "All car parks",
+    "gratuitsUniquement": "Free only",
+    "payantsUniquement": "Paid only",
+    "avecPMR": "With disabled spaces",
+    "avecElectrique": "With EV chargers",
+    "avecVelo": "With bike spaces",
+    "trierNom": "Sort by name",
+    "placesDispo": "Available spaces",
+    "capaciteTotale": "Total capacity",
+    "placesPMR": "Disabled spaces",
+    "bornesElectriques": "EV chargers",
+    "placesVelo": "Bike spaces",
+    "chargement": "Loading...",
+    "chargementParkings": "Loading car parks..."
+}
