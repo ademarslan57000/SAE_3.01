@@ -44,7 +44,7 @@
       </div>
       <div style="display: flex; gap: 15px">
         <button class="btn-langue" onclick="changerLangue()" id="btn-langue">
-          FR
+          🇫🇷 Français
         </button>
         <a
           href="../index.html"
@@ -80,7 +80,7 @@
               autocomplete="off"
             />
             <select id="parkingSelect" size="5">
-              <option value="" disabled selected>
+              <option value="" disabled selected data-i18n="chargementParking">
                 Chargement des parkings...
               </option>
             </select>
@@ -108,7 +108,9 @@
           >
             <label class="checkbox-label">
               <input type="checkbox" id="borneElectrique" />
-              ⚡ Réserver une borne de recharge électrique
+              <label data-i18n="reserverBorne">
+                ⚡ Réserver une borne de recharge électrique</label
+              >
             </label>
             <small
               id="borneInfo"
@@ -117,8 +119,9 @@
           </div>
 
           <div class="form-group">
-            <label for="vehicleImmat">📝 Immatriculation</label>
-            <input
+            <label for="vehicleImmat" data-i18n="immatriculation"
+              >📝 Immatriculation</label
+            ><input
               type="text"
               id="vehicleImmat"
               placeholder="AB-123-CD"
@@ -127,67 +130,77 @@
           </div>
 
           <div class="form-group">
-            <label for="startTime">Arrivée prévue</label>
+            <label for="startTime" data-i18n="arriveePrevue"
+              >Arrivée prévue</label
+            >
             <input type="datetime-local" id="startTime" />
           </div>
 
           <div class="form-group">
-            <label for="endTime">Départ prévu</label>
+            <label for="endTime" data-i18n="departPrevu">Départ prévu</label>
             <input type="datetime-local" id="endTime" />
             <div
               id="dateError"
               class="error-msg"
               style="color: #e74c3c; display: none; margin-top: 5px"
+              data-i18n="dateFinDebut"
             >
               La date de fin doit être après la date de début.
             </div>
           </div>
 
           <div class="notification-section">
-            <h3>🔔 Notifications intelligentes</h3>
+            <h3 data-i18n="notif">🔔 Notifications intelligentes</h3>
             <label class="checkbox-label">
               <input type="checkbox" id="notifEnabled" />
-              <span>Activer les rappels</span>
+              <span data-i18n="activerRappels">Activer les rappels</span>
             </label>
 
             <div id="notifOptions">
               <label class="checkbox-label">
                 <input type="checkbox" id="notif30min" />
-                <span>⏰ Rappel 30 min avant</span>
+                <span data-i18n="notif30min">⏰ Rappel 30 min avant</span>
               </label>
               <label class="checkbox-label">
                 <input type="checkbox" id="notif1h" />
-                <span>⏰ Rappel 1h avant</span>
+                <span data-i18n="notif1h">⏰ Rappel 1h avant</span>
               </label>
               <div class="notif-info">
-                <small>📱 Envois par SMS et email</small>
+                <small data-i18n="notifSMSEmail"
+                  >📱 Envois par SMS et email</small
+                >
               </div>
             </div>
           </div>
 
           <div class="price-summary">
             <div class="price-row">
-              <span>Durée :</span>
+              <span data-i18n="duree">Durée :</span>
               <span id="durationDisplay">0h 00m</span>
             </div>
             <div class="price-row">
-              <span>Tarif horaire :</span>
+              <span data-i18n="tarifHoraire">Tarif horaire :</span>
               <span id="rateDisplay">-</span>
             </div>
             <div class="total-row">
-              <span>Total estimé :</span>
+              <span data-i18n="totalEstime">Total estimé :</span>
               <span id="totalDisplay">0.00 €</span>
             </div>
           </div>
 
-          <button type="button" id="submitBtn" class="btn-reserve" disabled>
+          <button
+            type="button"
+            id="submitBtn"
+            class="btn-reserve"
+            disabled
+            data-i18n="confirmerPayer"
+          >
             Confirmer et Payer
           </button>
         </form>
       </div>
     </div>
-
-    <script src="../js/reservation.js"></script>
     <script src="../js/reservation.translation.js"></script>
+    <script src="../js/reservation.js"></script>
   </body>
 </html>

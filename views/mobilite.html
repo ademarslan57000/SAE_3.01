@@ -14,8 +14,8 @@
                 <h1 data-i18n="titre" style="color: #333; font-size: 28px; margin: 0;">🚇 Services de Mobilité</h1>
             </div>
             <div style="display: flex; gap: 15px;">
-                <button class="btn-langue" onclick="changerLangue()" id="btn-langue">
-                    FR
+                <button id="btn-langue" onclick="changerLangue()" style="background: #2196f3; border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px;">
+                    🇬🇧 English
                 </button>
                 <a href="../index.html" class="btn-retour" data-i18n="retour" style="padding: 10px 20px; background: linear-gradient(90deg, #00d0ff, #006aff); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">← Retour à la carte</a>
             </div>
@@ -38,39 +38,39 @@
             <!-- Contenu: Transports en commun -->
             <div id="transports" class="tab-content active">
                 <div class="city-section">
-                    <h2>🇫🇷 Metz - Le MET'</h2>
+                    <h2 data-i18n="metzMET">🇫🇷 Metz - Le MET'</h2>
                     <div class="service-card">
                         <div class="service-icon">🚊</div>
                         <div class="service-info">
-                            <h3>Réseau Le MET'</h3>
-                            <p>
+                            <h3 data-i18n="reseauMET">Réseau Le MET'</h3>
+                            <p data-i18n="busMettisService">
                                 Bus et Mettis (BHNS) - Service de transport en
                                 commun de Metz Métropole
                             </p>
                             <div class="service-features">
-                                <span class="badge">🚌 27 lignes de bus</span>
-                                <span class="badge">🚊 2 lignes Mettis</span>
-                                <span class="badge">🌙 Service nocturne</span>
+                                <span class="badge" data-i18n="nbLignesBus">🚌 27 lignes de bus</span>
+                                <span class="badge" data-i18n="nbLignesMettis">🚊 2 lignes Mettis</span>
+                                <span class="badge" data-i18n="serviceNocturne">🌙 Service nocturne</span>
                             </div>
                             <div class="service-links">
                                 <a
                                     href="https://www.lemet.fr"
                                     target="_blank"
-                                    class="btn-service"
+                                    class="btn-service" data-i18n="siteOfficiel"
                                 >
                                     🌐 Site officiel
                                 </a>
                                 <a
                                     href="https://www.lemet.fr/horaires/"
                                     target="_blank"
-                                    class="btn-service"
+                                    class="btn-service" data-i18n="horairesPlans"
                                 >
                                     📅 Horaires & Plans
                                 </a>
                                 <a
                                     href="https://services.lemet.fr/fr/billetterie"
                                     target="_blank"
-                                    class="btn-service"
+                                    class="btn-service" data-i18n="acheterTitre"
                                 >
                                     🎫 Acheter un titre
                                 </a>
@@ -81,15 +81,15 @@
                     <div class="service-card">
                         <div class="service-icon">🚂</div>
                         <div class="service-info">
-                            <h3>Gare de Metz-Ville</h3>
-                            <p>
+                            <h3 data-i18n="gareMetz">Gare de Metz-Ville</h3>
+                            <p data-i18n="TGVTERConnexions">
                                 TGV et TER - Connexions nationales et régionales
                             </p>
                             <div class="service-features">
                                 <span class="badge"
-                                >🚄 TGV vers Paris (1h20)</span>
-                                <span class="badge">🚆 TER Grand Est</span>
-                                <span class="badge"
+                                data-i18n="TGVParis">🚄 TGV vers Paris (1h20)</span>
+                                <span class="badge" data-i18n="terGrandEst">🚆 TER Grand Est</span>
+                                <span class="badge" data-i18n="Luxembourg"
                                 >🌍 Luxembourg (40 min)</span>
                             </div>
                             <div class="service-links">
@@ -103,7 +103,7 @@
                                 <a
                                     href="https://www.ter.sncf.com/grand-est"
                                     target="_blank"
-                                    class="btn-service"
+                                    class="btn-service" data-i18n="terGrandEst"
                                 >
                                     🚆 TER Grand Est
                                 </a>
@@ -113,23 +113,23 @@
                 </div>
 
                 <div class="city-section">
-                    <h2>🚇 Londres - TfL</h2>
+                    <h2>🇬🇧 Londres - TfL</h2>
                     <div class="service-card">
                         <div class="service-icon">🚇</div>
                         <div class="service-info">
-                            <h3>Transport for London</h3>
-                            <p>Métro (Tube), Bus, DLR, et Overground</p>
+                            <h3 data-i18n="transportPourLondres">Transport for London</h3>
+                            <p data-i18n="metroBusDlr">Métro (Tube), Bus, DLR, et Overground</p>
                             <div class="service-features">
-                                <span class="badge">🚇 11 lignes de métro</span>
-                                <span class="badge">🚌 700+ lignes de bus</span>
-                                <span class="badge"
+                                <span class="badge" data-i18n="nbLignesMetro">🚇 11 lignes de métro</span>
+                                <span class="badge" data-i18n="nbLignesDeBus">🚌 700+ lignes de bus</span>
+                                <span class="badge" 
                                 >🎫 Oyster Card & Contactless</span>
                             </div>
                             <div class="service-links">
                                 <a
                                     href="https://tfl.gov.uk"
                                     target="_blank"
-                                    class="btn-service"
+                                    class="btn-service" data-i18n="TfLOff"
                                 >
                                     🌐 TfL Official
                                 </a>
@@ -137,13 +137,14 @@
                                     href="https://tfl.gov.uk/plan-a-journey"
                                     target="_blank"
                                     class="btn-service"
+                                    data-i18n="planif"
                                 >
                                     🗺️ Journey Planner
                                 </a>
                                 <a
                                     href="https://tfl.gov.uk/fares"
                                     target="_blank"
-                                    class="btn-service"
+                                    class="btn-service" data-i18n="tickets"
                                 >
                                     💷 Fares & Tickets
                                 </a>
@@ -152,8 +153,8 @@
                     </div>
 
                     <div class="alert-box">
-                        <strong>⚠️ Congestion Charge & ULEZ</strong>
-                        <p>
+                        <strong data-i18n="congestion">⚠️ Congestion Charge & ULEZ</strong>
+                        <p data-i18n="conduireLondres">
                             Si vous conduisez à Londres, pensez à vous acquitter
                             de la Congestion Charge (£15/jour) et à vérifier si
                             votre véhicule respecte les normes ULEZ.
@@ -161,7 +162,7 @@
                         <a
                             href="https://tfl.gov.uk/modes/driving/congestion-charge"
                             target="_blank"
-                            class="btn-alert"
+                            class="btn-alert" data-i18n="plusInfos"
                         >
                             Plus d'infos
                         </a>
@@ -172,25 +173,25 @@
             <!-- Contenu: Vélos en libre-service -->
             <div id="velos" class="tab-content">
                 <div class="city-section">
-                    <h2>🇫🇷 Metz - Vélos Pompidou</h2>
+                    <h2 data-i18n="metzVelosPompi">🇫🇷 Metz - Vélos Pompidou</h2>
                     <div class="service-card">
                         <div class="service-icon">🚴</div>
                         <div class="service-info">
                             <h3>Vélomet'</h3>
-                            <p>
+                            <p data-i18n="serviceVelosMetz">
                                 Service de vélos en libre-service de Metz
                                 Métropole
                             </p>
                             <div class="service-features">
-                                <span class="badge">🚲 20 stations</span>
-                                <span class="badge">⏰ 24h/24</span>
-                                <span class="badge">💳 Abonnement dès 1€</span>
+                                <span class="badge" data-i18n="nbStations">🚲 20 stations</span>
+                                <span class="badge"  data-i18n="24h/24">⏰ 24h/24</span>
+                                <span class="badge" data-i18n="abonnements">💳 Abonnement dès 1€</span>
                             </div>
                             <div class="service-links">
                                 <a
                                     href="https://velomet.lemet.fr"
                                     target="_blank"
-                                    class="btn-service"
+                                    class="btn-service" data-i18n="siteVelomet"
                                 >
                                     🌐 Site Vélomet'
                                 </a>
@@ -199,9 +200,9 @@
                     </div>
 
                     <div class="info-box">
-                        <h4>📋 Tarifs Vélomet'</h4>
+                        <h4 data-i18n="tarifsVelomet">📋 Tarifs Vélomet'</h4>
                         <ul></ul>                      
-                            <li><strong>Ticket 24h :</strong>à partir de 2€</li>
+                            <li><strong data-i18n="ticket24h">Ticket 24h :</strong><p data-i18n="aPartirdePrix"> à partir de 2€</p></li>
                         </ul>
                     </div>
 
@@ -209,28 +210,28 @@
                         <div class="service-icon">⚡🚴</div>
                         <div class="service-info">
                             <h3>Graoulib</h3>
-                            <p>
+                            <p data-i18n="descriptionGraoulib">
                                 Vélos électriques en libre-service de Metz
                                 Métropole
                             </p>
                             <div class="service-features">
-                                <span class="badge">⚡ 100% électrique</span>
-                                <span class="badge"
+                                <span class="badge" data-i18n="electrique100">⚡ 100% électrique</span>
+                                <span class="badge" data-i18n="stationsCentreVille"
                                 >📍 Stations en centre-ville</span>
-                                <span class="badge">📱 Application mobile</span>
+                                <span class="badge" data-i18n="appMobile">📱 Application mobile</span>
                             </div>
                             <div class="service-links">
                                 <a
                                     href="https://www.eurometropolemetz.eu/vivre-habiter/se-deplacer/a-velo"
                                     target="_blank"
-                                    class="btn-service"
+                                    class="btn-service" data-i18n="Graoulib"
                                 >
                                     🌐 page Graoulib'
                                 </a>
                                 <a
                                     href="https://play.google.com/store/apps/details?id=io.birota.graoulib&hl=fr&pli=1"
                                     target="_blank"
-                                    class="btn-service"
+                                    class="btn-service" data-i18n="telechargerApp"
                                 >
                                     📱 Télécharger l'appli
                                 </a>
@@ -239,41 +240,41 @@
                     </div>
 
                     <div class="info-box">
-                        <h4>📋 Tarifs Graoulib</h4>
+                        <h4 data-i18n="tarifGraoulib">📋 Tarifs Graoulib</h4>
                         <ul>
                             <li>
-                                <strong>Abonnement mensuel :</strong> À partir
-                                de 5€
+                                <strong data-i18n="aboMensuel">Abonnement mensuel :</strong > <p data-i18n="aPartirPrix">À partir
+                                de 5€</p>
                             </li>
                             <li>
-                                <strong>10 premières minutes :</strong> GRATUIT
+                                <strong data-i18n="premieresMinute">10 premières minutes :</strong><p data-i18n="gratuit"> GRATUIT</p>
                             </li>
                             <li>
-                                <strong>Location courte durée :</strong>
-                                Disponible
+                                <strong data-i18n="locationCourteDuree">Location courte durée :</strong>
+                                <p data-i18n="dispo">Disponible</p>
                             </li>
                             <li>
-                                <strong>Vélos 100% électriques :</strong>
-                                Assistance au pédalage
+                                <strong data-i18n="veloElect">Vélos 100% électriques :</strong>
+                                <p data-i18n="assistancePedalage">Assistance au pédalage</p>
                             </li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="city-section">
-                    <h2>🚲 Londres - Santander Cycles</h2>
+                    <h2 >🇬🇧 Londres - Santander Cycles</h2>
                     <div class="service-card">
                         <div class="service-icon">🚴</div>
                         <div class="service-info">
                             <h3>Santander Cycles</h3>
-                            <p>
+                            <p data-i18n="descriptionSantander">
                                 Vélos en libre-service de Londres (anciennement
                                 "Boris Bikes")
                             </p>
                             <div class="service-features">
-                                <span class="badge">🚲 800+ stations</span>
-                                <span class="badge">🔢 12,000+ vélos</span>
-                                <span class="badge">⏰ 24h/24</span>
+                                <span class="badge" data-i18n="nbStationVeloLondres">🚲 800+ stations</span>
+                                <span class="badge" data-i18n="nbVeloLondres">🔢 12,000+ vélos</span>
+                                <span class="badge" data-i18n="24h/24">⏰ 24h/24</span>
                             </div>
                             <div class="service-links">
                                 <a
@@ -286,7 +287,7 @@
                                 <a
                                     href="https://tfl.gov.uk/modes/cycling/santander-cycles/find-a-docking-station"
                                     target="_blank"
-                                    class="btn-service"
+                                    class="btn-service" data-i18n="trouverStation"
                                 >
                                     📍 Find a Station
                                 </a>
@@ -295,11 +296,11 @@
                     </div>
 
                     <div class="info-box">
-                        <h4>📋 Santander Cycles Pricing</h4>
+                        <h4 data-i18n="santanderCyclesPrix">📋 Santander Cycles Pricing</h4>
                         <ul>
-                            <li><strong>Access fee :</strong> £1.65 (24h)</li>
-                            <li><strong>First 30 minutes :</strong> FREE</li>
-                            <li><strong>Extra time :</strong> £1.65/30 min</li>
+                            <li><strong data-i18n="FraisAcces">Access fee :</strong> £1.65 (24h)</li>
+                            <li><strong data-i18n="premiere30minutes">First 30 minutes :</strong> <p data-i18n="gratuit">FREE </p></li>
+                            <li><strong data-i18n="tempsSupp">Extra time :</strong> £1.65/30 min</li>
                         </ul>
                     </div>
                 </div>
@@ -308,8 +309,8 @@
             <!-- Contenu: Itinéraire multimodal -->
             <div id="multimodal" class="tab-content">
                 <div class="multimodal-hero">
-                    <h2>🗺️ Planifiez votre trajet multimodal</h2>
-                    <p>
+                    <h2 data-i18n="planifMultimodal">🗺️ Planifiez votre trajet multimodal</h2>
+                    <p data-i18n="combinerParking">
                         Combinez parking, transports en commun et vélos pour
                         optimiser vos déplacements
                     </p>
@@ -318,8 +319,8 @@
                 <div class="multimodal-tips">
                     <div class="tip-card">
                         <div class="tip-icon">🅿️+🚌</div>
-                        <h3>Park & Ride</h3>
-                        <p>
+                        <h3 data-i18n="garerRouler">Park & Ride</h3>
+                        <p data-i18n="garezEnPeriph">
                             Garez-vous en périphérie et rejoignez le centre en
                             transport en commun
                         </p>
@@ -332,29 +333,29 @@
 
                     <div class="tip-card">
                         <div class="tip-icon">🅿️+🚴</div>
-                        <h3>Park & Bike</h3>
-                        <p>Stationnez votre voiture et terminez en vélo</p>
+                        <h3 data-i18n="garerVelo">Park & Bike</h3>
+                        <p data-i18n="stationnerVoitureVelo">Stationnez votre voiture et terminez en vélo</p>
                         <ul>
-                            <li>Parkings avec emplacements vélo sécurisés</li>
-                            <li>Stations Vélomet' à proximité</li>
-                            <li>Pistes cyclables accessibles</li>
+                            <li data-i18n="parkingEmplacementVelo">Parkings avec emplacements vélo sécurisés</li>
+                            <li data-i18n="StationsVelomet">Stations Vélomet' à proximité</li>
+                            <li data-i18n="pistesCyclables">Pistes cyclables accessibles</li>
                         </ul>
                     </div>
 
                     <div class="tip-card">
                         <div class="tip-icon">🚇+🚲</div>
-                        <h3>Transit & Bike</h3>
-                        <p>Combinez métro/bus et vélo en libre-service</p>
+                        <h3 data-i18n="transitBike">Transit & Bike</h3>
+                        <p data-i18n="combinerMetroVelo">Combinez métro/bus et vélo en libre-service</p>
                         <ul>
-                            <li>Stations de vélos près des arrêts</li>
-                            <li>Tarification combinée possible</li>
-                            <li>Gain de temps sur le dernier kilomètre</li>
+                            <li data-i18n="stationVeloArrets">Stations de vélos près des arrêts</li>
+                            <li data-i18n="tarifCombine">Tarification combinée possible</li>
+                            <li data-i18n="gainTemps">Gain de temps sur le dernier kilomètre</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="journey-planner">
-                    <h3>🔍 Planificateurs d'itinéraires</h3>
+                    <h3 data-i18n="planifItineraire">🔍 Planificateurs d'itinéraires</h3>
                     <div class="planner-links">
                         <a
                             href="https://services.lemet.fr/fr/"
@@ -363,8 +364,8 @@
                         >
                             <span class="planner-icon">🇫🇷</span>
                             <div>
-                                <strong>Le MET' Metz</strong>
-                                <p>Itinéraires dans Metz Métropole</p>
+                                <strong data-i18n="leMetMetz">Le MET' Metz</strong>
+                                <p data-i18n="itineraireMetz">Itinéraires dans Metz Métropole</p>
                             </div>
                         </a>
                         <a
@@ -372,10 +373,10 @@
                             target="_blank"
                             class="planner-card"
                         >
-                            <span class="planner-icon">🗺️</span>
+                            <span class="planner-icon">🇬🇧</span>
                             <div>
-                                <strong>TfL Journey Planner</strong>
-                                <p>Plan your journey in London</p>
+                                <strong data-i18n="tflJourneyPlanner">TfL Planificateur d'itinéraires</strong>
+                                <p data-i18n="planifTrajetLondres">Planifier votre itinéraire à Londres</p>
                             </div>
                         </a>
                         <a
@@ -386,7 +387,7 @@
                             <span class="planner-icon">🗺️</span>
                             <div>
                                 <strong>Google Maps</strong>
-                                <p>Itinéraires multimodaux internationaux</p>
+                                <p data-i18n="itinerairesMultimodaux">Itinéraires multimodaux internationaux</p>
                             </div>
                         </a>
                     </div>

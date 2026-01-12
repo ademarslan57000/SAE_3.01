@@ -1,12 +1,12 @@
-import { traduire } from "./PopUp.translation.js";
 
 export class ParkingRenderer {
-  constructor(map, destinationIcon, routingService) {
+  constructor(map, destinationIcon, routingService, traduireFn) {
     this.map = map;
     this.destinationIcon = destinationIcon;
     this.routingService = routingService;
     this.markers = [];
     this.markerClusterGroup = null;
+    this.traduire = traduireFn || ((key) => key); // fallback
   }
 
   renderParkings(data, fitBounds = true) {
@@ -22,8 +22,7 @@ export class ParkingRenderer {
       iconCreateFunction: (cluster) => {
         const count = cluster.getChildCount();
         return L.divIcon({
-          html:
-            `<div style="background:#004cbe;color:white;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:bold;box-shadow:0 2px 8px rgba(0,0,0,0.3);">${count}</div>`,
+          html: `<div style="background:#004cbe;color:white;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:bold;box-shadow:0 2px 8px rgba(0,0,0,0.3);">${count}</div>`,
           className: "",
           iconSize: [40, 40],
         });
@@ -64,16 +63,10 @@ export class ParkingRenderer {
   }
 
   createPriceLabel(parking) {
-    if (parking.gratuit) {
-      return traduire("free");
-    }
-    if (parking.tarif_1h) {
-      return `${parking.tarif_1h}€/h`;
-    }
-    if (parking.tarif_24h) {
-      return `${parking.tarif_24h}€/24h`;
-    }
-    return traduire("paid");
+    if (parking.gratuit) return this.traduire("free");
+    if (parking.tarif_1h) return `${parking.tarif_1h}€/h`;
+    if (parking.tarif_24h) return `${parking.tarif_24h}€/24h`;
+    return this.traduire("paid");
   }
 
   renderSidebar(parkings) {
@@ -81,15 +74,12 @@ export class ParkingRenderer {
     if (!container) return;
 
     if (parkings.length === 0) {
-      container.innerHTML =
-        '<div style="text-align:center;padding:20px;color:#999;">Aucun parking trouvé</div>';
+      container.innerHTML = `<div style="text-align:center;padding:20px;color:#999;">${this.traduire("no_parking_found")}</div>`;
       return;
     }
 
     window.allSidebarParkings = parkings;
-    container.innerHTML = parkings.map((p) => this.createSidebarItem(p)).join(
-      "",
-    );
+    container.innerHTML = parkings.map((p) => this.createSidebarItem(p)).join("");
 
     const items = container.querySelectorAll(".sidebar-parking-item");
     items.forEach((item) => {
@@ -106,25 +96,28 @@ export class ParkingRenderer {
         }
       };
 
-      item.addEventListener("pointerup", onSelect); // PC + mobile + tablette
+      item.addEventListener("pointerup", onSelect);
     });
   }
 
   createSidebarItem(p) {
     const gratuit = p.gratuit || p.gratuit === 1;
     const prix = gratuit
-      ? "GRATUIT"
+      ? this.traduire("free")
       : (p.tarif_1h
         ? `${p.tarif_1h}€/h`
-        : (p.tarif_24h ? `${p.tarif_24h}€/24h` : "Payant"));
+        : (p.tarif_24h ? `${p.tarif_24h}€/24h` : this.traduire("paid")));
+
     const dispo = p.place_libre != null
-      ? `${p.place_libre}/${p.place_total_rt || p.nb_places} places`
-      : `? / ${p.nb_places} places`;
+      ? `${p.place_libre}/${p.place_total_rt || p.nb_places} ${this.traduire("places")}`
+      : `? / ${p.nb_places} ${this.traduire("places")}`;
+
     const dispoClass = p.place_libre != null && p.place_libre > 10
       ? "disponible"
       : (p.place_libre != null && p.place_libre > 0
         ? ""
         : (p.place_libre === 0 ? "complet" : ""));
+
     const imageUrl = this.getParkingImage(p);
 
     return `
@@ -133,13 +126,11 @@ export class ParkingRenderer {
         <img src="${imageUrl}" alt="${p.name}" class="parking-item-image" 
              onerror="this.src='${this.getDefaultImage(p)}'">
         <div class="parking-item-header">
-          <div class="parking-item-name">${p.name || "Parking"}</div>
-          <div class="parking-item-price ${
-      gratuit ? "gratuit" : ""
-    }">${prix}</div>
+          <div class="parking-item-name">${p.name || this.traduire("parking")}</div>
+          <div class="parking-item-price ${gratuit ? "gratuit" : ""}">${prix}</div>
         </div>
         <div class="parking-item-info">
-          <div>📍 ${p.adresse || "Adresse non disponible"}</div>
+          <div>📍 ${p.adresse || this.traduire("address_not_available")}</div>
           <div class="parking-item-dispo ${dispoClass}">🅿️ ${dispo}</div>
         </div>
       </div>
@@ -147,9 +138,7 @@ export class ParkingRenderer {
   }
 
   getParkingImage(parking) {
-    if (parking.image) {
-      return parking.image;
-    }
+    if (parking.image) return parking.image;
 
     const parkingName = String(parking.name || "")
       .toLowerCase()
@@ -160,15 +149,12 @@ export class ParkingRenderer {
       .replace(/^-|-$/g, "");
 
     console.log(`📸 Image attendue pour "${parking.name}": ${parkingName}.jpg`);
-
     return `./image/parkings/${parkingName}.jpg`;
   }
 
   getDefaultImage(parking) {
-    const nomParking = (parking.name || "Parking").substring(0, 15);
+    const nomParking = (parking.name || this.traduire("parking")).substring(0, 15);
     const encodedName = encodeURIComponent(nomParking);
-
-    // ✅ Utiliser un SVG en Data URI au lieu de via.placeholder.com
     return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='350' height='180'%3E%3Crect fill='%23667eea' width='350' height='180'/%3E%3Ctext fill='white' x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-size='20' font-family='Arial' font-weight='bold'%3E${encodedName}%3C/text%3E%3C/svg%3E`;
   }
 
@@ -179,104 +165,67 @@ export class ParkingRenderer {
   }
 
   buildPopup(p) {
-    const nomSafe = (p.name || "Parking").replace(/'/g, "\\'").replace(
-      /"/g,
-      "",
-    );
+    const nomSafe = (p.name || this.traduire("parking")).replace(/'/g, "\\'").replace(/"/g, "");
+
     const dispoPopup = p.place_libre != null
-      ? `<hr style="margin:5px 0;"><b>Disponibilité :</b><br>
-         <span style="color:#e67e22; font-weight:700;">${p.place_libre}</span> / ${
-        p.place_total_rt ?? p.nb_places
-      }
-         ${
-        p.place_update
-          ? `<br><small>Maj : ${
-            new Date(p.place_update).toLocaleString()
-          }</small>`
-          : ""
-      }`
-      : `<hr style="margin:5px 0;"><b>Disponibilité :</b><br>
+      ? `<hr style="margin:5px 0;"><b>${this.traduire("availability")} :</b><br>
+         <span style="color:#e67e22; font-weight:700;">${p.place_libre}</span> / ${p.place_total_rt ?? p.nb_places}
+         ${p.place_update ? `<br><small>${this.traduire("updated")} : ${new Date(p.place_update).toLocaleString()}</small>` : ""}`
+      : `<hr style="margin:5px 0;"><b>${this.traduire("availability")} :</b><br>
          <span style="color:#999; font-weight:700;">?</span> / ${p.nb_places}<br>
-         <small style="color:#999;">Données temps réel non disponibles</small>`;
+         <small style="color:#999;">${this.traduire("realtime_unavailable")}</small>`;
+
     const tarifs = p.gratuit
-      ? "<span style='color:#28a745;'><b>GRATUIT</b></span>"
-      : `${p.tarif_1h ? `1h : ${p.tarif_1h}€<br>` : ""}
-         ${p.tarif_2h ? `2h : ${p.tarif_2h}€<br>` : ""}
-         ${p.tarif_24h ? `24h : ${p.tarif_24h}€<br>` : ""}`;
+      ? `<span style='color:#28a745;'><b>${this.traduire("free")}</b></span>`
+      : `${p.tarif_1h ? `1h : ${p.tarif_1h}€<br>` : ""}${p.tarif_2h ? `2h : ${p.tarif_2h}€<br>` : ""}${p.tarif_24h ? `24h : ${p.tarif_24h}€<br>` : ""}`;
+
     return `
       <div style="min-width:280px; font-size:13px;">
         <b style="font-size:15px;">${p.name}</b><br>
         ${p.adresse ? `<small>${p.adresse}</small><br>` : ""}
-        <hr style="margin:5px 0;"><b>Capacité :</b><br>Total : ${p.nb_places} places
-        <hr style="margin:5px 0;"><b>Tarifs :</b><br>${tarifs}
+        <hr style="margin:5px 0;"><b>${this.traduire("capacity")} :</b><br>Total : ${p.nb_places} ${this.traduire("places")}
+        <hr style="margin:5px 0;"><b>${this.traduire("rates")} :</b><br>${tarifs}
         ${p.info ? `<hr style="margin:5px 0;"><i>${p.info}</i><br>` : ""}
         ${dispoPopup}
         <hr style="margin:5px 0;">
         <div class="popup-buttons">
-          <button onclick="window.mapController.routingService.demarrerGuidage(${p.lat}, ${p.lon}, '${nomSafe}', ()=>window.mapController.userLocationService.getLocation())">Itinéraire</button>
-          ${
-      p.url && !p.name.includes("(LUL)")
-        ? `<button onclick="window.open('${p.url}', '_blank')">Plus d'infos</button>`
-        : ""
-    }
+          <button onclick="window.mapController.routingService.demarrerGuidage(${p.lat}, ${p.lon}, '${nomSafe}', ()=>window.mapController.userLocationService.getLocation())">
+            ${this.traduire("directions")}
+          </button>
+          ${p.url && !p.name.includes("(LUL)") ? `<button onclick="window.open('${p.url}', '_blank')">${this.traduire("more_info")}</button>` : ""}
         </div>
       </div>
     `;
   }
 
+  // méthodes pour ouvrir popups
   simpleOpenPopup(parking) {
-    let markerTrouve = null;
-    for (let i = 0; i < this.markers.length; i++) {
-      const m = this.markers[i];
+    const markerTrouve = this.markers.find(m => {
       const latLng = m.getLatLng();
-      if (
-        Math.abs(latLng.lat - parking.lat) < 0.00001 &&
-        Math.abs(latLng.lng - parking.lon) < 0.00001
-      ) {
-        markerTrouve = m;
-        break;
-      }
-    }
-    if (!markerTrouve) {
-      console.error("❌ Marker non trouvé");
-      return;
-    }
+      return Math.abs(latLng.lat - parking.lat) < 0.00001 &&
+             Math.abs(latLng.lng - parking.lon) < 0.00001;
+    });
+    if (!markerTrouve) return console.error("❌ Marker non trouvé");
     markerTrouve.openPopup();
-    setTimeout(() => {
-      if (!markerTrouve.isPopupOpen()) {
-        markerTrouve.openPopup();
-      }
-    }, 200);
+    setTimeout(() => { if (!markerTrouve.isPopupOpen()) markerTrouve.openPopup(); }, 200);
   }
 
-  forceOpenPopup(parking) {
-    this.simpleOpenPopup(parking);
-  }
-
-  openParkingPopupSimple(parking) {
-    this.simpleOpenPopup(parking);
-  }
+  forceOpenPopup(parking) { this.simpleOpenPopup(parking); }
+  openParkingPopupSimple(parking) { this.simpleOpenPopup(parking); }
 
   openParkingPopup(parking) {
-    const marker = this.markers.find((m) => {
+    const marker = this.markers.find(m => {
       const latLng = m.getLatLng();
       return Math.abs(latLng.lat - parking.lat) < 0.0001 &&
-        Math.abs(latLng.lng - parking.lon) < 0.0001;
+             Math.abs(latLng.lng - parking.lon) < 0.0001;
     });
-    if (!marker) {
-      console.error("❌ Marker non trouvé");
-      return;
-    }
-    this.markerClusterGroup.zoomToShowLayer(marker, () => {
-      marker.openPopup();
-    });
+    if (!marker) return console.error("❌ Marker non trouvé");
+    this.markerClusterGroup.zoomToShowLayer(marker, () => marker.openPopup());
   }
 
-  clickOnMarker(parking) {
-    this.openParkingPopup(parking);
-  }
-
-  openPopupAt(parking) {
-    this.openParkingPopup(parking);
-  }
+  clickOnMarker(parking) { this.openParkingPopup(parking); }
+  openPopupAt(parking) { this.openParkingPopup(parking); }
 }
+
+
+

@@ -2,7 +2,45 @@
 let allParkings = [];
 let selectedParking = null;
 
-// --- Éléments du DOM ---
+
+// --- Traductions internes ---
+const i18n = {
+    choose_parking: { fr: "Choisir un parking...", en: "Choose a parking..." },
+    free: { fr: "GRATUIT", en: "FREE" },
+    paid: { fr: "Payant", en: "Paid" },
+    rate_unavailable: { fr: "Tarif non disponible", en: "Rate not available" },
+
+    bike_available: { fr: "places vélo disponibles", en: "bike spots available" },
+    bike_none: { fr: "Ce parking n'a pas d'emplacements vélo", en: "This parking has no bike spots" },
+
+    pmr_available: { fr: "places PMR disponibles", en: "accessible spots available" },
+    pmr_none: { fr: "Ce parking n'a pas de places PMR", en: "This parking has no accessible spots" },
+
+    charging_available: { fr: "bornes disponibles", en: "charging stations available" },
+    charging_none: { fr: "Aucune borne électrique disponible", en: "No charging station available" },
+
+    parking_full: { fr: "Parking complet actuellement", en: "Parking currently full" },
+    parking_available: { fr: "places disponibles", en: "available spaces" },
+
+    reservation_ok: { fr: "Réservation confirmée !", en: "Reservation confirmed !" },
+
+    parking: { fr: "Parking", en: "Parking" },
+    vehicle: { fr: "Véhicule", en: "Vehicle" },
+    plate: { fr: "Immat", en: "License plate" },
+    amount: { fr: "Montant", en: "Amount" },
+
+    hour: { fr: "h", en: "h" },
+    minute: { fr: "m", en: "m" },
+
+    loading_error: { fr: "Erreur de chargement", en: "Loading error" }
+};
+
+// Fonction traduction
+function t(key) {
+    return i18n[key]?.[langueActuelle] || key;
+}
+
+// --- DOM Elements ---
 const parkingSearch = document.getElementById("parkingSearch");
 const parkingSelect = document.getElementById("parkingSelect");
 const vehicleType = document.getElementById("vehicleType");
@@ -29,23 +67,25 @@ async function loadParkings() {
 
         allParkings.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
-        parkingSelect.innerHTML = '<option value="" disabled selected>Choisir un parking...</option>';
-        
+        parkingSelect.innerHTML = `<option value="" disabled selected>${t("choose_parking")}</option>`;
+
         allParkings.forEach((parking, index) => {
             const parkingName = parking.name || parking.nom;
             const parkingId = parking.id || parking.id_parking;
             const flag = String(parkingId).startsWith("LONDON_") ? "🇬🇧" : "🇫🇷";
-            
-            let prix = (parking.gratuit == 1) ? "GRATUIT" : (parking.tarif_1h ? `${parking.tarif_1h}€/h` : "Payant");
+
+            let prix = (parking.gratuit == 1)
+                ? t("free")
+                : (parking.tarif_1h ? `${parking.tarif_1h}€/h` : t("paid"));
 
             const option = document.createElement("option");
-            option.value = index; 
+            option.value = index;
             option.textContent = `${flag} ${parkingName} - ${prix}`;
             parkingSelect.appendChild(option);
         });
     } catch (e) {
         console.error("Erreur chargement parkings:", e);
-        parkingSelect.innerHTML = '<option value="">Erreur de chargement</option>';
+        parkingSelect.innerHTML = `<option value="">${t("loading_error")}</option>`;
     }
 }
 
@@ -65,7 +105,6 @@ function updateParkingInfo() {
 function checkAvailability() {
     if (!selectedParking) return;
 
-    // Nettoyage ancien message
     const oldMessage = document.getElementById("availabilityMessage");
     if (oldMessage) oldMessage.remove();
 
@@ -73,36 +112,50 @@ function checkAvailability() {
     let message = "";
     let available = true;
 
-    if (type === "electrique") {
+    if (type === "electrique" || type === "hybride") {
         borneElectriqueGroup.style.display = "block";
         if (!selectedParking.nb_voitures_electriques || selectedParking.nb_voitures_electriques == 0) {
-            borneInfo.textContent = "⚠️ Aucune borne disponible";
+            borneInfo.textContent = `⚠️ ${t("charging_none")}`;
             borneElectrique.disabled = true;
             borneElectrique.checked = false;
         } else {
-            borneInfo.textContent = `✅ Bornes disponibles`;
+            borneInfo.textContent = `✅ ${selectedParking.nb_voitures_electriques} ${t("charging_available")}`;
             borneElectrique.disabled = false;
         }
     } else {
         borneElectriqueGroup.style.display = "none";
     }
 
-    // Messages de places libres
-    if (type === "velo" && (!selectedParking.nb_velo || selectedParking.nb_velo == 0)) {
-        message = "⚠️ Pas d'emplacements vélo";
-        available = false;
-    } else if (selectedParking.place_libre !== undefined && selectedParking.place_libre == 0) {
-        message = "⚠️ Parking complet";
-        available = false;
-    } else {
-        message = "✅ Places disponibles";
+    if (type === "velo") {
+        if (!selectedParking.nb_velo || selectedParking.nb_velo == 0) {
+            message = `⚠️ ${t("bike_none")}`;
+            available = false;
+        } else {
+            message = `✅ ${selectedParking.nb_velo} ${t("bike_available")}`;
+        }
+    } else if (type === "pmr") {
+        if (!selectedParking.nb_pmr || selectedParking.nb_pmr == 0) {
+            message = `⚠️ ${t("pmr_none")}`;
+            available = false;
+        } else {
+            message = `✅ ${selectedParking.nb_pmr} ${t("pmr_available")}`;
+        }
+    } else if (selectedParking.place_libre !== undefined) {
+        if (selectedParking.place_libre == 0) {
+            message = `⚠️ ${t("parking_full")}`;
+            available = false;
+        } else {
+            message = `✅ ${selectedParking.place_libre} ${t("parking_available")}`;
+        }
     }
 
-    const msg = document.createElement("div");
-    msg.id = "availabilityMessage";
-    msg.style.cssText = `padding:12px; margin:10px 0; border-radius:8px; text-align:center; font-weight:600; background:${available ? "#e8f5e9" : "#ffebee"}; color:${available ? "#2e7d32" : "#c62828"};`;
-    msg.textContent = message;
-    vehicleType.parentElement.after(msg);
+    if (message) {
+        const msg = document.createElement("div");
+        msg.id = "availabilityMessage";
+        msg.style.cssText = `padding:12px; margin:10px 0; border-radius:8px; text-align:center; font-weight:600; background:${available ? "#e8f5e9" : "#ffebee"}; color:${available ? "#2e7d32" : "#c62828"};`;
+        msg.textContent = message;
+        vehicleType.parentElement.after(msg);
+    }
 }
 
 // --- 4. CALCUL DU PRIX ---
@@ -112,7 +165,7 @@ function calculatePrice() {
     const endVal = endInput.value;
     const immat = vehicleImmat.value.trim();
 
-    if (!startVal || !endVal){
+    if (!startVal || !endVal) {
         submitBtn.disabled = true;
         return;
     }
@@ -124,52 +177,36 @@ function calculatePrice() {
         dateError.style.display = "block";
         submitBtn.disabled = true;
         totalDisplay.innerText = "---";
-        durationDisplay.innerText = "0h 00m";
+        durationDisplay.innerText = `0${t("hour")} 00${t("minute")}`;
         return;
-    } 
-    
+    }
+
     dateError.style.display = "none";
 
-    // Durée
-    const diffHrs = (end-start) / (1000 * 60 * 60);
+    const diffHrs = (end - start) / (1000 * 60 * 60);
     const hours = Math.floor(diffHrs);
     const minutes = Math.round((diffHrs - hours) * 60);
-    durationDisplay.innerText = `${hours}h ${minutes}m`;
+    durationDisplay.innerText = `${hours}${t("hour")} ${minutes.toString().padStart(2,'0')}${t("minute")}`;
 
-    // Prix (Approximation pour affichage)
     let total = 0;
     if (selectedParking.gratuit != 1 && selectedParking.tarif_1h) {
         total = diffHrs * parseFloat(selectedParking.tarif_1h);
     }
-    totalDisplay.innerText = selectedParking.gratuit == 1 ? "GRATUIT" : `${total.toFixed(2)} €`;
+    totalDisplay.innerText = selectedParking.gratuit == 1 ? t("free") : `${total.toFixed(2)} €`;
     submitBtn.disabled = (immat === "");
 }
 
-// --- 5. GESTION DES NOTIFICATIONS (ACTIVER / DESACTIVER LA ZONE) ---
-
+// --- 5. GESTION NOTIFICATIONS ---
 function toggleNotifZone() {
     const isEnabled = notifEnabled.checked;
-    
-    if (isEnabled) {
-        // Affiche la zone
-        notifOptions.style.display = "block";
-    } else {
-        // Cache complètement la zone
-        notifOptions.style.display = "none";
-        
-        // Optionnel : décocher les sous-options quand on ferme
+    notifOptions.style.display = isEnabled ? "block" : "none";
+    if (!isEnabled) {
         const inputs = notifOptions.querySelectorAll("input");
         inputs.forEach(input => input.checked = false);
     }
 }
-
-// Écouteur de changement
 notifEnabled.addEventListener("change", toggleNotifZone);
-
-// Initialisation au chargement
 toggleNotifZone();
-
-
 
 // --- 6. ÉVÉNEMENTS ---
 parkingSearch.addEventListener("input", () => {
@@ -179,17 +216,13 @@ parkingSearch.addEventListener("input", () => {
         opt.style.display = opt.textContent.toLowerCase().includes(term) ? "" : "none";
     });
 });
-
 parkingSelect.addEventListener("change", updateParkingInfo);
-vehicleType.addEventListener("change", ()=>{
-    checkAvailability();
-    calculatePrice();
-});
-vehicleImmat.addEventListener("input", calculatePrice); // Recalcule l'état du bouton
+vehicleType.addEventListener("change", ()=>{ checkAvailability(); calculatePrice(); });
+vehicleImmat.addEventListener("input", calculatePrice);
 startInput.addEventListener("change", calculatePrice);
 endInput.addEventListener("change", calculatePrice);
 
-// --- 6. ENVOI DE LA RÉSERVATION (CONNEXION PHP) ---
+// --- 7. ENVOI RÉSERVATION ---
 submitBtn.addEventListener("click", async () => {
     if (!selectedParking) return;
 
@@ -201,13 +234,11 @@ submitBtn.addEventListener("click", async () => {
         dateFin: endInput.value
     };
 
-    // UI Chargement
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.textContent = "Traitement en cours...";
 
     try {
-        // APPEL AU FICHIER PHP QUE TU VIENS DE CRÉER
         const response = await fetch('../auth/reservation.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -217,21 +248,22 @@ submitBtn.addEventListener("click", async () => {
         const result = await response.json();
 
         if (result.success) {
-            alert("✅ " + result.message);
-            window.location.href = "../index.html"; // Redirection accueil
+            alert(`✅ ${t("reservation_ok")}`);
+            window.location.href = "../index.html";
         } else {
-            alert("❌ Erreur : " + result.message);
+            alert("❌ " + result.message);
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
-
     } catch (error) {
         console.error('Erreur technique:', error);
         alert("Erreur de communication avec le serveur.");
         submitBtn.disabled = false;
-        submitBtn.textContent=originalText;
+        submitBtn.textContent = originalText;
     }
 });
 
-// Initialisation
+// --- Initialisation ---
 loadParkings();
+
+

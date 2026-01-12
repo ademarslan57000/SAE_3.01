@@ -31,5 +31,12 @@
     "distance": "📍 Distance (si localisé)",
     "reset": "↺ Réinitialiser",
     "chargement": "Chargement...",
-    "installerApp":"📱 Installer l'application"
+    "installerApp":"📱 Installer l'application",
+    "user_location": "Vous êtes ici",
+    "geo_not_supported": "Géolocalisation non supportée"
+
+
+
+
+
 }

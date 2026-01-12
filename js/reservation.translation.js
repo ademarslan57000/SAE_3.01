@@ -3,8 +3,10 @@ let langueActuelle = localStorage.getItem("lang") || "fr";
 function changerLangue() {
     langueActuelle = langueActuelle === "fr" ? "en" : "fr";
     localStorage.setItem("lang", langueActuelle);
-    mettreAJourBoutonLangue();
     appliquerLangue(langueActuelle);
+    mettreAJourBoutonLangue();
+
+    document.dispatchEvent(new Event("langueChangee"));
 }
 
 async function appliquerLangue(lang) {
@@ -59,25 +61,45 @@ async function appliquerLangue(lang) {
             }
         }
 
-        document.documentElement.lang = lang;
         localStorage.setItem("lang", lang);
-    } catch (e) {
-        console.error("Erreur langue :", e);
+  } catch (e) {
+    console.error("Erreur langue :", e);
+  }
     }
-}
+
 
 function mettreAJourBoutonLangue() {
     const btn = document.getElementById("btn-langue");
     if (!btn) return;
 
     if (langueActuelle === "fr") {
-        btn.innerHTML = "EN";
+        btn.innerHTML = "🇫🇷 Français";
     } else {
-        btn.innerHTML = "FR";
+        btn.innerHTML = "🇬🇧 English";
     }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    
     appliquerLangue(langueActuelle);
     mettreAJourBoutonLangue();
 });
+
+document.addEventListener("langueChangee", () => {
+  // Recharger les textes dynamiques
+  if (typeof loadParkings === "function") {
+    loadParkings();
+  }
+
+  if (typeof updateParkingInfo === "function") {
+    updateParkingInfo();
+  }
+
+  if (typeof calculatePrice === "function") {
+    calculatePrice();
+  }
+});
+
+
+
+

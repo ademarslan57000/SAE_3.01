@@ -1,43 +1,33 @@
-
-export const translations = {
+export const traductions = {
   fr: {
     free: "GRATUIT",
     paid: "Payant",
-    capacity: "Capacité",
-    total: "Total",
-    places: "places",
-    prices: "Tarifs",
+    parking: "Parking",
     availability: "Disponibilité",
-    route: "Itinéraire",
-    moreInfo: "Plus d'infos",
-    addressUnavailable: "Adresse non disponible",
-    noParking: "Aucun parking trouvé",
-    updatedAt: "Maj",
+    updated: "Maj",
+    realtime_unavailable: "Données temps réel non disponibles",
+    capacity: "Capacité",
+    rates: "Tarifs",
+    directions: "Itinéraire",
+    more_info: "Plus d'infos",
   },
   en: {
     free: "FREE",
     paid: "Paid",
-    capacity: "Capacity",
-    total: "Total",
-    places: "spaces",
-    prices: "Prices",
+    parking: "Parking",
     availability: "Availability",
-    route: "Directions",
-    moreInfo: "More info",
-    addressUnavailable: "Address not available",
-    noParking: "No parking found",
-    updatedAt: "Updated",
+    updated: "Updated",
+    realtime_unavailable: "Realtime data unavailable",
+    capacity: "Capacity",
+    rates: "Rates",
+    directions: "Directions",
+    more_info: "More info",
   },
 };
 
-
-
-let currentLang = "fr";
-
-export function setLang(lang) {
-  currentLang = translations[lang] ? lang : "fr";
+export function traduire(key, lang = "fr") {
+  return traductions[lang]?.[key] ?? key;
 }
 
-export function traduire(key) {
-  return translations[currentLang][key] || key;
-}
+
+

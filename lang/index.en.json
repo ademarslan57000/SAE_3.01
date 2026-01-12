@@ -31,5 +31,11 @@
     "distance": "📍 Distance (if located)",
     "reset": "↺ Reset",
     "chargement": "Loading...",
-    "installerApp":"📱 Download the mobile app"
+    "installerApp":"📱 Download the mobile app",
+    "user_location": "You are here",
+    "geo_not_supported": "Location not supported"
 }
+
+
+
+
