@@ -20,292 +20,218 @@ const cityBadge = document.getElementById("cityBadge");
 const dateError = document.getElementById("dateError");
 const notifEnabled = document.getElementById("notifEnabled");
 const notifOptions = document.getElementById("notifOptions");
-const notif30min = document.getElementById("notif30min");
-const notif1h = document.getElementById("notif1h");
-const notif2h = document.getElementById("notif2h");
 
-// --- Chargement des parkings ---
+// --- 1. CHARGEMENT DES PARKINGS ---
 async function loadParkings() {
     try {
-        const response = await fetch(
-            "../map/backend/GetParkingWithRealTime.php",
-        );
+        const response = await fetch("../map/backend/GetParkingWithRealTime.php");
         allParkings = await response.json();
 
-        // Trier par nom
         allParkings.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
-        // Remplir le select
-        parkingSelect.innerHTML =
-            '<option value="" disabled selected>Choisir un parking...</option>';
+        parkingSelect.innerHTML = '<option value="" disabled selected>Choisir un parking...</option>';
+        
         allParkings.forEach((parking, index) => {
-            const isLondon = String(parking.id).startsWith("LONDON_");
-            const flag = isLondon ? "🇬🇧" : "🇫🇷";
-            const prix = parking.gratuit
-                ? "GRATUIT"
-                : (parking.tarif_1h
-                    ? `${parking.tarif_1h}€/h`
-                    : (parking.tarif_24h
-                        ? `${parking.tarif_24h}€/24h`
-                        : "Payant"));
+            const parkingName = parking.name || parking.nom;
+            const parkingId = parking.id || parking.id_parking;
+            const flag = String(parkingId).startsWith("LONDON_") ? "🇬🇧" : "🇫🇷";
+            
+            let prix = (parking.gratuit == 1) ? "GRATUIT" : (parking.tarif_1h ? `${parking.tarif_1h}€/h` : "Payant");
 
             const option = document.createElement("option");
-            option.value = index;
-            option.textContent = `${flag} ${parking.name} - ${prix}`;
+            option.value = index; 
+            option.textContent = `${flag} ${parkingName} - ${prix}`;
             parkingSelect.appendChild(option);
         });
     } catch (e) {
         console.error("Erreur chargement parkings:", e);
-        parkingSelect.innerHTML =
-            '<option value="">Erreur de chargement</option>';
+        parkingSelect.innerHTML = '<option value="">Erreur de chargement</option>';
     }
 }
 
-// --- Mise à jour des infos parking ---
+// --- 2. MISE À JOUR INFOS PARKING ---
 function updateParkingInfo() {
     const selectedIndex = parkingSelect.value;
     if (!selectedIndex) return;
 
     selectedParking = allParkings[selectedIndex];
-    const isLondon = String(selectedParking.id).startsWith("LONDON_");
+    cityBadge.textContent = selectedParking.name || selectedParking.nom;
 
-    // Mise à jour du badge
-    cityBadge.textContent = selectedParking.name;
-    cityBadge.style.backgroundColor = isLondon ? "#fadbd8" : "#d6eaf8";
-    cityBadge.style.color = isLondon ? "#c0392b" : "#2980b9";
-
-    // Supprimer l'ancienne notification avant de vérifier la nouvelle disponibilité
-    const oldMessage = document.getElementById("availabilityMessage");
-    if (oldMessage) {
-        oldMessage.remove();
-    }
-
-    // Vérifier les équipements
     checkAvailability();
     calculatePrice();
 }
 
-// --- Vérifier la disponibilité selon le type de véhicule ---
+// --- 3. VÉRIFICATION DISPONIBILITÉ ---
 function checkAvailability() {
     if (!selectedParking) return;
 
-    // Supprimer l'ancienne notification à chaque changement
+    // Nettoyage ancien message
     const oldMessage = document.getElementById("availabilityMessage");
-    if (oldMessage) {
-        oldMessage.remove();
-    }
+    if (oldMessage) oldMessage.remove();
 
     const type = vehicleType.value;
-    const parking = selectedParking;
-
     let message = "";
     let available = true;
 
-    switch (type) {
-        case "velo":
-            if (!parking.nb_velo || parking.nb_velo === 0) {
-                message = "⚠️ Ce parking n'a pas d'emplacements vélo";
-                available = false;
-            } else {
-                message = `✅ ${parking.nb_velo} places vélo disponibles`;
-            }
-            break;
-
-        case "pmr":
-            if (!parking.nb_pmr || parking.nb_pmr === 0) {
-                message = "⚠️ Ce parking n'a pas de places PMR";
-                available = false;
-            } else {
-                message = `✅ ${parking.nb_pmr} places PMR disponibles`;
-            }
-            break;
-
-        case "electrique":
-            borneElectriqueGroup.style.display = "block";
-            if (
-                !parking.nb_voitures_electriques ||
-                parking.nb_voitures_electriques === 0
-            ) {
-                borneInfo.textContent = "⚠️ Aucune borne électrique disponible";
-                borneElectrique.disabled = true;
-                borneElectrique.checked = false;
-            } else {
-                borneInfo.textContent =
-                    `✅ ${parking.nb_voitures_electriques} bornes disponibles`;
-                borneElectrique.disabled = false;
-            }
-            break;
-
-        default: // voiture normale
-            borneElectriqueGroup.style.display = "none";
-            if (parking.place_libre !== null && parking.place_libre === 0) {
-                message = "⚠️ Parking complet actuellement";
-            } else if (parking.place_libre !== null) {
-                message = `✅ ${parking.place_libre} places disponibles`;
-            }
+    if (type === "electrique") {
+        borneElectriqueGroup.style.display = "block";
+        if (!selectedParking.nb_voitures_electriques || selectedParking.nb_voitures_electriques == 0) {
+            borneInfo.textContent = "⚠️ Aucune borne disponible";
+            borneElectrique.disabled = true;
+            borneElectrique.checked = false;
+        } else {
+            borneInfo.textContent = `✅ Bornes disponibles`;
+            borneElectrique.disabled = false;
+        }
+    } else {
+        borneElectriqueGroup.style.display = "none";
     }
 
-    if (message) {
-        const msg = document.createElement("div");
-        msg.id = "availabilityMessage";
-        msg.style.cssText = `padding:10px; margin:10px 0; border-radius:8px; 
-                            background:${available ? "#d4edda" : "#f8d7da"}; 
-                            color:${available ? "#155724" : "#721c24"}; 
-                            font-size:14px;`;
-        msg.textContent = message;
-        vehicleType.parentElement.after(msg);
+    // Messages de places libres
+    if (type === "velo" && (!selectedParking.nb_velo || selectedParking.nb_velo == 0)) {
+        message = "⚠️ Pas d'emplacements vélo";
+        available = false;
+    } else if (selectedParking.place_libre !== undefined && selectedParking.place_libre == 0) {
+        message = "⚠️ Parking complet";
+        available = false;
+    } else {
+        message = "✅ Places disponibles";
     }
+
+    const msg = document.createElement("div");
+    msg.id = "availabilityMessage";
+    msg.style.cssText = `padding:12px; margin:10px 0; border-radius:8px; text-align:center; font-weight:600; background:${available ? "#e8f5e9" : "#ffebee"}; color:${available ? "#2e7d32" : "#c62828"};`;
+    msg.textContent = message;
+    vehicleType.parentElement.after(msg);
 }
 
-// --- Logique de Calcul ---
+// --- 4. CALCUL DU PRIX ---
 function calculatePrice() {
     if (!selectedParking) return;
-
     const startVal = startInput.value;
     const endVal = endInput.value;
+    const immat = vehicleImmat.value.trim();
 
-    if (!startVal || !endVal) return;
+    if (!startVal || !endVal){
+        submitBtn.disabled = true;
+        return;
+    }
 
     const start = new Date(startVal);
     const end = new Date(endVal);
 
-    // Validation des dates
     if (end <= start) {
         dateError.style.display = "block";
         submitBtn.disabled = true;
         totalDisplay.innerText = "---";
+        durationDisplay.innerText = "0h 00m";
         return;
-    } else {
-        dateError.style.display = "none";
-        submitBtn.disabled = vehicleImmat.value.trim() === "";
-    }
+    } 
+    
+    dateError.style.display = "none";
 
-    // Calcul de la différence en heures
-    const diffMs = end - start;
-    const diffHrs = diffMs / (1000 * 60 * 60);
-
-    // Formatage durée
+    // Durée
+    const diffHrs = (end-start) / (1000 * 60 * 60);
     const hours = Math.floor(diffHrs);
     const minutes = Math.round((diffHrs - hours) * 60);
     durationDisplay.innerText = `${hours}h ${minutes}m`;
 
-    // Calcul financier
-    const parking = selectedParking;
-    const isLondon = String(parking.id).startsWith("LONDON_");
-    const currency = isLondon ? "£" : "€";
-
-    let rate = 0;
+    // Prix (Approximation pour affichage)
     let total = 0;
-
-    if (parking.gratuit) {
-        rateDisplay.innerText = "GRATUIT";
-        totalDisplay.innerText = `0.00 ${currency}`;
-        return;
+    if (selectedParking.gratuit != 1 && selectedParking.tarif_1h) {
+        total = diffHrs * parseFloat(selectedParking.tarif_1h);
     }
-
-    // Utiliser le tarif approprié
-    if (parking.tarif_1h) {
-        rate = parseFloat(parking.tarif_1h);
-        total = diffHrs * rate;
-        rateDisplay.innerText = `${rate.toFixed(2)} ${currency} / h`;
-    } else if (parking.tarif_24h) {
-        rate = parseFloat(parking.tarif_24h);
-        const days = diffHrs / 24;
-        total = days * rate;
-        rateDisplay.innerText = `${rate.toFixed(2)} ${currency} / 24h`;
-    } else {
-        rateDisplay.innerText = "Tarif non disponible";
-        totalDisplay.innerText = "---";
-        return;
-    }
-
-    // Affichage
-    totalDisplay.innerText = `${total.toFixed(2)} ${currency}`;
+    totalDisplay.innerText = selectedParking.gratuit == 1 ? "GRATUIT" : `${total.toFixed(2)} €`;
+    submitBtn.disabled = (immat === "");
 }
 
-// --- Fonction de filtrage des parkings ---
-function filterParkings() {
-    const searchTerm = parkingSearch.value.toLowerCase();
-    const options = parkingSelect.options;
+// --- 5. GESTION DES NOTIFICATIONS (ACTIVER / DESACTIVER LA ZONE) ---
 
-    for (let i = 1; i < options.length; i++) { // Commence à 1 pour sauter l'option "Choisir..."
-        const optionText = options[i].textContent.toLowerCase();
-        if (optionText.includes(searchTerm)) {
-            options[i].style.display = "";
-        } else {
-            options[i].style.display = "none";
-        }
+function toggleNotifZone() {
+    const isEnabled = notifEnabled.checked;
+    
+    if (isEnabled) {
+        // Affiche la zone
+        notifOptions.style.display = "block";
+    } else {
+        // Cache complètement la zone
+        notifOptions.style.display = "none";
+        
+        // Optionnel : décocher les sous-options quand on ferme
+        const inputs = notifOptions.querySelectorAll("input");
+        inputs.forEach(input => input.checked = false);
     }
 }
 
-// --- Gestion des notifications ---
-notifEnabled.addEventListener("change", () => {
-    if (notifEnabled.checked) {
-        notifOptions.classList.remove("disabled");
-    } else {
-        notifOptions.classList.add("disabled");
-    }
+// Écouteur de changement
+notifEnabled.addEventListener("change", toggleNotifZone);
+
+// Initialisation au chargement
+toggleNotifZone();
+
+
+
+// --- 6. ÉVÉNEMENTS ---
+parkingSearch.addEventListener("input", () => {
+    const term = parkingSearch.value.toLowerCase();
+    Array.from(parkingSelect.options).forEach(opt => {
+        if (opt.value === "") return;
+        opt.style.display = opt.textContent.toLowerCase().includes(term) ? "" : "none";
+    });
 });
 
-// --- Écouteurs d'événements ---
-parkingSearch.addEventListener("input", filterParkings);
 parkingSelect.addEventListener("change", updateParkingInfo);
-vehicleType.addEventListener("change", checkAvailability);
-vehicleImmat.addEventListener("input", () => {
-    submitBtn.disabled = vehicleImmat.value.trim() === "" ||
-        !startInput.value || !endInput.value;
+vehicleType.addEventListener("change", ()=>{
+    checkAvailability();
+    calculatePrice();
 });
+vehicleImmat.addEventListener("input", calculatePrice); // Recalcule l'état du bouton
 startInput.addEventListener("change", calculatePrice);
 endInput.addEventListener("change", calculatePrice);
 
-// --- Simulation d'envoi ---
-submitBtn.addEventListener("click", () => {
+// --- 6. ENVOI DE LA RÉSERVATION (CONNEXION PHP) ---
+submitBtn.addEventListener("click", async () => {
     if (!selectedParking) return;
 
     const data = {
-        parking: selectedParking.name,
-        parkingId: selectedParking.id,
-        vehicleType: vehicleType.options[vehicleType.selectedIndex].text,
-        immatriculation: vehicleImmat.value,
-        borneElectrique: borneElectrique.checked,
+        parkingId: selectedParking.id || selectedParking.id_parking,
+        vehicleTypeRaw: vehicleType.value,
+        immatriculation: vehicleImmat.value.toUpperCase().trim(),
         dateDebut: startInput.value,
-        dateFin: endInput.value,
-        montant: totalDisplay.innerText,
-        notifications: {
-            enabled: notifEnabled.checked,
-            rappel30min: notif30min.checked,
-            rappel1h: notif1h.checked,
-            rappel2h: notif2h.checked,
-        },
+        dateFin: endInput.value
     };
 
-    console.log("Données réservation:", data);
+    // UI Chargement
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Traitement en cours...";
 
-    // Construire le message des notifications
-    let notifMessage = "";
-    if (data.notifications.enabled) {
-        const rappels = [];
-        if (data.notifications.rappel30min) rappels.push("30 min");
-        if (data.notifications.rappel1h) rappels.push("1h");
-        if (data.notifications.rappel2h) rappels.push("2h");
-        if (rappels.length > 0) {
-            notifMessage = `🔔 Rappels activés: ${
-                rappels.join(", ")
-            } avant la fin\n`;
+    try {
+        // APPEL AU FICHIER PHP QUE TU VIENS DE CRÉER
+        const response = await fetch('../auth/reservation.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("✅ " + result.message);
+            window.location.href = "../index.html"; // Redirection accueil
+        } else {
+            alert("❌ Erreur : " + result.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
         }
-    }
 
-    alert(
-        `✅ Réservation confirmée !\n\n` +
-            `📍 Parking: ${data.parking}\n` +
-            `🚗 Véhicule: ${data.vehicleType}\n` +
-            `📝 Immat: ${data.immatriculation}\n` +
-            `${data.borneElectrique ? "⚡ Avec borne électrique\n" : ""}` +
-            `💰 Montant: ${data.montant}\n` +
-            notifMessage +
-            `\n(Données prêtes pour envoi au serveur)`,
-    );
+    } catch (error) {
+        console.error('Erreur technique:', error);
+        alert("Erreur de communication avec le serveur.");
+        submitBtn.disabled = false;
+        submitBtn.textContent=originalText;
+    }
 });
 
-// --- Initialisation ---
+// Initialisation
 loadParkings();

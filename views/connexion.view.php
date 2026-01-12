@@ -34,6 +34,7 @@ $messages = [
 
 <body>
     <div class="center-wrapper">
+        <img src="../image/logo.png" alt="Logo" class="logo" style="max-width: 300px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; background: white; padding: 15px; border-radius: 10px;">
         <div class="card-login">
             <div class="card-header">
                 <h2 data-i18n="bonRetour">Bon retour</h2>

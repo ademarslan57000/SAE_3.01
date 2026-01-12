@@ -1,43 +1,52 @@
-async function loadLang(lang) {
-    try {
-        const res = await fetch(`../lang/compte.${lang}.json`);
-        const data = await res.json();
+let langueActuelle = localStorage.getItem("lang") || "fr";
 
+function changerLangue() {
+    langueActuelle = langueActuelle === "fr" ? "en" : "fr";
+    appliquerLangue(langueActuelle);
+}
+
+async function appliquerLangue(lang) {
+    try {
+        const response = await fetch(`../lang/compte.${lang}.json`);
+        const traductions = await response.json();
 
         document.querySelectorAll("[data-i18n]").forEach(el => {
             const key = el.getAttribute("data-i18n");
-            
-            if (data[key]) {
-
-                // Cas spécial pour input submit
+            if (traductions[key]) {
                 if (el.tagName.toLowerCase() === "input" && el.type === "submit") {
-                    el.value = data[key];
-                } 
-                
-                // Cas normal (p, h2, a, etc.)
-                else {
-                    el.textContent = data[key];
+                    el.value = traductions[key];
+                } else {
+                    el.textContent = traductions[key];
                 }
             }
         });
 
-       
         document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
             const key = el.getAttribute("data-i18n-placeholder");
-            if (data[key]) {
-                el.placeholder = data[key];
+            if (traductions[key]) {
+                el.placeholder = traductions[key];
             }
         });
 
+        localStorage.setItem("lang", lang);
+        mettreAJourBoutonLangue();
+
     } catch (err) {
-        console.error("Erreur chargement langue :", err);
+        console.error("Erreur chargement langue:", err);
     }
 }
 
-//menu déroulant
-document.getElementById("lang-selector").addEventListener("change", function() {
-    loadLang(this.value);
-});
+function mettreAJourBoutonLangue() {
+    const btn = document.getElementById("btn-langue");
+    if (!btn) return;
 
-//charger la langue par défaut au chargement de la page
-loadLang(document.getElementById("lang-selector").value);
+    if (langueActuelle === "fr") {
+        btn.innerHTML = "EN";
+    } else {
+        btn.innerHTML = "FR";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    appliquerLangue(langueActuelle);
+});

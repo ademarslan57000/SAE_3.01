@@ -49,7 +49,7 @@ function createParkingCard(p) {
 
     const isLondon = String(p.id).startsWith("LONDON_");
     const zoneBadge = isLondon
-        ? '<span class="zone-badge zone-uk">🇬🇧 Londres</span>'
+        ? '<span class="zone-badge zone-uk">GB Londres</span>'
         : '<span class="zone-badge zone-france">🇫🇷 Metz</span>';
 
     const hasVelo = p.nb_velo > 0 || (isLondon && p.info && p.info.toLowerCase().includes('cycle'));

@@ -7,13 +7,18 @@
         <link rel="stylesheet" href="../css/mobilite.css">
     </head>
     <body>
-        <header class="mobility-header">
-            <img src="../image/logo.png" alt="Logo" class="header-logo">
-            <h1 data-i18n="titre">🚇 Services de Mobilité</h1>
-            <button id="btn-langue" onclick="changerLangue()" style="background: transparent; border: 2px solid white; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; margin-right: 15px; transition: all 0.3s;">
-                🇬🇧 English
-            </button>
-            <a href="../index.html" class="btn-retour" data-i18n="retour">← Retour à la carte</a>
+        <header style="background: white; padding: 20px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+            <div style="width: 160px;"></div>
+            <div style="display: flex; align-items: center; gap: 15px; justify-content: center; flex: 1;">
+                <img src="../image/logo.png" alt="Logo" style="height: 50px;">
+                <h1 data-i18n="titre" style="color: #333; font-size: 28px; margin: 0;">🚇 Services de Mobilité</h1>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn-langue" onclick="changerLangue()" id="btn-langue">
+                    FR
+                </button>
+                <a href="../index.html" class="btn-retour" data-i18n="retour" style="padding: 10px 20px; background: linear-gradient(90deg, #00d0ff, #006aff); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">← Retour à la carte</a>
+            </div>
         </header>
 
         <div class="container">
@@ -108,7 +113,7 @@
                 </div>
 
                 <div class="city-section">
-                    <h2>🇬🇧 Londres - TfL</h2>
+                    <h2>🚇 Londres - TfL</h2>
                     <div class="service-card">
                         <div class="service-icon">🚇</div>
                         <div class="service-info">
@@ -256,7 +261,7 @@
                 </div>
 
                 <div class="city-section">
-                    <h2>🇬🇧 Londres - Santander Cycles</h2>
+                    <h2>🚲 Londres - Santander Cycles</h2>
                     <div class="service-card">
                         <div class="service-icon">🚴</div>
                         <div class="service-info">
@@ -367,7 +372,7 @@
                             target="_blank"
                             class="planner-card"
                         >
-                            <span class="planner-icon">🇬🇧</span>
+                            <span class="planner-icon">🗺️</span>
                             <div>
                                 <strong>TfL Journey Planner</strong>
                                 <p>Plan your journey in London</p>

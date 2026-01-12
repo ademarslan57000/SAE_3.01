@@ -1,9 +1,10 @@
 let langueActuelle = localStorage.getItem("lang") || "fr";
 
-
 function changerLangue() {
-  langueActuelle = langueActuelle === "fr" ? "en" : "fr";
-  appliquerLangue(langueActuelle);
+    langueActuelle = langueActuelle === "fr" ? "en" : "fr";
+    localStorage.setItem("lang", langueActuelle);
+    mettreAJourBoutonLangue();
+    appliquerLangue(langueActuelle);
 }
 
 
@@ -46,16 +47,19 @@ async function appliquerLangue(lang) {
 
 
 function mettreAJourBoutonLangue() {
-  const btn = document.getElementById("btn-langue");
-  if (!btn) return;
-
-  if (langueActuelle === "fr") {
-    btn.textContent = "FR → EN";
-  } else {
-    btn.textContent = "EN → FR";
+    const btn = document.getElementById("btn-langue");
+    const menuBtn = document.getElementById("menu-langue");
+    
+    if (btn) {
+        btn.innerHTML = langueActuelle === "fr" ? "EN" : "FR";
+    }
+    
+    if (menuBtn) {
+        menuBtn.innerHTML = langueActuelle === "fr" ? "English" : "Français";
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  appliquerLangue(langueActuelle);
+    appliquerLangue(langueActuelle);
+    mettreAJourBoutonLangue();
 });

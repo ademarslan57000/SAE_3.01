@@ -5,7 +5,7 @@
     "rechercher": "Search for a question...",
     "categorieReservations": "Bookings & Account",
     "questionAnnuler": "How do I cancel my booking?",
-    "reponseAnnuler": "You can cancel free of charge up to 1 hour before your scheduled arrival time. Go to the \"My Bookings\" tab and click \"Cancel\".",
+    "reponseAnnuler": "You can cancel free of charge up to 1 hour before your scheduled arrival time. Go to the \"My account\" and click on \"Cancel\" in the table \"My booking\".",
     "questionPlaque": "Can I edit my registration plate?",
     "reponsePlaque": "Yes. Go to \"My Profile\" > \"My Vehicles\". You can add, delete or edit a registration plate. Make sure the edit is made before arriving at the car park.",
     "categorieInfos": "Metz & London Info",
@@ -22,5 +22,3 @@
     "contacter":"Contact us"
 
 }
-
-

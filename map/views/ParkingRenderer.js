@@ -119,10 +119,12 @@ export class ParkingRenderer {
         : (p.tarif_24h ? `${p.tarif_24h}€/24h` : "Payant"));
     const dispo = p.place_libre != null
       ? `${p.place_libre}/${p.place_total_rt || p.nb_places} places`
-      : "N/A";
-    const dispoClass = p.place_libre > 10
+      : `? / ${p.nb_places} places`;
+    const dispoClass = p.place_libre != null && p.place_libre > 10
       ? "disponible"
-      : (p.place_libre > 0 ? "" : "complet");
+      : (p.place_libre != null && p.place_libre > 0
+        ? ""
+        : (p.place_libre === 0 ? "complet" : ""));
     const imageUrl = this.getParkingImage(p);
 
     return `
@@ -193,7 +195,9 @@ export class ParkingRenderer {
           }</small>`
           : ""
       }`
-      : "";
+      : `<hr style="margin:5px 0;"><b>Disponibilité :</b><br>
+         <span style="color:#999; font-weight:700;">?</span> / ${p.nb_places}<br>
+         <small style="color:#999;">Données temps réel non disponibles</small>`;
     const tarifs = p.gratuit
       ? "<span style='color:#28a745;'><b>GRATUIT</b></span>"
       : `${p.tarif_1h ? `1h : ${p.tarif_1h}€<br>` : ""}
@@ -211,7 +215,7 @@ export class ParkingRenderer {
         <div class="popup-buttons">
           <button onclick="window.mapController.routingService.demarrerGuidage(${p.lat}, ${p.lon}, '${nomSafe}', ()=>window.mapController.userLocationService.getLocation())">Itinéraire</button>
           ${
-      p.url
+      p.url && !p.name.includes("(LUL)")
         ? `<button onclick="window.open('${p.url}', '_blank')">Plus d'infos</button>`
         : ""
     }

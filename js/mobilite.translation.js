@@ -47,9 +47,9 @@ function mettreAJourBoutonLangue() {
     if (!btn) return;
 
     if (langueActuelle === "fr") {
-        btn.innerHTML = "🇬🇧 English";
+        btn.innerHTML = "EN";
     } else {
-        btn.innerHTML = "🇫🇷 Français";
+        btn.innerHTML = "FR";
     }
 }
 

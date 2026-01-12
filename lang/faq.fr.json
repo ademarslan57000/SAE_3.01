@@ -5,7 +5,7 @@
     "rechercher": "Rechercher une question...",
     "categorieReservations": "Réservations & Compte",
     "questionAnnuler": "Comment annuler ma réservation ?",
-    "reponseAnnuler": "Vous pouvez annuler sans frais jusqu'à 1 heure avant l'heure d'arrivée prévue. Rendez-vous dans l'onglet \"Mes Réservations\" et cliquez sur \"Annuler\".",
+    "reponseAnnuler": "Vous pouvez annuler sans frais jusqu'à 1 heure avant l'heure d'arrivée prévue. Rendez-vous dans l'onglet \"Mon compte\" et cliquez sur \"Annuler\" dans le tableau \"Mes réservations\".",
     "questionPlaque": "Puis-je modifier ma plaque d'immatriculation ?",
     "reponsePlaque": "Oui. Allez dans \"Mon Profil\" > \"Mes Véhicules\". Vous pouvez ajouter, supprimer ou modifier une plaque. Assurez-vous que la modification est faite avant d'arriver au parking.",
     "categorieInfos": "Info Metz & Londres",
@@ -20,9 +20,4 @@
     "barriereReponse":"Ne paniquez pas. Vérifiez que vous êtes bien devant la barrière d'entrée. Si la lecture de plaque échoue, utilisez le QR Code disponible dans votre réservation sur l'application ou sonnez à l'interphone.",
     "pasDeReponse":"Vous ne trouvez pas votre réponse ?",
     "contacter":"Contacter le support"
-
-
 }
-
-
-

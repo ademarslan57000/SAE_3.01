@@ -42,4 +42,9 @@ class Connexion
         $query->execute($valeurs);
         return $query->fetchAll();
     }
+
+    public function getPDO(): PDO
+    {
+        return $this->db;
+    }
 }

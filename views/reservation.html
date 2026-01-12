@@ -1,163 +1,193 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title data-i18n="titre">Réserver un Stationnement</title>
-        <link rel="stylesheet" href="../css/reservation.css">
-    </head>
-    <body>
-        <div class="booking-card">
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px"
-            >
-                <a href="../index.html" class="btn-back" data-i18n="retour"
-                >← Retour à l'accueil</a>
-                <button
-                    id="btn-langue"
-                    onclick="changerLangue()"
-                    style="background: #2196f3; border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.3s"
-                >
-                    🇬🇧 English
-                </button>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="titre">Réserver un Stationnement</title>
+    <link rel="stylesheet" href="../css/reservation.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-            <h2 data-i18n="reserverPlace">Réserver une place</h2>
+  <body>
+    <header
+      style="
+        background: white;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+      "
+    >
+      <div style="width: 160px" class="hide-mobile"></div>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          justify-content: center;
+          flex: 1;
+        "
+      >
+        <img src="../image/logo.png" alt="Logo" style="height: 50px" />
+        <h1
+          data-i18n="reserverPlace"
+          style="color: #333; font-size: 28px; margin: 0"
+        >
+          Réserver une place
+        </h1>
+      </div>
+      <div style="display: flex; gap: 15px">
+        <button class="btn-langue" onclick="changerLangue()" id="btn-langue">
+          FR
+        </button>
+        <a
+          href="../index.html"
+          class="btn-back"
+          data-i18n="retour"
+          style="
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #00d0ff, #006aff);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+          "
+          >← Retour à l'accueil</a
+        >
+      </div>
+    </header>
 
-            <div
-                id="cityBadge"
-                class="city-badge"
-                style="background: #eee; color: #333"
-                data-i18n="selectionnerParking"
-            >
-                Sélectionnez un parking
-            </div>
-
-            <form id="bookingForm">
-                <div class="form-group">
-                    <label for="parkingSelect" data-i18n="parking"
-                    >🅿️ Parking</label>
-                    <input
-                        type="text"
-                        id="parkingSearch"
-                        placeholder="Rechercher un parking..."
-                        data-i18n-placeholder="rechercherParking"
-                        autocomplete="off"
-                    >
-                    <select id="parkingSelect" size="5">
-                        <option value="" disabled selected>
-                            Chargement des parkings...
-                        </option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="vehicleType" data-i18n="typeVehicule"
-                    >🚗 Type de véhicule</label>
-                    <select id="vehicleType">
-                        <option value="voiture" data-i18n="voiture">
-                            🚗 Voiture
-                        </option>
-                        <option value="velo" data-i18n="velo">🚴 Vélo</option>
-                        <option value="pmr" data-i18n="pmr">
-                            ♿ PMR (Personnes à mobilité réduite)
-                        </option>
-                        <option value="electrique" data-i18n="electrique">
-                            ⚡ Véhicule électrique
-                        </option>
-                    </select>
-                </div>
-
-                <div
-                    class="form-group"
-                    id="borneElectriqueGroup"
-                    style="display: none"
-                >
-                    <label>
-                        <input type="checkbox" id="borneElectrique">
-                        ⚡ Réserver une borne de recharge électrique
-                    </label>
-                    <small id="borneInfo" style="color: #666"></small>
-                </div>
-
-                <div class="form-group">
-                    <label for="vehicleImmat">📝 Immatriculation</label>
-                    <input
-                        type="text"
-                        id="vehicleImmat"
-                        placeholder="AB-123-CD"
-                        maxlength="20"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="startTime">Arrivée prévue</label>
-                    <input type="datetime-local" id="startTime">
-                </div>
-
-                <div class="form-group">
-                    <label for="endTime">Départ prévu</label>
-                    <input type="datetime-local" id="endTime">
-                    <div id="dateError" class="error-msg">
-                        La date de fin doit être après la date de début.
-                    </div>
-                </div>
-
-                <div class="notification-section">
-                    <h3>🔔 Notifications intelligentes</h3>
-                    <div class="notification-option">
-                        <label>
-                            <input type="checkbox" id="notifEnabled" checked>
-                            Activer les rappels
-                        </label>
-                    </div>
-                    <div id="notifOptions" class="notif-options">
-                        <label>
-                            <input type="checkbox" id="notif30min" checked>
-                            ⏰ Rappel 30 minutes avant la fin
-                        </label>
-                        <label>
-                            <input type="checkbox" id="notif1h">
-                            ⏰ Rappel 1 heure avant la fin
-                        </label>
-                        <label>
-                            <input type="checkbox" id="notif2h">
-                            ⏰ Rappel 2 heures avant la fin
-                        </label>
-                        <div class="notif-info">
-                            <small>📱 Les notifications seront envoyées par SMS
-                                et email</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="price-summary">
-                    <div class="price-row">
-                        <span>Durée :</span>
-                        <span id="durationDisplay">0h 00m</span>
-                    </div>
-                    <div class="price-row">
-                        <span>Tarif horaire :</span>
-                        <span id="rateDisplay">-</span>
-                    </div>
-                    <div class="total-row">
-                        <span>Total estimé :</span>
-                        <span id="totalDisplay">0.00 €</span>
-                    </div>
-                </div>
-
-                <button
-                    type="button"
-                    id="submitBtn"
-                    class="btn-reserve"
-                    disabled
-                >
-                    Confirmer et Payer
-                </button>
-            </form>
+    <div class="container">
+      <div class="booking-card">
+        <div id="cityBadge" class="city-badge" data-i18n="selectionnerParking">
+          Sélectionnez un parking
         </div>
 
-        <script src="../js/reservation.js"></script>
-        <script src="../js/reservation.translation.js"></script>
-    </body>
+        <form id="bookingForm">
+          <div class="form-group">
+            <label for="parkingSearch" data-i18n="parking">🅿️ Parking</label>
+            <input
+              type="text"
+              id="parkingSearch"
+              placeholder="Rechercher un parking..."
+              data-i18n-placeholder="rechercherParking"
+              autocomplete="off"
+            />
+            <select id="parkingSelect" size="5">
+              <option value="" disabled selected>
+                Chargement des parkings...
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vehicleType" data-i18n="typeVehicule"
+              >🚗 Type de véhicule</label
+            >
+            <select id="vehicleType">
+              <option value="voiture" data-i18n="voiture">🚗 Voiture</option>
+              <option value="velo" data-i18n="velo">🚴 Vélo</option>
+              <option value="pmr" data-i18n="pmr">♿ PMR</option>
+              <option value="electrique" data-i18n="electrique">
+                ⚡ Électrique
+              </option>
+              <option value="hybride" data-i18n="hybride">🔋 Hybride</option>
+            </select>
+          </div>
+
+          <div
+            class="form-group"
+            id="borneElectriqueGroup"
+            style="display: none"
+          >
+            <label class="checkbox-label">
+              <input type="checkbox" id="borneElectrique" />
+              ⚡ Réserver une borne de recharge électrique
+            </label>
+            <small
+              id="borneInfo"
+              style="color: #666; display: block; margin-top: 5px"
+            ></small>
+          </div>
+
+          <div class="form-group">
+            <label for="vehicleImmat">📝 Immatriculation</label>
+            <input
+              type="text"
+              id="vehicleImmat"
+              placeholder="AB-123-CD"
+              maxlength="20"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="startTime">Arrivée prévue</label>
+            <input type="datetime-local" id="startTime" />
+          </div>
+
+          <div class="form-group">
+            <label for="endTime">Départ prévu</label>
+            <input type="datetime-local" id="endTime" />
+            <div
+              id="dateError"
+              class="error-msg"
+              style="color: #e74c3c; display: none; margin-top: 5px"
+            >
+              La date de fin doit être après la date de début.
+            </div>
+          </div>
+
+          <div class="notification-section">
+            <h3>🔔 Notifications intelligentes</h3>
+            <label class="checkbox-label">
+              <input type="checkbox" id="notifEnabled" />
+              <span>Activer les rappels</span>
+            </label>
+
+            <div id="notifOptions">
+              <label class="checkbox-label">
+                <input type="checkbox" id="notif30min" />
+                <span>⏰ Rappel 30 min avant</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="notif1h" />
+                <span>⏰ Rappel 1h avant</span>
+              </label>
+              <div class="notif-info">
+                <small>📱 Envois par SMS et email</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="price-summary">
+            <div class="price-row">
+              <span>Durée :</span>
+              <span id="durationDisplay">0h 00m</span>
+            </div>
+            <div class="price-row">
+              <span>Tarif horaire :</span>
+              <span id="rateDisplay">-</span>
+            </div>
+            <div class="total-row">
+              <span>Total estimé :</span>
+              <span id="totalDisplay">0.00 €</span>
+            </div>
+          </div>
+
+          <button type="button" id="submitBtn" class="btn-reserve" disabled>
+            Confirmer et Payer
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="../js/reservation.js"></script>
+    <script src="../js/reservation.translation.js"></script>
+  </body>
 </html>

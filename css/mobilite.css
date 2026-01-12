@@ -16,9 +16,11 @@
 
 body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg);
+    background: linear-gradient(90deg, #00d0ff, #006aff);
     color: var(--primary);
     line-height: 1.6;
+    min-height: 100vh;
+    padding-bottom: 40px;
 }
 
 /* Header */
@@ -26,41 +28,39 @@ body {
     background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
     color: white;
     padding: 20px;
-    text-align: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 10px;
 }
 
-#btn-langue {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+button.btn-langue {
+    padding: 10px 20px !important;
+    background: #2196f3;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    transition: all 0.3s;
 }
 
-#btn-langue:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
+button.btn-langue:hover {
     transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+    background: #2c5fad;
 }
 
 .header-logo {
     height: 50px;
-    margin-bottom: 10px;
 }
 
 .mobility-header h1 {
     font-size: 2rem;
-    margin-bottom: 10px;
+    margin: 0;
 }
 
 .btn-retour {
-    position: absolute;
-    top: 20px;
-    left: 20px;
     background: rgba(255, 255, 255, 0.2);
     color: white;
     padding: 10px 20px;

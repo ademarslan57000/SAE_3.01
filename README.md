@@ -1,93 +1,356 @@
-# SAE301
+# 🚗 Smart Parking Metz - Documentation Technique
 
+## 📋 Table des matières
+- [Vue d'ensemble](#vue-densemble)
+- [Architecture](#architecture)
+- [Installation](#installation)
+- [Principes SOLID](#principes-solid)
+- [Modules créés](#modules-créés)
+- [Sécurité](#sécurité)
+- [Utilisation](#utilisation)
 
+## 🎯 Vue d'ensemble
 
-## Getting started
+Smart Parking Metz est une Progressive Web App (PWA) permettant de trouver et réserver des places de parking à Metz et Londres en temps réel. Compatible Android Auto et Apple CarPlay.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+### Fonctionnalités
+- 🗺️ Carte interactive avec parkings en temps réel
+- 📱 PWA installable (Android Auto & CarPlay)
+- 🌐 Multilingue (FR/EN)
+- 🚇 Informations mobilité
+- 👤 Gestion compte utilisateur
+- 📝 Système de réservation
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 🏗️ Architecture
 
-## Add your files
+### Stack Technique
+- **Frontend**: HTML5, CSS3, JavaScript ES6+, Leaflet.js
+- **Backend**: PHP 8+ (POO), MySQL, PDO
+- **PWA**: Service Workers, Manifest
+- **APIs**: Open Data Metz, TfL London
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## 📦 Installation
+
+```bash
+# 1. Configuration BDD
+mysql -u root -p < database/schema.sql
+
+# 2. Configuration
+cp .env.example .env
+# Éditer .env avec vos paramètres
+
+# 3. Permissions
+chmod 755 -R sae301/
+chmod 777 logs/
+
+# 4. HTTPS (obligatoire pour PWA)
+certbot --apache -d votre-domaine.com
+```
+
+## 🎨 Principes SOLID Appliqués
+
+### ✅ Améliorations implémentées
+
+#### 1. **Single Responsibility Principle**
+Chaque classe/module a UNE responsabilité :
+
+**`Validator.class.php`** - Validation uniquement
+```php
+Validator::validateEmail($email);
+Validator::validatePassword($password);
+Validator::generateCSRFToken();
+```
+
+**`ApiService.js`** - Appels API uniquement
+```javascript
+const api = new ApiService();
+const data = await api.get('/endpoint', { useCache: true });
+```
+
+**`TranslationModule.js`** - Traductions uniquement
+```javascript
+const translation = new TranslationModule('../lang/page');
+translation.init();
+```
+
+#### 2. **DRY (Don't Repeat Yourself)**
+
+**Avant** : Code dupliqué dans 8 fichiers `*.translation.js`
+**Après** : Un seul module réutilisable `TranslationModule.js`
+
+**Avant** : Styles répétés dans 6 fichiers CSS
+**Après** : Styles communs dans `common.css`
+
+#### 3. **Dependency Injection**
+```php
+// UtilisateurDAO accepte injection de Connexion
+public function __construct(Connexion $connexion = null)
+{
+    $this->_bd = $connexion ?? new Connexion();
+}
+```
+
+#### 4. **Configuration centralisée**
+**`config/config.php`** - Toute la config en un seul fichier
+```php
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('SESSION_LIFETIME', 3600);
+define('API_CACHE_DURATION', 300);
+```
+
+## 📚 Modules Créés
+
+### 1. TranslationModule.js
+**Objectif** : Éliminer duplication dans les fichiers de traduction
+
+**Utilisation** :
+```javascript
+const translation = new TranslationModule('../lang/page', {
+    btnSelector: '#btn-langue'
+});
+
+function changerLangue() {
+    translation.changeLanguage();
+}
+
+translation.init();
+```
+
+### 2. ApiService.js
+**Objectif** : Centraliser appels API avec cache
+
+**Utilisation** :
+```javascript
+const api = new ApiService();
+
+// GET avec cache
+const parkings = await api.get('/parkings', { useCache: true });
+
+// POST
+await api.post('/reservation', { parking_id: 123 });
+
+// Parallèle
+const [data1, data2] = await api.fetchMultiple([
+    { method: 'GET', endpoint: '/api1' },
+    { method: 'GET', endpoint: '/api2' }
+]);
+```
+
+### 3. Validator.class.php
+**Objectif** : Sécuriser toutes les validations
+
+**Méthodes** :
+```php
+Validator::sanitizeString($input)
+Validator::validateEmail($email)
+Validator::validatePhone($phone)
+Validator::validatePassword($password)
+Validator::generateCSRFToken()
+Validator::verifyCSRFToken($token)
+```
+
+### 4. common.css
+**Objectif** : Styles réutilisables
+
+**Inclus** :
+- Header commun
+- Boutons standardisés (`.btn-langue`, `.btn-retour`)
+- Background gradient
+- Responsive design
+
+## 🔐 Sécurité
+
+### Protection XSS
+```php
+Validator::sanitizeString($input); // htmlspecialchars + trim
+```
+
+### Protection CSRF
+```php
+// Génération
+$token = Validator::generateCSRFToken();
+echo '<input type="hidden" name="csrf" value="'.$token.'">';
+
+// Vérification
+if (!Validator::verifyCSRFToken($_POST['csrf'])) {
+    die("CSRF invalide");
+}
+```
+
+### Protection SQL Injection
+```php
+// Toujours prepared statements
+$sql = "SELECT * FROM Utilisateur WHERE mail = :mail";
+$this->_bd->execSQL($sql, [":mail" => $email]);
+```
+
+### Hashage mots de passe
+```php
+// Inscription
+$hash = password_hash($password, PASSWORD_DEFAULT);
+
+// Connexion
+if (password_verify($password, $hash)) {
+    // OK
+}
+```
+
+### Sessions sécurisées
+```php
+ini_set('session.cookie_httponly', '1');
+ini_set('session.use_strict_mode', '1');
+ini_set('session.cookie_samesite', 'Strict');
+```
+
+## 🚀 Utilisation
+
+### Ajouter une nouvelle page
+
+1. **Fichiers**
+```bash
+touch views/ma-page.html
+touch css/ma-page.css
+touch js/ma-page.js
+touch lang/ma-page.fr.json
+touch lang/ma-page.en.json
+```
+
+2. **HTML - Inclure CSS commun**
+```html
+<link rel="stylesheet" href="../css/common.css">
+<link rel="stylesheet" href="../css/ma-page.css">
+```
+
+3. **JS - Utiliser TranslationModule**
+```javascript
+const translation = new TranslationModule('../lang/ma-page');
+
+function changerLangue() {
+    translation.changeLanguage();
+}
+
+translation.init();
+```
+
+4. **PHP - Utiliser Validator**
+```php
+require_once 'config/config.php';
+require_once 'classes/Validator.class.php';
+
+$email = Validator::sanitizeString($_POST['email']);
+if (!Validator::validateEmail($email)) {
+    die("Email invalide");
+}
+```
+
+### Structure recommandée
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.univ-lorraine.fr/e10974u/sae301.git
-git branch -M main
-git push -uf origin main
+nouvelle-page/
+├── HTML : Structure sémantique
+├── CSS : common.css + page.css
+├── JS : TranslationModule + ApiService
+└── PHP : Validator + UtilisateurDAO
 ```
 
-## Integrate with your tools
+## 📱 PWA Installation
 
-- [ ] [Set up project integrations](https://gitlab.univ-lorraine.fr/e10974u/sae301/-/settings/integrations)
+### Android
+1. Chrome → Menu ⋮ → "Installer l'application"
+2. Apparaît dans Android Auto automatiquement
 
-## Collaborate with your team
+### iOS
+1. Safari → Partager  → "Sur l'écran d'accueil"
+2. Réglages → CarPlay → Activer l'app
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+**Prérequis** : HTTPS obligatoire en production
 
-## Test and Deploy
+## 🎯 Bonnes Pratiques
 
-Use the built-in continuous integration in GitLab.
+### Code Style
+- Classes : `PascalCase`
+- Fonctions : `camelCase`
+- Constantes : `UPPER_SNAKE_CASE`
+- CSS : `kebab-case`
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### Validation
+- **Toujours** côté serveur
+- Facultatif côté client (UX)
 
-***
+### Gestion erreurs
+```javascript
+try {
+    await api.get('/data');
+} catch (error) {
+    console.error('Erreur:', error);
+    // Message utilisateur
+}
+```
 
-# Editing this README
+### Cache
+- API cache : 5 minutes
+- Service Worker : ressources statiques
+- localStorage : préférences utilisateur
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## 📊 Performance
 
-## Suggestions for a good README
+✅ Service Worker (PWA)
+✅ API avec cache
+✅ Prepared statements (PDO)
+✅ Images optimisées
+✅ CSS/JS minifiés
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## 🐛 Debug
 
-## Name
-Choose a self-explaining name for your project.
+```php
+// Activer logs
+define('DEBUG_MODE', true);
+logMessage('Debug info', 'DEBUG');
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+```javascript
+console.log('Data:', data);
+console.error('Error:', error);
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## 📄 Fichiers Principaux
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+```
+sae301/
+├── config/config.php          ✨ Configuration centralisée
+├── classes/
+│   ├── Validator.class.php   ✨ Validation sécurisée
+│   └── UtilisateurDAO.class.php ✨ CRUD + validation
+├── css/common.css             ✨ Styles communs
+├── js/
+│   ├── TranslationModule.js   ✨ Module traduction
+│   └── ApiService.js          ✨ Service API
+├── manifest.json              PWA config
+└── service-worker.js          Offline support
+```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## ✅ Checklist Qualité
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+- [x] Principes SOLID appliqués
+- [x] Code factorisé (DRY)
+- [x] Validation sécurisée
+- [x] Protection CSRF
+- [x] Prepared statements
+- [x] Configuration centralisée
+- [x] Modules réutilisables
+- [x] Documentation complète
+- [x] CSS responsive
+- [x] PWA fonctionnelle
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+## 📚 Ressources
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+- [PWA Documentation](https://web.dev/progressive-web-apps/)
+- [SOLID Principles](https://en.wikipedia.org/wiki/SOLID)
+- [PHP Security](https://www.php.net/manual/en/security.php)
+- [Leaflet.js](https://leafletjs.com/)
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+---
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+**Version** : 1.0.0  
+**Date** : Janvier 2026  
+**Projet** : SAE 301 - BUT MMI

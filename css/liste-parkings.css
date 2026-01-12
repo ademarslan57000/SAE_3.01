@@ -50,6 +50,25 @@ header h1 {
     background: #2c5fad;
 }
 
+button.btn-langue{
+    padding: 10px 20px !important;
+    background: #2196f3;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    transition: all 0.3s;
+}
+
+button.btn-langue:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+    background: #2c5fad;
+}
+
 .container {
     max-width: 1400px;
     margin: 30px auto;

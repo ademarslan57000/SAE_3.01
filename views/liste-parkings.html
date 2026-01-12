@@ -6,21 +6,25 @@
         <title data-i18n="titre">Liste des Parkings</title>
         <link rel="stylesheet" href="../css/liste-parkings.css">
     </head>
+
     <body>
         <header
-            style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap"
+            style="display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; padding: 15px 30px"
         >
-            <img src="../image/logo.png" alt="Logo" class="header-logo">
-            <h1 data-i18n="listeParkings">Liste des Parkings</h1>
-            <button
-                id="btn-langue"
-                onclick="changerLangue()"
-                style="background: #2196f3; border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.3s"
+            <div style="width: 160px"></div>
+            <div
+                style="display: flex; align-items: center; gap: 15px; justify-content: center; flex: 1"
             >
-                🇬🇧 English
-            </button>
-            <a href="../index.html" class="btn-retour" data-i18n="retour"
-            >Retour à la carte</a>
+                <img src="../image/logo.png" alt="Logo" class="header-logo">
+                <h1 data-i18n="listeParkings">Liste des Parkings</h1>
+            </div>
+            <div style="display: flex; gap: 15px">
+                <button class="btn-langue" onclick="changerLangue()" id="btn-langue">
+                    FR
+                </button>
+                <a href="../index.html" class="btn-retour" data-i18n="retour"
+                >← Retour à la carte</a>
+            </div>
         </header>
 
         <div class="container">

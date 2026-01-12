@@ -1,20 +1,22 @@
 :root {
     --primary-color: #2c3e50; /* Bleu Nuit (Comme avant) */
-    --accent-color: #3498db;  /* Bleu clair pour les actions */
-    --bg-color: #f4f6f9;      /* Fond gris clair (Comme avant) */
+    --accent-color: #3498db; /* Bleu clair pour les actions */
+    --bg-color: #f4f6f9; /* Fond gris clair (Comme avant) */
     --text-color: #333;
-    
+
     /* Le dégradé Violet pour le bouton uniquement */
     --btn-gradient: linear-gradient(90deg, #00d0ff, #006aff);
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-color);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(90deg, #00d0ff, #006aff);
     color: var(--text-color);
     margin: 0;
     padding: 0;
     line-height: 1.6;
+    min-height: 100vh;
+    padding-bottom: 40px;
 }
 
 /* --- EN-TÊTE (Comme avant : Bleu foncé) --- */
@@ -22,8 +24,6 @@ header {
     background-color: var(--primary-color);
     color: white;
     padding: 30px 20px;
-    display: flex;
-    justify-content: space-between; /* Écarte le titre et le bouton */
     align-items: center;
     flex-wrap: wrap;
     gap: 20px;
@@ -32,32 +32,55 @@ header {
 header h1 {
     margin: 0;
     font-size: 2.2rem;
+    text-align: center;
 }
 
 /* --- LE BOUTON RETOUR (Style "Liste Parking") --- */
 .btn-retour {
     padding: 10px 25px;
-    background: var(--btn-gradient); /* Le dégradé violet */
+    background: var(--btn-gradient);
     color: white;
     text-decoration: none;
     border-radius: 8px;
     font-weight: 600;
     font-size: 15px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    width: 100px;
+    margin: auto;
 }
 
 .btn-retour:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
     color: white;
+    background: #2c5fad;
 }
 
-/* --- BARRE DE RECHERCHE --- */
+button.btn-langue {
+    padding: 10px 20px !important;
+    background: #2196f3;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    transition: all 0.3s;
+}
+
+button.btn-langue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+    background: #2c5fad;
+}
 .search-container {
     max-width: 600px;
-    margin: 30px auto; /* Centré avec de la marge */
+    margin: 30px auto;
     padding: 0 20px;
     position: relative;
 }
@@ -68,7 +91,7 @@ header h1 {
     border-radius: 30px;
     border: none;
     font-size: 16px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     outline: none;
     transition: transform 0.2s;
@@ -81,8 +104,11 @@ header h1 {
 /* --- CONTENEUR FAQ --- */
 .faq-container {
     max-width: 800px;
-    margin: 0 auto;
-    padding: 0 20px 60px 20px;
+    margin: 30px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .faq-category {
@@ -103,7 +129,7 @@ header h1 {
     background: white;
     border-radius: 8px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     transition: all 0.3s ease;
 }
@@ -167,7 +193,7 @@ header h1 {
         text-align: center;
         gap: 15px;
     }
-    
+
     header h1 {
         font-size: 1.8rem;
     }
