@@ -1,11 +1,20 @@
 let langueActuelle = localStorage.getItem("lang") || "fr";
 window.traductionsGlobales = {};
 
-function changerLangue() {
-    langueActuelle = langueActuelle === "fr" ? "en" : "fr";
-    localStorage.setItem("lang", langueActuelle);
-    appliquerLangue(langueActuelle);
+async function changerLangue() {
+  langueActuelle = langueActuelle === "fr" ? "en" : "fr";
+  localStorage.setItem("lang", langueActuelle);
+  await appliquerLangue(langueActuelle);
+
+  
+  if (window.userLocationService) {
+    window.userLocationService.updatePopup();
+  }
 }
+
+
+
+
 
 async function appliquerLangue(lang) {
   try {
@@ -32,7 +41,7 @@ async function appliquerLangue(lang) {
     localStorage.setItem("lang", lang);
     mettreAJourBoutonLangue();
 
-    // 🔹 Rafraîchir les popups si ParkingRenderer est présent
+   
     if (window.parkingRenderer && window.allParkings) {
       window.parkingRenderer.renderParkings(window.allParkings, true);
     }
@@ -47,7 +56,7 @@ function mettreAJourBoutonLangue() {
     const menuBtn = document.getElementById("menu-langue");
 
     if (btn) btn.innerHTML = langueActuelle === "fr" ? "EN" : "FR";
-    if (menuBtn) menuBtn.innerHTML = langueActuelle === "fr" ? "English" : "Français";
+    if (menuBtn) menuBtn.innerHTML = langueActuelle === "fr" ? "🇬🇧 English" : "🇲🇫 Français";
 }
 
 window.traduirePopup = function(key) {
