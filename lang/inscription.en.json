@@ -8,6 +8,7 @@
     "Prenom": "First name",
     "Adresse": "Address",
     "Telephone": "Phone number",
+    "Sinscrire":"Sign in",
     "Email": "Mail",
     "MotDePasse": "Password",
     "seConnecter": "Log in",
