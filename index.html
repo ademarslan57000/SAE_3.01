@@ -1,160 +1,252 @@
 <!DOCTYPE html>
 <html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ParkGuide</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ParkGuide</title>
+    <link rel="manifest" href="manifest.json" />
 
-  <link rel="manifest" href="manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Smart Parking" />
+    <meta name="theme-color" content="#27ae60" />
 
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Smart Parking" />
-  <meta name="theme-color" content="#27ae60" />
+    <link rel="apple-touch-icon" href="image/logo.png" />
+    <link rel="icon" type="image/png" href="image/logo.png" />
 
-  <link rel="apple-touch-icon" href="image/logo.png" />
-  <link rel="icon" type="image/png" href="image/logo.png" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
+    />
 
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-  
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-</head>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+  </head>
 
-<body>
+  <body>
+    <header>
+      <img src="image/logo.png" alt="Logo" class="header-logo" />
+      <div class="header-right">
+        <div class="search-buttons-desktop">
+          <button onclick="localiserUtilisateur()" data-i18n="maPosition">
+            Ma position
+          </button>
+          <button onclick="trierParProximite()" data-i18n="parkingProche">
+            Parking proche
+          </button>
+          <button
+            id="btn-stop-guidage"
+            onclick="arreterGuidage()"
+            data-i18n="arreterGuidage"
+            style="display: none"
+          >
+            Stop guidage
+          </button>
+        </div>
 
-  <header>
-    <img src="image/logo.png" alt="Logo" class="header-logo" />
-    <div class="header-right">
-      <div class="search-buttons-desktop">
-        <button onclick="localiserUtilisateur()" data-i18n="maPosition">Ma position</button>
-        <button onclick="trierParProximite()" data-i18n="parkingProche">Parking proche</button>
-        <button id="btn-stop-guidage" onclick="arreterGuidage()" data-i18n="arreterGuidage" style="display: none">Stop guidage</button>
-      </div>
+        <div class="dropdown-menu">
+          <button class="btn-menu" id="btnMenu">☰</button>
+          <div class="dropdown-content" id="dropdownContent">
+            <a
+              href="#"
+              id="installBtn"
+              style="color: #27ae60; font-weight: bold; display: block"
+            >
+              <span data-i18n="installerApp">Installer l'application</span>
+            </a>
+            <hr id="installSeparator" />
 
-      <div class="dropdown-menu">
-        <button class="btn-menu" id="btnMenu">☰</button>
-        <div class="dropdown-content" id="dropdownContent">
-          <a href="#" id="installBtn" style="color: #27ae60; font-weight: bold; display: block;">
-            <span data-i18n="installerApp">Installer l'application</span>
-          </a>
-          <hr id="installSeparator" />
-
-          <a href="#" onclick="afficherListeParkings()" data-i18n="listeParking">📋 Liste des parkings</a>
-          <a href="views/mobilite.html" data-i18n="serviceMobilite">🚇 Services de mobilité</a>
-          <a href="views/compte.view.php" onclick="afficherInfosCompte()" data-i18n="monCompte">👤 Mon compte</a>
-          <a href="views/FAQ.html" onclick="afficherFAQ()" data-i18n="FAQ">❓ FAQ</a>
-          <a href="views/reservation.html" onclick="afficherReservation()" data-i18n="reservation">☑️ Réservation</a>
-          <a href="#" onclick="changerLangue()" id="menu-langue">Langue</a>
-          <hr />
-          <a href="logout.php" class="logout-link" data-i18n="deconnexion">🚪 Déconnexion</a>
+            <a
+              href="#"
+              onclick="afficherListeParkings()"
+              data-i18n="listeParking"
+              >📋 Liste des parkings</a
+            >
+            <a href="views/mobilite.html" data-i18n="serviceMobilite"
+              >🚇 Services de mobilité</a
+            >
+            <a
+              href="views/compte.view.php"
+              onclick="afficherInfosCompte()"
+              data-i18n="monCompte"
+              >👤 Mon compte</a
+            >
+            <a href="views/FAQ.html" onclick="afficherFAQ()" data-i18n="FAQ"
+              >❓ FAQ</a
+            >
+            <a
+              href="views/reservation.html"
+              onclick="afficherReservation()"
+              data-i18n="reservation"
+              >☑️ Réservation</a
+            >
+            <a href="#" onclick="changerLangue()" id="menu-langue">Langue</a>
+            <hr />
+            <a href="logout.php" class="logout-link" data-i18n="deconnexion"
+              >🚪 Déconnexion</a
+            >
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <div class="search-container">
-    <div class="search-buttons">
-      <button onclick="localiserUtilisateur()" data-i18n="maPosition">Ma position</button>
-      <button onclick="trierParProximite()" data-i18n="parkingProche">Parking proche</button>
-    </div>
-    <button id="btn-stop-guidage-mobile" onclick="arreterGuidage()" data-i18n="arreterGuidage" style="display: none">Stop guidage</button>
-  </div>
-
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <h3 data-i18n="parkingDisponibles">Parkings disponibles</h3>
-    </div>
-
-    <div class="sidebar-filters">
-      <input type="text" id="sidebarSearch" placeholder="🔍 Rechercher..." oninput="filterSidebarParkings()" />
-
-      <select id="filterZoneSidebar" onchange="filterSidebarParkings()">
-        <option value="all" data-i18n="allZone">🌍 Toutes les zones</option>
-        <option value="france">🇫🇷 France (Metz)</option>
-        <option value="uk">🇬🇧 GB - Londres</option>
-      </select>
-
-      <select id="filterTypeSidebar" onchange="filterSidebarParkings()">
-        <option value="all" data-i18n="allType">💰 Tous les types</option>
-        <option value="gratuit" data-i18n="gratuit">Gratuits uniquement</option>
-        <option value="payant" data-i18n="payant">Payants uniquement</option>
-      </select>
-
-      <select id="filterEquipements" onchange="filterSidebarParkings()">
-        <option value="all" data-i18n="allEquip">🔧 Tous équipements</option>
-        <option value="pmr" data-i18n="pmr">♿ Places PMR</option>
-        <option value="electrique" data-i18n="electrique">🔌 Bornes électriques</option>
-        <option value="velo" data-i18n="velo">🚲 Places vélo</option>
-      </select>
-
-      <select id="sortSidebar" onchange="filterSidebarParkings()">
-        <option value="name" data-i18n="name">📝 Trier par nom</option>
-        <option value="price_asc" data-i18n="prixAsc">💰 Prix croissant</option>
-        <option value="price_desc" data-i18n="prixDesc">💰 Prix décroissant</option>
-        <option value="places_desc" data-i18n="placesDisponibles">🅿️ Places disponibles ↓</option>
-        <option value="capacity_desc" data-i18n="capaciteTotale">📊 Capacité totale ↓</option>
-        <option value="distance" data-i18n="distance">📍 Distance</option>
-      </select>
-
-      <button class="btn-reset-filters" onclick="resetSidebarFilters()" data-i18n="reset">↺ Réinitialiser</button>
+    <div class="search-container">
+      <div class="search-buttons">
+        <button onclick="localiserUtilisateur()" data-i18n="maPosition">
+          Ma position
+        </button>
+        <button onclick="trierParProximite()" data-i18n="parkingProche">
+          Parking proche
+        </button>
+      </div>
+      <button
+        id="btn-stop-guidage-mobile"
+        onclick="arreterGuidage()"
+        data-i18n="arreterGuidage"
+        style="display: none"
+      >
+        Stop guidage
+      </button>
     </div>
 
-    <div class="sidebar-content" id="sidebarContent">
-      <div class="loader" data-i18n="chargement">Chargement...</div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h3 data-i18n="parkingDisponibles">Parkings disponibles</h3>
+      </div>
+
+      <div class="sidebar-filters">
+        <input
+          type="text"
+          id="sidebarSearch"
+          placeholder="🔍 Rechercher..."
+          oninput="filterSidebarParkings()"
+          data-i18n-placeholder="rechercher"
+        />
+
+        <select id="filterZoneSidebar" onchange="filterSidebarParkings()">
+          <option value="all" data-i18n="allZone">🌍 Toutes les zones</option>
+          <option value="france">🇫🇷 France (Metz)</option>
+          <option value="uk">🇬🇧 GB - Londres</option>
+        </select>
+
+        <select id="filterTypeSidebar" onchange="filterSidebarParkings()">
+          <option value="all" data-i18n="allType">💰 Tous les types</option>
+          <option value="gratuit" data-i18n="gratuit">
+            Gratuits uniquement
+          </option>
+          <option value="payant" data-i18n="payant">Payants uniquement</option>
+        </select>
+
+        <select id="filterEquipements" onchange="filterSidebarParkings()">
+          <option value="all" data-i18n="allEquip">🔧 Tous équipements</option>
+          <option value="pmr" data-i18n="pmr">♿ Places PMR</option>
+          <option value="electrique" data-i18n="electrique">
+            🔌 Bornes électriques
+          </option>
+          <option value="velo" data-i18n="velo">🚲 Places vélo</option>
+        </select>
+
+        <select id="sortSidebar" onchange="filterSidebarParkings()">
+          <option value="name" data-i18n="name">📝 Trier par nom</option>
+          <option value="price_asc" data-i18n="prixAsc">
+            💰 Prix croissant
+          </option>
+          <option value="price_desc" data-i18n="prixDesc">
+            💰 Prix décroissant
+          </option>
+          <option value="places_desc" data-i18n="placesDisponibles">
+            🅿️ Places disponibles ↓
+          </option>
+          <option value="capacity_desc" data-i18n="capaciteTotale">
+            📊 Capacité totale ↓
+          </option>
+          <option value="distance" data-i18n="distance">📍 Distance</option>
+        </select>
+
+        <button
+          class="btn-reset-filters"
+          onclick="resetSidebarFilters()"
+          data-i18n="reset"
+        >
+          ↺ Réinitialiser
+        </button>
+      </div>
+
+      <div class="sidebar-content" id="sidebarContent">
+        <div class="loader" data-i18n="chargement">Chargement...</div>
+      </div>
     </div>
-  </div>
 
-  <button class="btn-toggle-sidebar" id="toggleSidebarBtn" onclick="toggleSidebar()">▶</button>
+    <button
+      class="btn-toggle-sidebar"
+      id="toggleSidebarBtn"
+      onclick="toggleSidebar()"
+    >
+      ▶
+    </button>
 
-  <div id="map"></div>
+    <div id="map"></div>
 
-  <script type="module">
-    fetch("auth/check_session.php")
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data.authenticated) {
-          window.location.href = "views/connexion.view.php";
-        } else {
-          import("./map/main.js").catch((error) => console.error("Erreur map:", error));
-        }
-      })
-      .catch(() => window.location.href = "views/connexion.view.php");
-  </script>
+    <script type="module">
+      fetch("auth/check_session.php")
+        .then((response) => response.json())
+        .then((data) => {
+          if (!data.authenticated) {
+            window.location.href = "views/connexion.view.php";
+          } else {
+            import("./map/main.js").catch((error) =>
+              console.error("Erreur map:", error)
+            );
+          }
+        })
+        .catch(() => (window.location.href = "views/connexion.view.php"));
+    </script>
 
-  <script src="js/menu.js"></script>
-  <script src="js/index.translation.js"></script>
-  <script src="js/sidebar.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/index.translation.js"></script>
+    <script src="js/sidebar.js"></script>
 
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/service-worker.js");
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/service-worker.js");
+        });
+      }
+
+      let deferredPrompt;
+      const installBtn = document.getElementById("installBtn");
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
       });
-    }
 
-    let deferredPrompt;
-    const installBtn = document.getElementById("installBtn");
+      installBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
 
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-    });
+        const modal = document.createElement("div");
+        modal.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;justify-content:center;align-items:center;z-index:10000;animation:fadeIn 0.3s ease;`;
 
-    installBtn.addEventListener("click", async (e) => {
-      e.preventDefault();
-      
-      const modal = document.createElement("div");
-      modal.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;justify-content:center;align-items:center;z-index:10000;animation:fadeIn 0.3s ease;`;
-
-      modal.innerHTML = `
+        modal.innerHTML = `
           <div style="background:white;padding:30px;border-radius:20px;max-width:500px;margin:20px;box-shadow:0 10px 40px rgba(0,0,0,0.3);animation:slideUp 0.4s ease;font-family:sans-serif;">
             <h2 style="color:#2c3e50;margin:0 0 20px 0;font-size:24px;">🚗 Smart Parking PWA</h2>
             <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:20px;border-radius:12px;margin-bottom:20px;">
@@ -185,27 +277,29 @@
             </div>
           </div>`;
 
-      document.body.appendChild(modal);
+        document.body.appendChild(modal);
 
-      const style = document.createElement("style");
-      style.textContent = `@keyframes fadeIn{from{opacity:0;}to{opacity:1;}} @keyframes slideUp{from{transform:translateY(50px);opacity:0;}to{transform:translateY(0);opacity:1;}}`;
-      document.head.appendChild(style);
+        const style = document.createElement("style");
+        style.textContent = `@keyframes fadeIn{from{opacity:0;}to{opacity:1;}} @keyframes slideUp{from{transform:translateY(50px);opacity:0;}to{transform:translateY(0);opacity:1;}}`;
+        document.head.appendChild(style);
 
-      modal.querySelector('#closeModalInstall').onclick = () => {
-        modal.remove();
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          deferredPrompt = null;
-        }
-      };
+        modal.querySelector("#closeModalInstall").onclick = () => {
+          modal.remove();
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt = null;
+          }
+        };
 
-      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    });
+        modal.onclick = (e) => {
+          if (e.target === modal) modal.remove();
+        };
+      });
 
-    window.addEventListener("appinstalled", () => {
-      installBtn.style.display = "none";
-      document.getElementById("installSeparator").style.display = "none";
-    });
-  </script>
-</body>
+      window.addEventListener("appinstalled", () => {
+        installBtn.style.display = "none";
+        document.getElementById("installSeparator").style.display = "none";
+      });
+    </script>
+  </body>
 </html>
