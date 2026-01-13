@@ -445,6 +445,27 @@ header {
   background: #28a745;
 }
 
+.parking-item-price.park-ride {
+  background: #e67e22;
+}
+
+/* Info P+R */
+.pr-info {
+  font-size: 11px;
+  color: #e67e22;
+  background: #fff3cd;
+  padding: 6px 10px;
+  margin: 0 8px 8px 8px;
+  border-radius: 6px;
+  border-left: 3px solid #e67e22;
+  font-weight: 500;
+}
+
+/* Bordure colorée pour les parkings P+R */
+.sidebar-parking-item.park-ride {
+  border-left: 4px solid #e67e22;
+}
+
 /* Infos */
 .parking-item-info {
   font-size: 12px;
@@ -506,6 +527,15 @@ header {
 .price-label.payant {
   border-color: #dc3545;
   color: #dc3545;
+}
+
+/* Styles pour les marqueurs P+R */
+.leaflet-tooltip.park-ride {
+  background: #e67e22 !important;
+  color: white !important;
+  border: 2px solid #d35400 !important;
+  font-weight: bold;
+  padding: 4px 8px;
 }
 
 @media (max-width: 768px) {

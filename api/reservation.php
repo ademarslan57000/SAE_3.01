@@ -19,6 +19,7 @@ try {
     require_once "../classes/vehiculeDAO.class.php";
     require_once "../classes/reservation.class.php";
     require_once "../classes/reservationDAO.class.php";
+    require_once "../classes/Validator.class.php";
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Erreur chargement classes: ' . $e->getMessage()]);
     exit;
@@ -31,6 +32,17 @@ $data = json_decode($input, true);
 if (!$data) {
     echo json_encode(['success' => false, 'message' => 'Données JSON invalides.']);
     exit;
+}
+
+// Sanitisation des données d'entrée
+if (isset($data['parkingId'])) {
+    $data['parkingId'] = Validator::sanitizeString($data['parkingId']);
+}
+if (isset($data['immatriculation'])) {
+    $data['immatriculation'] = strtoupper(Validator::sanitizeString($data['immatriculation']));
+}
+if (isset($data['vehicleTypeRaw'])) {
+    $data['vehicleTypeRaw'] = Validator::sanitizeString($data['vehicleTypeRaw']);
 }
 
 $reservationDAO = new ReservationDAO();

@@ -1,4 +1,11 @@
 import { MapController } from "../js/controller/MapController.js";
+import { networkManager } from "./utils/NetworkManager.js";
+import { notificationManager } from "./utils/NotificationManager.js";
+
+// Initialiser le network manager
+networkManager.addListener((isOnline) => {
+  console.log("État réseau changé:", isOnline ? "Online" : "Offline");
+});
 
 window.mapController = new MapController();
 window.mapController.init();
@@ -22,8 +29,7 @@ window.filterSidebarParkings = async () => {
   if (!window.allSidebarParkings) return;
 
   let filtered = window.allSidebarParkings.filter((p) => {
-    const matchSearch =
-      p.name.toLowerCase().includes(searchTerm) ||
+    const matchSearch = p.name.toLowerCase().includes(searchTerm) ||
       (p.adresse && p.adresse.toLowerCase().includes(searchTerm));
 
     const isLondon = String(p.id).startsWith("LONDON_");
@@ -58,7 +64,7 @@ window.filterSidebarParkings = async () => {
       console.log("✅ Position obtenue:", lat, lon);
     } catch (e) {
       alert(
-        "Impossible de trier par distance : veuillez activer la géolocalisation."
+        "Impossible de trier par distance : veuillez activer la géolocalisation.",
       );
       document.getElementById("sortSidebar").value = "name";
       return;
@@ -93,13 +99,13 @@ window.filterSidebarParkings = async () => {
             window.userLocation[0],
             window.userLocation[1],
             a.lat,
-            a.lon
+            a.lon,
           );
           const distB = mapController.userLocationService.distance(
             window.userLocation[0],
             window.userLocation[1],
             b.lat,
-            b.lon
+            b.lon,
           );
           return distA - distB;
         }
@@ -126,15 +132,16 @@ window.filterSidebarParkings = async () => {
             window.userLocation[0],
             window.userLocation[1],
             p.lat,
-            p.lon
+            p.lon,
           );
-          const distText =
-            dist < 1 ? `${Math.round(dist * 1000)}m` : `${dist.toFixed(1)}km`;
+          const distText = dist < 1
+            ? `${Math.round(dist * 1000)}m`
+            : `${dist.toFixed(1)}km`;
 
           // Insérer la distance dans l'item
           item = item.replace(
             '<div class="parking-item-info">',
-            `<div class="parking-item-info"><div style="color:#667eea;font-weight:600;">📍 ${distText}</div>`
+            `<div class="parking-item-info"><div style="color:#667eea;font-weight:600;">📍 ${distText}</div>`,
           );
         }
 
@@ -196,9 +203,9 @@ window.addEventListener("DOMContentLoaded", () => {
   const sortSidebar = document.getElementById("sortSidebar");
 
   [sidebarSearch].forEach(
-    (el) => el && el.addEventListener("input", window.filterSidebarParkings)
+    (el) => el && el.addEventListener("input", window.filterSidebarParkings),
   );
   [filterZone, filterType, filterEquip, sortSidebar].forEach(
-    (el) => el && el.addEventListener("change", window.filterSidebarParkings)
+    (el) => el && el.addEventListener("change", window.filterSidebarParkings),
   );
 });

@@ -75,7 +75,7 @@ export class RoutingService {
           addWaypoints: false,
           showAlternatives: true, // Afficher les itinéraires alternatifs
           altLineOptions: {
-            styles: [{ color: "#888888", weight: 4, opacity: 0.5 }],
+            styles: [{ color: "#85189b", weight: 4, opacity: 0.5 }],
           },
           createMarker: (i, wp) =>
             L.marker(wp.latLng, {

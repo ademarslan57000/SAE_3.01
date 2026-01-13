@@ -79,6 +79,31 @@ body {
   font-size: 0.95rem;
 }
 
+/* Message d'erreur */
+.error-message {
+  background: #fee;
+  border: 1px solid #fcc;
+  border-left: 4px solid #e74c3c;
+  color: #c0392b;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .form {
   display: flex;
   flex-direction: column;

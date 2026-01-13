@@ -5,22 +5,30 @@ ini_set('display_errors', 1);
 session_start();
 
 require_once "../classes/utilisateurDAO.class.php";
+require_once "../classes/Validator.class.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../assets/views/connexion.view.php");
+    header("Location: ../views/connexion.view.php");
     exit;
 }
 
 if (!isset($_POST["email"], $_POST["password"])) {
-    header("Location: ../assets/views/connexion.view.php?error=incomplete");
+    header("Location: ../views/connexion.view.php?error=incomplete");
     exit;
 }
 
-$email = trim($_POST["email"]);
-$password = $_POST["password"];
+// Sanitisation de l'email
+$email = Validator::sanitizeString($_POST["email"]);
+$password = $_POST["password"]; // Pas de sanitisation pour le mot de passe (vérifié par hash)
 
 if (empty($email) || empty($password)) {
-    header("Location: ../assets/views/connexion.view.php?error=incomplete");
+    header("Location: ../views/connexion.view.php?error=incomplete");
+    exit;
+}
+
+// Validation du format email
+if (!Validator::validateEmail($email)) {
+    header("Location: ../views/connexion.view.php?error=invalid_credentials");
     exit;
 }
 
@@ -28,14 +36,14 @@ $dao = new UtilisateurDAO();
 $user_data = $dao->getByEmail($email);
 
 if ($user_data === null) {
-    header("Location: ../assets/views/connexion.view.php?error=invalid_credentials");
+    header("Location: ../views/connexion.view.php?error=invalid_credentials");
     exit;
 }
 
 $stored_hash = $user_data["mot_de_passe"];
 
 if (!password_verify($password, $stored_hash)) {
-    header("Location: ../assets/views/connexion.view.php?error=invalid_credentials");
+    header("Location: ../views/connexion.view.php?error=invalid_credentials");
     exit;
 }
 

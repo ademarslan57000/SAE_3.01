@@ -19,5 +19,8 @@
     "bornesElectriques": "Bornes électriques",
     "placesVelo": "Places vélo",
     "chargement": "Chargement...",
-    "chargementParkings": "Chargement des parkings..."
+    "chargementParkings": "Chargement des parkings...",
+    "parkAndRide": "P+R",
+    "parkAndRideInfo": "Gratuit avec ticket de transport en commun",
+    "parkAndRideNote": "Sans ticket : tarif standard applicable"
 }

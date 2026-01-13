@@ -5,16 +5,18 @@ ini_set("display_errors", 1);
 session_start();
 require_once "../classes/utilisateur.class.php";
 require_once "../classes/utilisateurDAO.class.php";
+require_once "../classes/Validator.class.php";
 
 if (!isset($_POST["register"])) {
     include "../views/inscription.view.php";
     exit;
 }
 
-$nom = trim($_POST["lastname"] ?? "");
-$prenom = trim($_POST["firstname"] ?? "");
-$adresse = trim($_POST["adresse"] ?? "");
-$tel = trim($_POST["tel"] ?? "");
+// Sanitisation de toutes les données d'entrée
+$nom = Validator::sanitizeString($_POST["lastname"] ?? "");
+$prenom = Validator::sanitizeString($_POST["firstname"] ?? "");
+$adresse = Validator::sanitizeString($_POST["adresse"] ?? "");
+$tel = Validator::sanitizeString($_POST["tel"] ?? "");
 $email = trim($_POST["email"] ?? "");
 $password = $_POST["password"] ?? "";
 
@@ -23,7 +25,8 @@ if (empty($nom) || empty($prenom) || empty($email) || empty($password)) {
     exit;
 }
 
-if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+// Validation de l'email
+if(!Validator::validateEmail($email)) {
     header("Location: ../views/inscription.view.php?error=invalid_email");
     exit;
 }

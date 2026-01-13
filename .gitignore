@@ -1,0 +1,9 @@
+# Fichier à ignorer par Git
+node_modules/
+coverage/
+.phpunit.cache/
+vendor/
+*.log
+.DS_Store
+.vscode/
+.idea/

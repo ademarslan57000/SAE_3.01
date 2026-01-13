@@ -2,6 +2,11 @@
 let allParkings = [];
 let selectedParking = null;
 
+// Import des utilitaires
+import { ApiHelper } from "./utils/ApiHelper.js";
+import { notificationManager } from "./utils/NotificationManager.js";
+import { networkManager } from "./utils/NetworkManager.js";
+
 // --- Constantes ---
 const PARKING_TYPES = {
     PR: "park-and-ride",
@@ -43,9 +48,24 @@ const notifOptions = document.getElementById("notifOptions");
  * @returns {Promise<void>}
  */
 async function loadParkings() {
+    // Vérifier la connexion
+    if (!networkManager.isOnline) {
+        notificationManager.error(
+            "Impossible de charger les parkings sans connexion Internet",
+        );
+        parkingSelect.innerHTML = '<option value="">Pas de connexion</option>';
+        return;
+    }
+
     try {
-        const response = await fetch(
+        // Afficher un loader
+        parkingSelect.innerHTML =
+            '<option value="" disabled selected>⏳ Chargement...</option>';
+
+        const response = await ApiHelper.fetchWithTimeout(
             "../api/GetParkingWithRealTime.php",
+            {},
+            10000,
         );
 
         if (!response.ok) {
@@ -54,6 +74,8 @@ async function loadParkings() {
 
         allParkings = await response.json();
 
+        console.log(`✅ ${allParkings.length} parkings chargés`);
+
         allParkings.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
         parkingSelect.innerHTML =
@@ -61,6 +83,12 @@ async function loadParkings() {
 
         allParkings.forEach((parking, index) => {
             const parkingName = parking.name || parking.nom;
+
+            // Debug : afficher les parkings sans nom
+            if (!parkingName) {
+                console.warn("⚠️ Parking sans nom:", parking);
+            }
+
             const parkingId = parking.id || parking.id_parking;
             const flag = String(parkingId).startsWith("LONDON_") ? "🇬🇧" : "🇫🇷";
 
@@ -77,13 +105,16 @@ async function loadParkings() {
 
             const option = document.createElement("option");
             option.value = index;
-            option.textContent = `${flag} ${parkingName} - ${prix}`;
+            option.textContent = `${flag} ${
+                parkingName || "Parking sans nom"
+            } - ${prix}`;
             parkingSelect.appendChild(option);
         });
     } catch (e) {
         console.error("Erreur chargement parkings:", e);
+        ApiHelper.handleApiError(e, "Chargement des parkings");
         parkingSelect.innerHTML =
-            '<option value="">Erreur de chargement</option>';
+            '<option value="">❌ Erreur de chargement - Réessayer</option>';
     }
 }
 
@@ -145,7 +176,7 @@ function checkAvailability() {
         }
     }
 
-    if (type === "electrique") {
+    if (type === "electrique" || type === "hybride") {
         borneElectriqueGroup.style.display = "block";
         if (
             !selectedParking.nb_voitures_electriques ||
@@ -311,6 +342,16 @@ endInput.addEventListener("change", calculatePrice);
 submitBtn.addEventListener("click", async () => {
     if (!selectedParking) return;
 
+    // Vérifier la connexion avant l'envoi
+    if (
+        !networkManager.checkBeforeAction(
+            "submit",
+            "Impossible de réserver sans connexion Internet",
+        )
+    ) {
+        return;
+    }
+
     const data = {
         parkingId: selectedParking.id || selectedParking.id_parking,
         vehicleTypeRaw: vehicleType.value,
@@ -322,29 +363,44 @@ submitBtn.addEventListener("click", async () => {
     // UI Chargement
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
-    submitBtn.textContent = "Traitement en cours...";
+    submitBtn.textContent = "⏳ Traitement en cours...";
+
+    // Notification de chargement
+    const loadingToast = notificationManager.loading(
+        "Envoi de votre réservation...",
+    );
 
     try {
-        // APPEL AU FICHIER PHP QUE TU VIENS DE CRÉER
-        const response = await fetch("../api/reservation.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        });
+        // APPEL AU FICHIER PHP AVEC TIMEOUT
+        const response = await ApiHelper.fetchWithTimeout(
+            "../api/reservation.php",
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            },
+            15000, // Timeout de 15s pour une réservation
+        );
 
         const result = await response.json();
 
+        // Fermer le toast de chargement
+        loadingToast.remove();
+
         if (result.success) {
-            alert("✅ " + result.message);
-            window.location.href = "index.html"; // Redirection accueil
+            notificationManager.success("✅ " + result.message);
+            setTimeout(() => {
+                window.location.href = "index.html"; // Redirection accueil
+            }, 1500);
         } else {
-            alert("❌ Erreur : " + result.message);
+            notificationManager.error("❌ " + result.message);
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
     } catch (error) {
-        console.error("Erreur technique:", error);
-        alert("Erreur de communication avec le serveur.");
+        console.error("Erreur réservation:", error);
+        loadingToast.remove();
+        ApiHelper.handleApiError(error, "Envoi de la réservation");
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     }

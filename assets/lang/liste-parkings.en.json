@@ -19,5 +19,8 @@
     "bornesElectriques": "EV chargers",
     "placesVelo": "Bike spaces",
     "chargement": "Loading...",
-    "chargementParkings": "Loading car parks..."
+    "chargementParkings": "Loading car parks...",
+    "parkAndRide": "P+R",
+    "parkAndRideInfo": "Free with public transport ticket",
+    "parkAndRideNote": "Without ticket: standard rate applies"
 }
