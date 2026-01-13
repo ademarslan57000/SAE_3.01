@@ -1,7 +1,8 @@
 <?php
-require_once "../auth/compte.php";
+require_once "../api/compte.php";
 // On inclut le DAO pour récupérer les réservations
 require_once "../classes/reservationDAO.class.php";
+require_once "../api/compte.php";
 
 // On récupère la liste des réservations de l'utilisateur connecté
 $reservationDAO = new ReservationDAO();
@@ -17,7 +18,7 @@ $mesReservations = $reservationDAO->getByUser($idUser);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="monCompte">Mon compte</title>
-  <link rel="stylesheet" href="../css/compte.css">
+  <link rel="stylesheet" href="../assets/css/compte.css">
 
   <style>
     .reservations-table {
@@ -78,12 +79,12 @@ $mesReservations = $reservationDAO->getByUser($idUser);
     style="background: white; padding: 20px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
     <div style="width: 160px;"></div>
     <div style="display: flex; align-items: center; gap: 15px; justify-content: center; flex: 1;">
-      <img src="../image/logo.png" alt="Logo" style="height: 50px;">
+      <img src="../assets/image/logo.png" alt="Logo" style="height: 50px;">
       <h2 data-i18n="infoPerso" style="margin: 0; color: #333; font-size: 28px;">Mon Espace</h2>
     </div>
     <div style="display: flex; gap: 15px;">
       <button class="btn-langue" onclick="changerLangue()" id="btn-langue">FR</button>
-      <a href="../index.html" class="btn" data-i18n="Retour"
+      <a href="index.html" class="btn" data-i18n="Retour"
         style="padding: 10px 20px; background: linear-gradient(90deg, #00d0ff, #006aff); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">←
         Retour à la carte</a>
     </div>
@@ -161,7 +162,7 @@ $mesReservations = $reservationDAO->getByUser($idUser);
 
   </div>
 
-  <script src="../js/compte.translation.js"></script>
+  <script src="../assets/js/translation/compte.translation.js"></script>
 
   <script>
     async function annulerReservation(idReservation) {
@@ -169,7 +170,7 @@ $mesReservations = $reservationDAO->getByUser($idUser);
 
     try {
         // Le chemin remonte de views/ vers le dossier parent, puis entre dans auth/
-        const response = await fetch('../auth/reservation.php', { 
+        const response = await fetch('../api/reservation.php', { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

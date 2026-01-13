@@ -29,12 +29,12 @@ $messages = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="titleConnexion">Connexion</title>
-    <link rel="stylesheet" href="../css/connexion.css">
+    <link rel="stylesheet" href="../assets/css/connexion.css">
 </head>
 
 <body>
     <div class="center-wrapper">
-        <img src="../image/logo.png" alt="Logo" class="logo" style="max-width: 300px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; background: white; padding: 15px; border-radius: 10px;">
+        <img src="../assets/image/logo.png" alt="Logo" class="logo" style="max-width: 300px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; background: white; padding: 15px; border-radius: 10px;">
         <div class="card-login">
             <div class="card-header">
                 <h2 data-i18n="bonRetour">Bon retour</h2>
@@ -51,7 +51,7 @@ $messages = [
                 </div>
             <?php endif; ?>
 
-            <form action="../auth/connexion.php" method="post" class="form">
+            <form action="../api/connexion.php" method="post" class="form">
                 <div class="input-group">
 
                     <label data-i18n="Email"></label>
@@ -72,7 +72,7 @@ $messages = [
                 <span data-i18n="pasDeCompte">Pas encore de compte ?</span>
                 <a href="inscription.view.php" data-i18n="creerCompte">Créer un compte</a>
                 <br>
-                <a href="accueil.html"><u data-i18n="retourAccueil">Retour sur le site</u></a>
+                <a href="../accueil.html"><u data-i18n="retourAccueil">Retour sur le site</u></a>
             </div>
             <div class="lang-container">
                 <select id="lang-selector" class="dropdown-btn">
@@ -85,7 +85,7 @@ $messages = [
 
     </div>
     <div id="mySidebar" class="sidebar"></div>
-    <script src="../js/connexion.translation.js"></script>
+    <script src="../assets/js/translation/connexion.translation.js"></script>
 </body>
 
 </html>

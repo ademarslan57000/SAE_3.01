@@ -1,0 +1,18 @@
+{
+    "TitleInscription": "Inscription",
+    "rejoindre": "Rejoignez Smart Parking",
+    "retourAccueil":"Retour sur le site",
+    "Inscription": "Inscription",
+    "creerCompte": "Créez votre compte en quelques secondes.",
+    "Nom": "Nom",
+    "Prenom": "Prénom",
+    "Adresse": "Adresse",
+    "Sinscrire":"S'inscrire",
+    "Telephone": "Téléphone",
+    "Email": "Email",
+    "MotDePasse": "Mot de passe",
+    "seConnecter": "Se connecter",
+    "CompteExistant": "Déjà un compte ?",
+    "placeholderAdresse": "Votre adresse complète",
+    "placeholderEmail": "email@exemple.com"
+}

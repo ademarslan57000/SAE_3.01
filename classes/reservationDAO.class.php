@@ -67,10 +67,6 @@ class ReservationDAO
         $sql = "SELECT COUNT(*) as count
                 FROM Reservation
                 WHERE id_utilisateur = :id_user
-<<<<<<< HEAD
-=======
-                AND statut = 'active'
->>>>>>> d47186dd654f6596703e4fae6fd2ef7e0b66808a
                 AND (
                     (date_debut <= :date_debut AND date_fin > :date_debut)
                     OR (date_debut < :date_fin AND date_fin >= :date_fin)

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="TitleInscription">Inscription</title>
-    <link rel="stylesheet" href="../css/inscription.css">
+    <link rel="stylesheet" href="../assets/css/inscription.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
 </head>
 
@@ -17,7 +17,7 @@
                 <p data-i18n="creerCompte"></p>
             </div>
 
-            <form action="../auth/inscription.php" method="post" class="form">
+            <form action="../api/inscription.php" method="post" class="form">
 
                 <div class="row">
                     <div class="col">
@@ -69,7 +69,7 @@
                     <span data-i18n="CompteExistant">Déjà un compte ?</span>
                     <a href="connexion.view.php" data-i18n="seConnecter">Se connecter</a>
                     <br>
-                    <a href="accueil.html"><u data-i18n="retourAccueil">Retour au site</u></a>
+                    <a href="../accueil.html"><u data-i18n="retourAccueil">Retour au site</u></a>
                 </div>
 
             </form>
@@ -83,7 +83,7 @@
 
     </div>
     <div id="mySidebar" class="sidebar"></div>
-    <script src="../js/inscription.translation.js"></script>
+    <script src="../assets/js/translation/inscription.translation.js"></script>
 </body>
 
 </html>

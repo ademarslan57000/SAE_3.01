@@ -1,0 +1,167 @@
+/* =========================
+   compte.css final
+   ========================= */
+
+/* Reset & global */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background: linear-gradient(90deg, #00d0ff, #006aff);
+  color: #111827;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+/* Container */
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* Logo */
+img {
+  height: 60px;
+}
+
+/* Titre */
+h2 {
+  font-size: 1.8rem;
+  margin: 0;
+  color: white;
+}
+
+/* Bouton langue */
+button.btn-langue {
+    padding: 10px 20px !important;
+    background: #2196f3;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    transition: all 0.3s;
+}
+
+button.btn-langue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+    background: #2c5fad;
+}
+
+/* Carte compte */
+.account-card {
+  background: #ffffff;
+  width: 100%;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Table-like layout */
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #e5e7eb;
+  flex-wrap: nowrap; /* ne pas passer à la ligne */
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row label {
+  font-weight: 600;
+  color: #111827;
+  min-width: 120px; /* largeur fixe */
+  margin-right: 10px;
+  flex: 0 0 auto;
+}
+
+.row .value {
+  color: #6b7280;
+  flex: 1 1 auto;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* Bouton Retour */
+.btn {
+  display: inline-block;
+  margin-top: 15px;
+  text-align: center;
+  padding: 10px;
+  background: linear-gradient(90deg, #00d0ff, #006aff);
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  opacity: 0.95;
+  background: #2c5fad;
+}
+
+/* Sélecteur de langue */
+#lang-selector {
+  margin: 15px auto 0 auto;
+  width: 150px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: block;
+}
+
+/* =========================
+   Responsive mobile
+   ========================= */
+@media (max-width: 600px) {
+  .account-card {
+    padding: 15px 10px;
+  }
+
+  .row {
+    gap: 6px;
+    padding: 6px 0;
+  }
+
+  .row label {
+    min-width: 90px; /* réduit la largeur du label */
+  }
+
+  .row .value {
+    text-align: right;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  #lang-selector {
+    width: 100%;
+    margin: 10px 0 0 0;
+  }
+
+  img {
+    height: 70px;
+    margin-bottom: 10px;
+  }
+}

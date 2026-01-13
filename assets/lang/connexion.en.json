@@ -1,0 +1,15 @@
+{
+    "titleConnexion": "Login",
+    "bonRetour" :"Welcome back",
+    "introduction": "Login to access your account.",
+    "oublieMdp": "Forgotten ?",
+    "seConnecter": "Login",
+    "Email": "Write your email",
+    "MotDePasse": "Write your password",
+    "Login": "Login",
+    "pasDeCompte": "Don't have an account yet ?",
+    "creerCompte": "Sign up",
+    "retourAccueil": "Back to the site",
+    "placeholderEmail": "mail@example.com"
+    
+}
