@@ -34,9 +34,11 @@ export class UserLocationService {
 
   
   showMarker(lat, lon, map) {
+    const translatedText = window.traduirePopup("youAreHere");
+    const popupContent = translatedText !== "youAreHere" ? translatedText : "Vous êtes ici";
     this.userMarker = L.marker([lat, lon], { icon: this.userIcon })
       .addTo(map)
-      .bindPopup("Vous êtes ici") 
+      .bindPopup(popupContent) 
       .openPopup();
   }
 
