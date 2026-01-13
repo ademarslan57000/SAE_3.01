@@ -33,7 +33,21 @@
     "chargement": "Loading...",
     "installerApp":"📱 Download the mobile app",
     "user_location": "You are here",
-    "geo_not_supported": "Location not supported"
+    "geo_not_supported": "Location not supported",
+
+    "free": "FREE",
+    "paid": "Paid",
+    "parking": "Parking",
+    "availability": "Availability",
+    "updated": "Updated",
+    "realtime_unavailable": "Realtime data unavailable",
+    "capacity": "Capacity",
+    "rates": "Rates",
+    "directions": "Directions",
+    "more_info": "More info",
+    "places": "spaces",
+    "address_not_available": "Address not available",
+    "no_parking_found": "No parking found"
 }
 
 

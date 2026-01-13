@@ -33,10 +33,22 @@
     "chargement": "Chargement...",
     "installerApp":"📱 Installer l'application",
     "user_location": "Vous êtes ici",
-    "geo_not_supported": "Géolocalisation non supportée"
+    "geo_not_supported": "Géolocalisation non supportée",
 
 
-
+    "free": "GRATUIT",
+    "paid": "Payant",
+    "parking": "Parking",
+    "availability": "Disponibilité",
+    "updated": "Mise à jour",
+    "realtime_unavailable": "Données temps réel non disponibles",
+    "capacity": "Capacité",
+    "rates": "Tarifs",
+    "directions": "Itinéraire",
+    "more_info": "Plus d'infos",
+    "places": "places",
+    "address_not_available": "Adresse non disponible",
+    "no_parking_found": "Aucun parking trouvé"
 
 
 }

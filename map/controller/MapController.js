@@ -13,7 +13,8 @@ export class MapController {
     this.routingService = new RoutingService(this.map, this.ICONS);
     this.userLocationService = new UserLocationService(this.ICONS.user);
     this.renderer = new ParkingRenderer(this.map, this.ICONS.destination, this.routingService);
-
+    window.ParkingRenderer = this.renderer; // Pour accès global
+    window.MapController = this;
     this.parkings = [];
   }
 

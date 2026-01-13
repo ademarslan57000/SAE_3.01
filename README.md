@@ -1,356 +1,388 @@
-# 🚗 Smart Parking Metz - Documentation Technique
-
-## 📋 Table des matières
-- [Vue d'ensemble](#vue-densemble)
-- [Architecture](#architecture)
-- [Installation](#installation)
-- [Principes SOLID](#principes-solid)
-- [Modules créés](#modules-créés)
-- [Sécurité](#sécurité)
-- [Utilisation](#utilisation)
-
-## 🎯 Vue d'ensemble
-
-Smart Parking Metz est une Progressive Web App (PWA) permettant de trouver et réserver des places de parking à Metz et Londres en temps réel. Compatible Android Auto et Apple CarPlay.
-
-### Fonctionnalités
-- 🗺️ Carte interactive avec parkings en temps réel
-- 📱 PWA installable (Android Auto & CarPlay)
-- 🌐 Multilingue (FR/EN)
-- 🚇 Informations mobilité
-- 👤 Gestion compte utilisateur
-- 📝 Système de réservation
-
-## 🏗️ Architecture
-
-### Stack Technique
-- **Frontend**: HTML5, CSS3, JavaScript ES6+, Leaflet.js
-- **Backend**: PHP 8+ (POO), MySQL, PDO
-- **PWA**: Service Workers, Manifest
-- **APIs**: Open Data Metz, TfL London
-
-## 📦 Installation
-
-```bash
-# 1. Configuration BDD
-mysql -u root -p < database/schema.sql
-
-# 2. Configuration
-cp .env.example .env
-# Éditer .env avec vos paramètres
-
-# 3. Permissions
-chmod 755 -R sae301/
-chmod 777 logs/
-
-# 4. HTTPS (obligatoire pour PWA)
-certbot --apache -d votre-domaine.com
-```
-
-## 🎨 Principes SOLID Appliqués
-
-### ✅ Améliorations implémentées
-
-#### 1. **Single Responsibility Principle**
-Chaque classe/module a UNE responsabilité :
-
-**`Validator.class.php`** - Validation uniquement
-```php
-Validator::validateEmail($email);
-Validator::validatePassword($password);
-Validator::generateCSRFToken();
-```
-
-**`ApiService.js`** - Appels API uniquement
-```javascript
-const api = new ApiService();
-const data = await api.get('/endpoint', { useCache: true });
-```
-
-**`TranslationModule.js`** - Traductions uniquement
-```javascript
-const translation = new TranslationModule('../lang/page');
-translation.init();
-```
-
-#### 2. **DRY (Don't Repeat Yourself)**
-
-**Avant** : Code dupliqué dans 8 fichiers `*.translation.js`
-**Après** : Un seul module réutilisable `TranslationModule.js`
-
-**Avant** : Styles répétés dans 6 fichiers CSS
-**Après** : Styles communs dans `common.css`
-
-#### 3. **Dependency Injection**
-```php
-// UtilisateurDAO accepte injection de Connexion
-public function __construct(Connexion $connexion = null)
-{
-    $this->_bd = $connexion ?? new Connexion();
-}
-```
-
-#### 4. **Configuration centralisée**
-**`config/config.php`** - Toute la config en un seul fichier
-```php
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('SESSION_LIFETIME', 3600);
-define('API_CACHE_DURATION', 300);
-```
-
-## 📚 Modules Créés
-
-### 1. TranslationModule.js
-**Objectif** : Éliminer duplication dans les fichiers de traduction
-
-**Utilisation** :
-```javascript
-const translation = new TranslationModule('../lang/page', {
-    btnSelector: '#btn-langue'
-});
-
-function changerLangue() {
-    translation.changeLanguage();
-}
-
-translation.init();
-```
-
-### 2. ApiService.js
-**Objectif** : Centraliser appels API avec cache
-
-**Utilisation** :
-```javascript
-const api = new ApiService();
-
-// GET avec cache
-const parkings = await api.get('/parkings', { useCache: true });
-
-// POST
-await api.post('/reservation', { parking_id: 123 });
-
-// Parallèle
-const [data1, data2] = await api.fetchMultiple([
-    { method: 'GET', endpoint: '/api1' },
-    { method: 'GET', endpoint: '/api2' }
-]);
-```
-
-### 3. Validator.class.php
-**Objectif** : Sécuriser toutes les validations
-
-**Méthodes** :
-```php
-Validator::sanitizeString($input)
-Validator::validateEmail($email)
-Validator::validatePhone($phone)
-Validator::validatePassword($password)
-Validator::generateCSRFToken()
-Validator::verifyCSRFToken($token)
-```
-
-### 4. common.css
-**Objectif** : Styles réutilisables
-
-**Inclus** :
-- Header commun
-- Boutons standardisés (`.btn-langue`, `.btn-retour`)
-- Background gradient
-- Responsive design
-
-## 🔐 Sécurité
-
-### Protection XSS
-```php
-Validator::sanitizeString($input); // htmlspecialchars + trim
-```
-
-### Protection CSRF
-```php
-// Génération
-$token = Validator::generateCSRFToken();
-echo '<input type="hidden" name="csrf" value="'.$token.'">';
-
-// Vérification
-if (!Validator::verifyCSRFToken($_POST['csrf'])) {
-    die("CSRF invalide");
-}
-```
-
-### Protection SQL Injection
-```php
-// Toujours prepared statements
-$sql = "SELECT * FROM Utilisateur WHERE mail = :mail";
-$this->_bd->execSQL($sql, [":mail" => $email]);
-```
-
-### Hashage mots de passe
-```php
-// Inscription
-$hash = password_hash($password, PASSWORD_DEFAULT);
-
-// Connexion
-if (password_verify($password, $hash)) {
-    // OK
-}
-```
-
-### Sessions sécurisées
-```php
-ini_set('session.cookie_httponly', '1');
-ini_set('session.use_strict_mode', '1');
-ini_set('session.cookie_samesite', 'Strict');
-```
-
-## 🚀 Utilisation
-
-### Ajouter une nouvelle page
-
-1. **Fichiers**
-```bash
-touch views/ma-page.html
-touch css/ma-page.css
-touch js/ma-page.js
-touch lang/ma-page.fr.json
-touch lang/ma-page.en.json
-```
-
-2. **HTML - Inclure CSS commun**
-```html
-<link rel="stylesheet" href="../css/common.css">
-<link rel="stylesheet" href="../css/ma-page.css">
-```
-
-3. **JS - Utiliser TranslationModule**
-```javascript
-const translation = new TranslationModule('../lang/ma-page');
-
-function changerLangue() {
-    translation.changeLanguage();
-}
-
-translation.init();
-```
-
-4. **PHP - Utiliser Validator**
-```php
-require_once 'config/config.php';
-require_once 'classes/Validator.class.php';
-
-$email = Validator::sanitizeString($_POST['email']);
-if (!Validator::validateEmail($email)) {
-    die("Email invalide");
-}
-```
-
-### Structure recommandée
-
-```
-nouvelle-page/
-├── HTML : Structure sémantique
-├── CSS : common.css + page.css
-├── JS : TranslationModule + ApiService
-└── PHP : Validator + UtilisateurDAO
-```
-
-## 📱 PWA Installation
-
-### Android
-1. Chrome → Menu ⋮ → "Installer l'application"
-2. Apparaît dans Android Auto automatiquement
-
-### iOS
-1. Safari → Partager  → "Sur l'écran d'accueil"
-2. Réglages → CarPlay → Activer l'app
-
-**Prérequis** : HTTPS obligatoire en production
-
-## 🎯 Bonnes Pratiques
-
-### Code Style
-- Classes : `PascalCase`
-- Fonctions : `camelCase`
-- Constantes : `UPPER_SNAKE_CASE`
-- CSS : `kebab-case`
-
-### Validation
-- **Toujours** côté serveur
-- Facultatif côté client (UX)
-
-### Gestion erreurs
-```javascript
-try {
-    await api.get('/data');
-} catch (error) {
-    console.error('Erreur:', error);
-    // Message utilisateur
-}
-```
-
-### Cache
-- API cache : 5 minutes
-- Service Worker : ressources statiques
-- localStorage : préférences utilisateur
-
-## 📊 Performance
-
-✅ Service Worker (PWA)
-✅ API avec cache
-✅ Prepared statements (PDO)
-✅ Images optimisées
-✅ CSS/JS minifiés
-
-## 🐛 Debug
-
-```php
-// Activer logs
-define('DEBUG_MODE', true);
-logMessage('Debug info', 'DEBUG');
-```
-
-```javascript
-console.log('Data:', data);
-console.error('Error:', error);
-```
-
-## 📄 Fichiers Principaux
+# Smart Parking - Application Web Progressive
+
+## Contexte du projet
+
+**SAE 301 - BUT MMI 2ème année**\
+**Année universitaire** : 2025-2026\
+**Équipe** : ARSLAN - BENMOUFFEK - COLASSE -  MALLINGER - SWIATOKA 
+**Groupe** : 13
+
+Ce projet a été réalisé dans le cadre de la SAE 301 du BUT Informatique. L'objectif était de concevoir et développer une application
+web complète permettant de faciliter le stationnement urbain à Metz et Londres,
+en exploitant les données ouvertes et en appliquant les bonnes pratiques de
+développement web.
+
+
+### Fonctionnalités principales
+
+✅ **Carte interactive** avec visualisation en temps réel des parkings
+disponibles\
+✅ **Système de réservation** complet avec gestion des dates et types de
+véhicules\
+✅ **Gestion utilisateur** : inscription, connexion, profil, historique des
+réservations\
+✅ **Informations mobilité** : transports en commun, vélos en libre-service,
+itinéraires multimodaux\
+✅ **Interface multilingue** (français/anglais) avec changement dynamique\
+✅ **Progressive Web App** installable sur mobile et ordinateur
+
+### Fonctionnalités avancées
+
+✅ **Compatibilité Android Auto et Apple CarPlay** pour utilisation en voiture\
+✅ **Mode hors ligne** grâce au Service Worker pour consultation même sans
+connexion\
+✅ **Calcul d'itinéraires** vers les parkings avec guidage GPS\
+✅ **Données temps réel** synchronisées avec Open Data Metz et TfL London\
+✅ **Système de filtrage** par type de parking, disponibilité, tarifs\
+✅ **Parkings Relais (P+R)** identifiés avec tarification spéciale Métis\
+✅ **Validation intelligente** : empêche réservations passées et doublons\
+✅ **Adaptation véhicules** : masquage automatique de l'immatriculation pour les
+vélo
+
+- Gestion de compte utilisateur sécurisée
+- Compatible Andet compétences mises en œuvre
+
+### Stack technique
+
+**Frontend**
+
+- **HTML5** : structure sémantique et accessibilité
+- **CSS3** : design responsive avec Flexbox et Grid, animations
+- **JavaScript ES6+** : programmation moderne (modules, async/await, classes)
+- **Leaflet.js** : cartographie interactive avec clustering et marqueurs
+  personnalisés
+- **Service Workers** : mise en cache intelligente et mode hors ligne
+
+**Backend**
+
+- **PHP 8+** : programmation orientée objet, typage strict
+- **MySQL** : base de données relationnelle
+- **PDO** : requêtes préparées contre les injections SQL
+- **Architecture DAO** : séparation modèle/accès données
+
+**APIs et données**
+
+- **Open Data Metz** : données de parkings en temps réel (format JSON)
+- **Transport for London (TfL)** : parkings londoniens
+- **OpenStreetMap** : fonds de carte
+
+### Compétences développées
+
+**Développement web**
+
+- Architecture MVC adaptée au web
+- Principes SOLID appliqués (Single Responsibility, Dependency Injection)
+- Code réutilisable et maintenable (modules, classes génériques)
+- Gestion d'état et synchronisation client-serveur
+
+**Sécurité**
+
+- Validation et sanitisation des entrées utilisateur
+- Protection XSS, CSRF, injections SQL
+- Hashage sécurisé des mots de passe (bcrypt)
+- Gestion sécurisée des sessions
+
+**UX/UI Design**
+
+- Interface intuitive et responsive (mobile-first)
+- Internationalisation (i18n)
+- Feedback utilisateur temps réel
+- Accessibilité web (WCAG)
+
+**DevOps**
+
+- Gestion de version (Git)
+- Configuration d'environnements
+- Optimisation des performances (cache, lazy loading) **APIs externes**
+
+- Open Data Metz pour les données de parkings
+- Transport for London (TfL) pour les parkings londoniens
+
+## Installation et configuration
+
+### Prérequis
+
+- Serveur web (Apache)
+- PHP 8.0 ou supérieur
+- MySQL 5.7 ou supérieur
+- HTTPS (obligatoire pour PWA)
+
+### Étapes d'installation
+
+1. **Cloner le projet**
+   ```bash
+   git clone [https://gitlab.univ-lorraine.fr/e10974u/sae301]
+   cd sae301
+   ```
+
+2. **Configurer la base de données**
+   - Créer une base de données MySQL
+   - Importer le schéma (fichier SQL fourni)
+   - Configurer les identifiants dans `classes/connexion.class.php` ou via
+     variables d'environnement
+
+3. **Configuration environnement** Vous pouvez utiliser des variables
+   d'environnement :
+   ```bash
+   export DB_HOST="localhost"
+   export DB_NAME="nom_base"
+   export DB_USER="utilisateur"
+   export DB_PASSWORD="mot_de_passe"
+   ```
+
+4. **Permissions**
+   ```bash
+   chmod 755 -R sae301/
+   ```
+
+5. **HTTPS (obligatoire)** L'application nécessite HTTPS pour fonctionner en PWA
+   :
+   ```bash
+   certbot --apache -d votre-domaine.com
+   ```
+
+## Structure du projet
 
 ```
 sae301/
-├── config/config.php          ✨ Configuration centralisée
-├── classes/
-│   ├── Validator.class.php   ✨ Validation sécurisée
-│   └── UtilisateurDAO.class.php ✨ CRUD + validation
-├── css/common.css             ✨ Styles communs
-├── js/
-│   ├── TranslationModule.js   ✨ Module traduction
-│   └── ApiService.js          ✨ Service API
-├── manifest.json              PWA config
-└── service-worker.js          Offline support
+├── auth/              # Scripts d'authentification
+├── classes/           # Classes PHP (DAO, modèles)
+├── config/            # Configuration
+├── css/               # Feuilles de style
+├── js/                # Scripts JavaScript
+├── lang/              # Fichiers de traduction
+├── map/               # Module carte interactive
+├── views/             # Pages HTML
+├── index.html         # Page d'accueil
+├── manifest.json      # Configuration PWA
+└── service-worker.js  # Gestion cache et mode hors ligne
 ```
 
-## ✅ Checklist Qualité
+## Utilisation
 
-- [x] Principes SOLID appliqués
-- [x] Code factorisé (DRY)
-- [x] Validation sécurisée
-- [x] Protection CSRF
-- [x] Prepared statements
-- [x] Configuration centralisée
-- [x] Modules réutilisables
-- [x] Documentation complète
-- [x] CSS responsive
-- [x] PWA fonctionnelle
+### Pour les développeurs
 
-## 📚 Ressources
+**Ajouter une nouvelle page**
 
-- [PWA Documentation](https://web.dev/progressive-web-apps/)
-- [SOLID Principles](https://en.wikipedia.org/wiki/SOLID)
-- [PHP Security](https://www.php.net/manual/en/security.php)
-- [Leaflet.js](https://leafletjs.com/)
+1. Créer les fichiers de base :
+   ```bash
+   touch views/ma-page.html
+   touch css/ma-page.css
+   touch js/ma-page.js
+   ```
+
+2. Ajouter les traductions :
+   ```bash
+   touch lang/ma-page.fr.json
+   touch lang/ma-page.en.json
+   ```
+
+3. Utiliser les modules existants dans votre JavaScript :
+   ```javascript
+   const translation = new TranslationModule("../lang/ma-page");
+   translation.init();
+   ```
+
+**Sécurité**
+
+Le projet intègre plusieurs mécanismes de sécurité :
+
+- Validation et sanitisation des données avec `Validator.class.php`
+- Protection contre les injections SQL (requêtes préparées)
+- Protection XSS (échappement des données)
+- Hashage sécurisé des mots de passe (bcrypt)
+- Sessions sécurisées avec cookies HTTP-only
+
+**Appels API**
+
+Utiliser le module `ApiService.js` pour les requêtes :
+
+```javascript
+const api = new ApiService();
+const data = await api.get("/endpoint", { useCache: true });
+```
+
+### Pour les utilisateurs finaux
+
+Difficultés rencontrées et solutions apportées
+
+### 1. Intégration des données temps réel
+
+**Problème** : Les APIs Open Data Metz et TfL London retournent des formats
+différents.\
+**Solution** : Création d'une couche d'abstraction (`ParkingService.js`) qui
+normalise les données avant affichage.
+
+### 2. Validation des réservations
+
+**Problème** : Empêcher les utilisateurs de réserver dans le passé ou de créer
+des doublons.\
+**Solution** : Double validation (client + serveur) avec fonction
+`hasOverlappingReservation()` en SQL pour détecter les chevauchements.
+
+### 3. Gestion multilingue
+
+**Problème** : Code dupliqué dans 8 fichiers de traduction différents (800+
+lignes).\
+**Solution** : Création d'un module réutilisable `TranslationModule.js` qui
+centralise la logique.
+
+### 4. Performance de la carte
+
+**Problème** : Affichage ralenti avec plus de 100 marqueurs.\
+**Solution** : Implémentation du clustering avec `MarkerClusterGroup` de
+Leaflet.
+
+### 5. Sécurité PHP 8.4
+
+**Problème** : Avertissements de dépréciation sur les paramètres nullables.\
+**Solution** : Migration vers la syntaxe `?Type` pour tous les paramètres
+optionnels.
+
+### 6. Identification des parkings P+R
+
+**Problème** : Pas de champ dédié dans l'API pour identifier les parkings
+relais.\
+**Solution** : Détection par mots-clés ("P+R", "Rochambeau", etc.) avec
+affichage spécifique (couleur orange, badge).
+
+## Qualité du code et bonnes pratiques
+
+### Principes appliqués
+
+✅ **SOLID** : chaque classe a une responsabilité unique (ex: `Validator`,
+`ParkingService`)\
+✅ **DRY** : code factorisé, modules réutilisables, pas de duplication\
+✅ **Defensive Programming** : validation systématique, gestion des erreurs\
+✅ **Clean Code** : nommage explicite, fonctions courtes, commentaires
+JSDoc/PHPDoc\
+✅ **Sécurité** : protection XSS, CSRF, SQL injection, mots de passe hashés
+
+###Bilan et perspectives
+
+### Points forts du projet
+
+✅ Application complète et fonctionnelle répondant au cahier des charges\
+✅ Interface utilisateur moderne et intuitive\
+✅ Code propre suivant les standards professionnels\
+✅ Sécurité renforcée sur toutes les couches\
+✅ Performance optimisée (cache, clustering)\
+✅ Documentation technique complète
+
+### Améliorations possibles
+
+🔄 **Notifications push** pour rappels de fin de stationnement\
+🔄 **Paiement en ligne** intégré directement dans l'application\
+🔄 **Historique détaillé** avec statistiques de stationnement\
+🔄 **API REST** pour ouverture à des applications tierces\
+🔄 **Tests automatisés** (unitaires, intégration, E2E)\
+🔄 **PWA++ ** avec fonctionnalités avancées (background sync, share API)
+
+### Apprentissages
+
+Ce projet nous a permis de :
+
+- Maîtriser le développement full-stack avec technologies modernes
+- Comprendre l'importance de l'architecture logicielle
+- Appliquer concrètement les principes de sécurité web
+- Gérer l'intégration d'APIs externes
+- Développer une application "production-ready"
+
+## Installation du projet
+
+### Prérequis
+
+- Serveur Apache avec PHP 8.0+
+- MySQL 5.7+
+- HTTPS configuré (obligatoire pour PWA)
+
+### Procédure d'installation
+
+```bash
+# 1. Cloner le projet
+git clone https://gitlab.univ-lorraine.fr/e10974u/sae301
+cd sae301
+
+# 2. Configurer la base de données
+# Créer la base MySQL et importer le schéma fourni
+
+# 3. Configurer les accès BDD
+# Modifier classes/connexion.class.php ou utiliser variables d'environnement
+
+# 4. Vérifier les permissions
+chmod 755 -R sae301/
+
+# 5. Accéder à l'application
+# Ouvrir https://votre-domaine.com dans un navigateur
+```
+
+## Crédits et ressources
+
+**Projet académique**\
+SAE 301 - BUT MMI 2ème année\
+IUT de Metz - Université de Lorraine
+
+**Équipe de développement**\
+[Noms des membres]
+
+**Sources de données**
+
+- Open Data Metz (parkings temps réel)
+- Transport for London (TfL API)
+
+**Technologies et librairies**
+
+- Leaflet.js (cartographie)
+- OpenStreetMap (fonds de carte)
+- MarkerCluster plugin
 
 ---
 
-**Version** : 1.0.0  
-**Date** : Janvier 2026  
-**Projet** : SAE 301 - BUT MMI
+**Date de rendu** : Janvier 2026\
+**Version** : 1.0.0
+
+- Validation manuelle de tous les parcours utilisateur
+- Test sur différents navigateurs (Chrome, Firefox, Safari, Edge)
+- Test responsive sur mobile, tablette, desktop
+- Vérification de la sécurité (tentatives d'injection, XSS)
+- Zéro erreur de compilation après audit completpement
+
+Le code suit les bonnes pratiques de développement web :
+
+- **Principe SOLID** : chaque classe a une responsabilité unique
+- **Code réutilisable** : modules JavaScript et classes PHP génériques
+- **Sécurité first** : validation systématique des données
+- **Performance** : cache API, optimisation des requêtes
+- **Accessibilité** : interface claire et responsive
+
+## Points d'attention
+
+- **HTTPS obligatoire** : certaines fonctionnalités PWA nécessitent une
+  connexion sécurisée
+- **Navigateurs supportés** : Chrome, Firefox, Safari, Edge (versions récentes)
+- **Validation des données** : toujours effectuée côté serveur, même si
+  validation client active
+- **Données temps réel** : dépendent de la disponibilité des APIs externes
+
+## Contribution et développement
+
+Le projet est ouvert aux améliorations. Pour contribuer :
+
+1. Respecter la structure existante
+2. Commenter le code de manière claire
+3. Tester les fonctionnalités avant commit
+4. Suivre les conventions de nommage :
+   - Classes : `PascalCase`
+   - Fonctions : `camelCase`
+   - Constantes : `UPPER_SNAKE_CASE`
+   - CSS : `kebab-case`
+
+## Crédits
+
+**Projet académique** : SAE 301 - BUT MMI **Données** : Open Data Metz,
+Transport for London **Cartographie** : Leaflet.js, OpenStreetMap
+
+---
+
+Pour toute question ou problème, consulter la documentation technique ou
+contacter l'équipe de développement.
