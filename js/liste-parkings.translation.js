@@ -3,6 +3,7 @@ let langueActuelle = localStorage.getItem("lang") || "fr";
 function changerLangue() {
     langueActuelle = langueActuelle === "fr" ? "en" : "fr";
     localStorage.setItem("lang", langueActuelle);
+    sessionStorage.setItem("parkingLang", langueActuelle);
     mettreAJourBoutonLangue();
     appliquerLangue(langueActuelle);
 }
@@ -15,32 +16,20 @@ async function appliquerLangue(lang) {
         document.querySelectorAll("[data-i18n]").forEach((el) => {
             const key = el.getAttribute("data-i18n");
             if (traductions[key]) {
-                // Ne pas traduire le contenu qui sera remplacé dynamiquement
-                if (el.id === "parkingCount" || el.id === "parkingList") {
-                    // Ces éléments seront remplis par JavaScript
-                    return;
-                }
-                if (el.tagName === "OPTION") {
-                    el.textContent = traductions[key];
-                } else {
-                    el.textContent = traductions[key];
-                }
+                if (el.id === "parkingCount" || el.id === "parkingList") return;
+                el.textContent = traductions[key];
             }
         });
 
         document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
             const key = el.getAttribute("data-i18n-placeholder");
-            if (traductions[key]) {
-                el.placeholder = traductions[key];
-            }
+            if (traductions[key]) el.placeholder = traductions[key];
         });
 
         const titleEl = document.querySelector("title[data-i18n]");
         if (titleEl) {
             const key = titleEl.getAttribute("data-i18n");
-            if (traductions[key]) {
-                document.title = traductions[key];
-            }
+            if (traductions[key]) document.title = traductions[key];
         }
 
         document.documentElement.lang = lang;
@@ -52,15 +41,14 @@ async function appliquerLangue(lang) {
 function mettreAJourBoutonLangue() {
     const btn = document.getElementById("btn-langue");
     if (!btn) return;
-
-    if (langueActuelle === "fr") {
-        btn.innerHTML = "EN";
-    } else {
-        btn.innerHTML = "FR";
-    }
+    btn.innerHTML = langueActuelle === "fr" ? "EN" : "FR";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    sessionStorage.setItem("parkingLang", langueActuelle);
     appliquerLangue(langueActuelle);
     mettreAJourBoutonLangue();
 });
+
+
+
