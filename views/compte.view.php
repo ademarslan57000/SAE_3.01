@@ -92,7 +92,7 @@ $mesReservations = $reservationDAO->getByUser($idUser);
   <div class="container">
 
     <section class="account-card">
-      <h3 style="margin-top: 0; color: #006aff;">👤 Informations personnelles</h3>
+      <h3 style="margin-top: 0; color: #006aff;" data-i18n="infopersonelle">👤 Informations personnelles</h3>
       <div class="row">
         <label data-i18n="Nom">Nom</label>
         <div class="value"><?= htmlspecialchars($user['nom']) ?></div>
@@ -116,20 +116,20 @@ $mesReservations = $reservationDAO->getByUser($idUser);
     </section>
 
     <section class="account-card" style="margin-top: 30px;">
-      <h3 style="margin-top: 0; color: #006aff;">🅿️ Mes Réservations</h3>
+      <h3 style="margin-top: 0; color: #006aff;" data-i18n="mesReservations">🅿️ Mes Réservations</h3>
 
       <?php if (empty($mesReservations)): ?>
-        <p style="color: #666; font-style: italic;">Aucune réservation en cours.</p>
+        <p style="color: #666; font-style: italic;" data-i18n="aucuneReservation">Aucune réservation en cours.</p>
       <?php else: ?>
         <div style="overflow-x: auto;">
           <table class="reservations-table">
             <thead>
               <tr>
-                <th>Parking</th>
-                <th>Véhicule</th>
-                <th>Du</th>
-                <th>Au</th>
-                <th>Action</th>
+                <th data-i18n="parking">Parking</th>
+                <th data-i18n="vehicule">Véhicule</th>
+                <th data-i18n="du">Du</th>
+                <th data-i18n="au">Au</th>
+                <th data-i18n="action">Action</th>
               </tr>
             </thead>
             <tbody>
