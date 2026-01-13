@@ -45,6 +45,17 @@ body {
   animation: slideUp 0.5s ease-out;
 }
 
+.center-wrapper .logo {
+  max-width: 300px;
+  margin-bottom: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
 .card-login {
   background: var(--white);
   padding: 40px;

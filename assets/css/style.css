@@ -78,6 +78,19 @@ button:hover {
   display: none;
 }
 
+/* Boutons stop guidage cachés par défaut */
+#btn-stop-guidage,
+#btn-stop-guidage-mobile {
+  display: none;
+}
+
+/* Style pour le lien installBtn */
+#installBtn {
+  color: #27ae60;
+  font-weight: bold;
+  display: block;
+}
+
 #btn-stop-guidage-mobile:hover {
   background: #c62828;
 }

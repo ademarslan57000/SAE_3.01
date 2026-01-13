@@ -8,17 +8,13 @@
     </head>
 
     <body>
-        <header
-            style="display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; padding: 15px 30px"
-        >
-            <div style="width: 160px"></div>
-            <div
-                style="display: flex; align-items: center; gap: 15px; justify-content: center; flex: 1"
-            >
+        <header>
+            <div class="header-spacer"></div>
+            <div class="header-center">
                 <img src="../assets/image/logo.png" alt="Logo" class="header-logo">
                 <h1 data-i18n="listeParkings">Liste des Parkings</h1>
             </div>
-            <div style="display: flex; gap: 15px">
+            <div class="header-right">
                 <button class="btn-langue" onclick="changerLangue()" id="btn-langue">
                     FR
                 </button>

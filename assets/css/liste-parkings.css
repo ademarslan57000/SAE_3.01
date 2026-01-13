@@ -20,6 +20,24 @@ header {
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 15px;
+    padding: 15px 30px;
+}
+
+.header-spacer {
+    width: 160px;
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: center;
+    flex: 1;
+}
+
+.header-right {
+    display: flex;
+    gap: 15px;
 }
 
 .header-logo {
