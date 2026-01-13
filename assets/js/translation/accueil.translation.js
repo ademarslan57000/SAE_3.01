@@ -19,7 +19,7 @@ function changerLangue() {
 
 async function appliquerLangue(lang) {
   try {
-    const response = await fetch(`../assets/lang/accueil.${lang}.json`);
+    const response = await fetch(`assets/lang/accueil.${lang}.json`);
     const traductions = await response.json();
 
     document.querySelectorAll("[data-i18n]").forEach(el => {
