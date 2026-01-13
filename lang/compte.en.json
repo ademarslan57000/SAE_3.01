@@ -1,11 +1,19 @@
 {
-  "monCompte":"My account",
-  "infoPerso": "Personal information",
+  "infoPerso":"My account",
+  "infopersonelle": "👤 Personal information",
   "Nom": "Name",
   "Prenom": "First name",
   "Adresse": "Address",
   "Telephone": "Phone number",
   "Email": "Mail",
-  "Retour": "Back to the map"
+  "Retour": "Back to the map",
+
+  "mesReservations" : "🅿️ My reservations",
+  "aucuneReservation" : "No current reservation.",
+  "parking" : "Parking",
+  "vehcule" : "Vehicle",
+  "du"  : "From",
+  "au" : "To",
+  "action" : "Action"
     
 }

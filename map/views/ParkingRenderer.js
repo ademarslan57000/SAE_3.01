@@ -1,12 +1,19 @@
 
 export class ParkingRenderer {
-  constructor(map, destinationIcon, routingService, traduireFn) {
+  constructor(map, destinationIcon, routingService) {
     this.map = map;
     this.destinationIcon = destinationIcon;
     this.routingService = routingService;
     this.markers = [];
-    this.markerClusterGroup = null;
-    this.traduire = traduireFn || ((key) => key); // fallback
+    
+    // Remplacer l'ancien binding par une fonction sécurisée
+    this.traduire = (key) => {
+      if (typeof window.traduirePopup === "function") {
+        return window.traduirePopup(key);
+      }
+      // Fallback si la traduction n'est pas encore prête
+      return key; 
+    };
   }
 
   renderParkings(data, fitBounds = true) {
@@ -123,8 +130,10 @@ export class ParkingRenderer {
     return `
       <div class="sidebar-parking-item ${gratuit ? "gratuit" : "payant"}"
            data-lat="${p.lat}" data-lon="${p.lon}">
-        <img src="${imageUrl}" alt="${p.name}" class="parking-item-image" 
-             onerror="this.src='${this.getDefaultImage(p)}'">
+        <img src="${imageUrl}" 
+     alt="${p.name}" 
+     class="parking-item-image" 
+     onerror="this.onerror=null; this.src='${this.getDefaultImage()}';" />
         <div class="parking-item-header">
           <div class="parking-item-name">${p.name || this.traduire("parking")}</div>
           <div class="parking-item-price ${gratuit ? "gratuit" : ""}">${prix}</div>
@@ -153,9 +162,7 @@ export class ParkingRenderer {
   }
 
   getDefaultImage(parking) {
-    const nomParking = (parking.name || this.traduire("parking")).substring(0, 15);
-    const encodedName = encodeURIComponent(nomParking);
-    return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='350' height='180'%3E%3Crect fill='%23667eea' width='350' height='180'/%3E%3Ctext fill='white' x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-size='20' font-family='Arial' font-weight='bold'%3E${encodedName}%3C/text%3E%3C/svg%3E`;
+    return "./image/parkings/no-image-park.jpg";
   }
 
   clearMarkers() {

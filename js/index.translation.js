@@ -1,3 +1,8 @@
+window.traduirePopup = function(key) {
+  return (window.traductionsGlobales && window.traductionsGlobales[key]) ? 
+          window.traductionsGlobales[key] : key;
+};
+
 let langueActuelle = localStorage.getItem("lang") || "fr";
 window.traductionsGlobales = {};
 
@@ -57,10 +62,6 @@ function mettreAJourBoutonLangue() {
 
     if (btn) btn.innerHTML = langueActuelle === "fr" ? "EN" : "FR";
     if (menuBtn) menuBtn.innerHTML = langueActuelle === "fr" ? "🇬🇧 English" : "🇲🇫 Français";
-}
-
-window.traduirePopup = function(key) {
-  return window.traductionsGlobales[key] || key;
 }
 
 document.addEventListener("DOMContentLoaded", () => {

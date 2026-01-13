@@ -13,8 +13,8 @@ class ReservationDAO
 
     public function insert(Reservation $r): void
     {
-        $sql = "INSERT INTO Reservation (id_utilisateur, id_vehicule, id_parking, date_debut, date_fin, statut)
-                VALUES (:id_user, :id_vehicule, :id_parking, :date_debut, :date_fin, :statut)";
+        $sql = "INSERT INTO Reservation (id_utilisateur, id_vehicule, id_parking, date_debut, date_fin)
+                VALUES (:id_user, :id_vehicule, :id_parking, :date_debut, :date_fin)";
 
         $this->_bd->execSQL($sql, [
             ":id_user" => $r->getIdUtilisateur(),
@@ -22,7 +22,6 @@ class ReservationDAO
             ":id_parking" => $r->getIdParking(),
             ":date_debut" => $r->getDateDebut(),
             ":date_fin" => $r->getDateFin(),
-            ":statut" => $r->getStatut()
         ]);
         $lastId = $this->_bd->getPDO()->lastInsertId();
         $r->setId((int) $lastId);
@@ -44,7 +43,7 @@ class ReservationDAO
 
     public function getByUser(string $id): array
     {
-        $sql = "SELECT r.id_reservation, r.date_debut, r.date_fin, r.statut, p.nom AS nom_parking, v.immatriculation
+        $sql = "SELECT r.id_reservation, r.date_debut, r.date_fin, p.nom AS nom_parking, v.immatriculation
         FROM Reservation AS r
         JOIN Parking p ON r.id_parking = p.id_parking
         JOIN Vehicule v ON r.id_vehicule = v.id_vehicule
@@ -54,6 +53,33 @@ class ReservationDAO
         return $this->_bd->execSQL($sql, [
             ":id" => $id
         ]);
+    }
+
+    /**
+     * Vérifie si l'utilisateur a déjà une réservation qui chevauche la période demandée
+     * @param int $idUtilisateur
+     * @param string $dateDebut
+     * @param string $dateFin
+     * @return bool true s'il y a un chevauchement, false sinon
+     */
+    public function hasOverlappingReservation(int $idUtilisateur, string $dateDebut, string $dateFin): bool
+    {
+        $sql = "SELECT COUNT(*) as count
+                FROM Reservation
+                WHERE id_utilisateur = :id_user
+                AND (
+                    (date_debut <= :date_debut AND date_fin > :date_debut)
+                    OR (date_debut < :date_fin AND date_fin >= :date_fin)
+                    OR (date_debut >= :date_debut AND date_fin <= :date_fin)
+                )";
+
+        $result = $this->_bd->execSQL($sql, [
+            ":id_user" => $idUtilisateur,
+            ":date_debut" => $dateDebut,
+            ":date_fin" => $dateFin
+        ]);
+
+        return isset($result[0]['count']) && $result[0]['count'] > 0;
     }
 }
 ?>

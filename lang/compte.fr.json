@@ -1,11 +1,18 @@
 {
-  "monCompte":"Mon compte",
-  "infoPerso": "Informations personnelles",
+  "infoPerso":"Mon compte",
+  "infopersonelle": "👤 Informations personnelles",
   "Nom": "Nom",
   "Prenom": "Prénom",
   "Adresse": "Adresse",
   "Telephone": "Téléphone",
   "Email": "Email",
-  "Retour": "Retour sur la carte"
-    
+  "Retour": "Retour sur la carte",
+  "mesReservations" : "🅿️ Mes réservations",
+  "aucuneReservation" : "Aucune réservation en cours.",
+  "parking" : "Parking",
+  "vehcule" : "Véhicule",
+  "du"  : "Du",
+  "au" : "Au",
+  "action" : "Action"
+
 }
