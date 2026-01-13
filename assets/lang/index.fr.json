@@ -32,7 +32,7 @@
     "reset": "↺ Réinitialiser",
     "chargement": "Chargement...",
     "installerApp":"📱 Installer l'application",
-    "user_location": "Vous êtes ici",
+    "youAreHere": "Vous êtes ici",
     "geo_not_supported": "Géolocalisation non supportée",
 
 
