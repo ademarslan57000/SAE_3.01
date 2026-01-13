@@ -2,7 +2,8 @@
 
 ## Contexte du projet
 
-**SAE 301 - BUT Informatique 2ème année**\
+**SAE 301 - BUT MMI 2ème année**\
+
 **Année universitaire** : 2025-2026\
 **Équipe** : ARSLAN - BENMOUFFEK - COLASSE -  MALLINGER - SWIATOKA 
 **Groupe** : 13
@@ -15,7 +16,7 @@ développement web.
 
 ### Fonctionnalités principales
 
-✅ **Carte interactive** avec visualisation en temps réel des parkings pour Metz
+✅ **Carte interactive** avec visualisation en temps réel des parkings
 disponibles\
 ✅ **Système de réservation** complet avec gestion des dates et types de
 véhicules\
@@ -33,7 +34,7 @@ itinéraires multimodaux\
 connexion\
 ✅ **Calcul d'itinéraires** vers les parkings avec guidage GPS\
 ✅ **Données temps réel** synchronisées avec Open Data Metz et TfL London\
-✅ **Système de filtrage** par ville, type de parking, disponibilité, tarifs\
+✅ **Système de filtrage** par type de parking, disponibilité, tarifs\
 ✅ **Parkings Relais (P+R)** identifiés avec tarification spéciale Métis\
 ✅ **Validation intelligente** : empêche réservations passées et doublons\
 ✅ **Adaptation véhicules** : masquage automatique de l'immatriculation pour les
@@ -48,14 +49,14 @@ vélo
 
 - **HTML5** : structure sémantique et accessibilité
 - **CSS3** : design responsive avec Flexbox et Grid, animations
-- **JavaScript** : programmation moderne (modules, async/await, classes)
+- **JavaScript ES6+** : programmation moderne (modules, async/await, classes)
 - **Leaflet.js** : cartographie interactive avec clustering et marqueurs
   personnalisés
 - **Service Workers** : mise en cache intelligente et mode hors ligne
 
 **Backend**
 
-- **PHP** : programmation orientée objet, typage strict
+- **PHP 8+** : programmation orientée objet, typage strict
 - **MySQL** : base de données relationnelle
 - **PDO** : requêtes préparées contre les injections SQL
 - **Architecture DAO** : séparation modèle/accès données

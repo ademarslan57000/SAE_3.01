@@ -102,6 +102,7 @@ function fetchLondonParkings()
                 $key = strtolower(preg_replace('/[^a-z]/', '', $prop["key"] ?? ''));
                 $val = trim($prop["value"] ?? '');
 
+<<<<<<< HEAD
                 if (preg_match('/capacity|spaces|numberofspaces|total/', $key))
                     $capacity = (int) $val;
                 elseif (preg_match('/disabled|accessible|bluebadge/', $key))
@@ -126,6 +127,55 @@ function fetchLondonParkings()
         }
         if ($capacity == 0 && isset($item["capacity"]))
             $capacity = (int) $item["capacity"];
+=======
+                // 1. CAPACITÉ
+                if (preg_match('/capacity|spaces|numberofspaces|total/', $key)) {
+                    $capacity = (int)$val;
+                }
+
+                // 2. PMR
+                elseif (preg_match('/disabled|accessible|bluebadge/', $key)) {
+                    $nb_pmr = (int)$val;
+                }
+
+                // 3. VELOS
+                elseif (preg_match('/cycle|bike/', $key)) {
+                    $nb_velo = (int)$val;
+                }
+
+                // 4. ELECTRIQUE
+                elseif (preg_match('/electric|ev|charging/', $key)) {
+                    $nb_elec = (int)$val;
+                }
+
+                // 5. TARIFS / INFOS
+                elseif (preg_match('/payment|tariff|price|peak|cost/', $key)) {
+                    if ($val !== '' && strtolower($val) !== 'no') {
+                        // Si la valeur contient uniquement des chiffres et des barres, on ne l'ajoute pas à info_sup
+                        if (!preg_match('/^[\d\s\.\/|]+$/', $val)) {
+                            $info_sup .= " | " . $val;
+                        }
+
+                        // On continue d'extraire le prix pour le champ tarif_24h
+                        if (preg_match('/(\d+(?:\.\d{1,2})?)/', $val, $m)) {
+                            $prixFound = floatval($m[1]);
+                            if ($prixFound > 0 && $prixFound < 50 && $tarif_24h === null) {
+                                $tarif_24h = $m[1];
+                            }
+                        }
+                    }
+                }
+
+                // 6. URL
+                elseif (preg_match('/url|website/', $key)) {
+                    $url_parking = $val;
+                }
+            }
+        }
+
+        // Sécurité pour la capacité par défaut
+        if ($capacity == 0 && isset($item["capacity"])) $capacity = (int)$item["capacity"];
+>>>>>>> d47186dd654f6596703e4fae6fd2ef7e0b66808a
 
         $list[] = [
             "id" => "LONDON_" . ($item["id"] ?? uniqid()),
@@ -147,17 +197,103 @@ function fetchLondonParkings()
             "tarif_24h" => $tarif_24h,
             "url" => $url_parking,
             "info" => $info_sup,
+<<<<<<< HEAD
             "type_place" => "Parking",
+=======
+>>>>>>> d47186dd654f6596703e4fae6fd2ef7e0b66808a
             "pays" => "GB"
         ];
     }
     return $list;
 }
 
+<<<<<<< HEAD
 function fetchOverpassLondonParkings()
 {
     $bbox = "51.40,-0.30,51.60,0.10";
     $query = '[out:json][timeout:30];(nwr["amenity"="parking"]["name"](' . $bbox . '););out center 25;';
+=======
+function fetchOverpassLondonParkings() {
+    $bbox = "51.40,-0.30,51.60,0.10"; 
+    $query = '[out:json][timeout:30];(nwr["amenity"="parking"]["name"]('.$bbox.'););out center 25;';
+
+    $url = "https://overpass-api.de/api/interpreter";
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL => $url,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => "data=" . urlencode($query),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_USERAGENT => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ParkingFinder/1.0",
+        CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded']
+    ]);
+
+    $data = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode !== 200) return [];
+    $json = json_decode($data, true);
+    $list = [];
+
+    if (isset($json['elements'])) {
+        foreach ($json['elements'] as $element) {
+            $lat = $element['lat'] ?? $element['center']['lat'] ?? null;
+            $lon = $element['lon'] ?? $element['center']['lon'] ?? null;
+            $tags = $element['tags'] ?? [];
+            if (!$lat || !$lon) continue;
+
+            // --- RECONSTRUCTION DE L'ADRESSE ---
+            $addrParts = [];
+            if (isset($tags['addr:housenumber'])) $addrParts[] = $tags['addr:housenumber'];
+            if (isset($tags['addr:street'])) $addrParts[] = $tags['addr:street'];
+            if (isset($tags['addr:city'])) $addrParts[] = $tags['addr:city'];
+            if (isset($tags['addr:postcode'])) $addrParts[] = $tags['addr:postcode'];
+            $full_address = !empty($addrParts) ? implode(", ", $addrParts) : "London, UK";
+
+            // --- INFO COMPLÉMENTAIRE ---
+            $type = $tags['parking'] ?? 'surface';
+            $access = isset($tags['access']) ? " | Accès: " . $tags['access'] : "";
+            $info_sup = "Parking OSM (" . $type . ")" . $access;
+
+            $list[] = [
+                "id" => "LONDON_OSM_" . $element['id'],
+                "name" => strtoupper($tags['name'] ?? "PARKING LONDRES"),
+                "lat" => (float)$lat,
+                "lon" => (float)$lon,
+                "adresse" => $full_address,
+                "gratuit" => (isset($tags['fee']) && $tags['fee'] === 'no') ? 1 : 0,
+                "nb_places" => isset($tags['capacity']) ? (int)$tags['capacity'] : 50, // Valeur par défaut si inconnue
+                "nb_pmr" => isset($tags['capacity:disabled']) ? (int)$tags['capacity:disabled'] : null,
+                "nb_velo" => null,
+                "nb_voitures_electriques" => isset($tags['capacity:charging']) ? (int)$tags['capacity:charging'] : null,
+                "place_libre" => null,
+                "place_total_rt" => isset($tags['capacity']) ? (int)$tags['capacity'] : null,
+                "place_update" => date("Y-m-d H:i:s"),
+                "place_variation" => null,
+                "tarif_1h" => null,
+                "tarif_2h" => null,
+                "tarif_24h" => null,
+                "url" => $tags['website'] ?? "",
+                "info" => $info_sup,
+                "pays" => "GB"
+            ];
+        }
+    }
+    return $list;
+}
+
+//--------------------------------------
+// MAIN
+//--------------------------------------
+try {
+    // 1) Metz (BDD)
+    $parkings = $conn->execSQL("SELECT id, nom AS name, adresse, gratuit, nb_places, nb_pmr, nb_velo,
+               nb_voitures_electriques, Ylat AS lat, Xlong AS lon,
+               tarif_1h, tarif_2h, tarif_24h, url, info
+        FROM parkings");
+>>>>>>> d47186dd654f6596703e4fae6fd2ef7e0b66808a
 
     $ch = curl_init("https://overpass-api.de/api/interpreter");
     curl_setopt_array($ch, [
@@ -255,15 +391,27 @@ try {
     $byId = [];
     $byName = [];
     foreach ($features as $f) {
+<<<<<<< HEAD
         $pr = $f["properties"];
         if (!empty($pr["id"]))
             $byId[$pr["id"]] = $pr;
         if (!empty($pr["lib"]))
             $byName[normalize_name($pr["lib"])] = $pr;
+=======
+        $p = $f["properties"];
+        if (!empty($p["id"])) $byId[$p["id"]] = $p;
+        if (!empty($p["lib"])) $byName[normalize_name($p["lib"])] = $p;
+>>>>>>> d47186dd654f6596703e4fae6fd2ef7e0b66808a
     }
 
     // 3. FUSION DONNÉES METZ
     $out = [];
+<<<<<<< HEAD
+=======
+    foreach ($parkings as $p) {
+        foreach (["lat", "lon", "tarif_1h", "tarif_2h", "tarif_24h"] as $k) $p[$k] = (float)$p[$k];
+        foreach (["nb_places", "nb_pmr", "nb_velo", "nb_voitures_electriques"] as $k) $p[$k] = (int)$p[$k];
+>>>>>>> d47186dd654f6596703e4fae6fd2ef7e0b66808a
 
     // Si la requête SQL n'a rien retourné (tableau vide), on ne rentre pas dans la boucle
     if (is_array($parkings)) {
@@ -275,6 +423,7 @@ try {
             $p["tarif_2h"] = (float) $p["tarif_2h"];
             $p["tarif_24h"] = (float) $p["tarif_24h"];
 
+<<<<<<< HEAD
             // Si la jointure type_place est NULL (pas de ligne correspondante), on met 0
             $p["nb_places"] = (int) $p["nb_places"];
             $p["nb_pmr"] = (int) $p["nb_pmr"];
@@ -321,6 +470,38 @@ try {
 } catch (Exception $e) {
     // En cas d'erreur grave, on renvoie un JSON d'erreur
     ob_clean();
+=======
+        $p["place_libre"]     = $api["place_libre"] ?? null;
+        $p["place_total_rt"]  = $api["place_total"] ?? null;
+        $p["place_update"]    = $api["place_update"] ?? null;
+        $p["place_variation"] = $api["place_variation"] ?? null;
+        $p["pays"] = "FR";
+        $out[] = $p;
+    }
+
+    // --- LONDRES ---
+    $london_tfl = fetchLondonParkings();
+    $london_osm = fetchOverpassLondonParkings();
+    
+    // On fusionne les deux sources de Londres
+    $london_all = array_merge($london_tfl, $london_osm);
+    
+    $seen_coords = [];
+    foreach ($london_all as $p) {
+        // Clé unique par position pour éviter les doublons TfL/OSM
+        $key = round($p['lat'], 4) . "_" . round($p['lon'], 4);
+        if (!isset($seen_coords[$key])) {
+            $seen_coords[$key] = true;
+            $out[] = $p; // On ajoute au tableau final qui contient déjà Metz
+        }
+    }
+
+    // --- SORTIE FINALE ---
+    // On vide le tampon de sortie pour éviter tout caractère parasite
+    ob_clean(); 
+    echo json_encode($out, JSON_UNESCAPED_UNICODE);
+
+} catch (Exception $e) {
+>>>>>>> d47186dd654f6596703e4fae6fd2ef7e0b66808a
     echo json_encode(["error" => $e->getMessage()]);
 }
-?>
