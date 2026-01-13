@@ -32,7 +32,7 @@
     "reset": "↺ Reset",
     "chargement": "Loading...",
     "installerApp":"📱 Download the mobile app",
-    "user_location": "You are here",
+    "youAreHere": "You are here",
     "geo_not_supported": "Location not supported",
 
     "free": "FREE",
