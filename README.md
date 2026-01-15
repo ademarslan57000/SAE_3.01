@@ -142,20 +142,26 @@ vélo
 
 ## Structure du projet
 
-```
-sae301/
-├── auth/              # Scripts d'authentification
-├── classes/           # Classes PHP (DAO, modèles)
-├── config/            # Configuration
-├── css/               # Feuilles de style
-├── js/                # Scripts JavaScript
-├── lang/              # Fichiers de traduction
-├── map/               # Module carte interactive
-├── views/             # Pages HTML
-├── index.html         # Page d'accueil
-├── manifest.json      # Configuration PWA
-└── service-worker.js  # Gestion cache et mode hors ligne
-```
+```text
+.
+├── api/                   # Endpoints PHP (connexion, réservations, parkings)
+├── assets/                # Ressources statiques de l'application
+│   ├── css/               # Feuilles de style organisées par module
+│   ├── image/             # Logos et galerie de photos des parkings
+│   ├── js/                # Logique applicative (Frontend)
+│   │   ├── controller/    # Contrôleurs (ex: MapController)
+│   │   ├── service/       # Services métier (API, GPS, Itinéraires)
+│   │   ├── translation/   # Logique de gestion multilingue
+│   │   ├── utils/         # Helpers (Réseau, Notifications, Utils)
+│   │   └── views/         # Rendu dynamique des composants
+│   └── lang/              # Dictionnaires JSON (FR/EN)
+├── classes/               # Modèles PHP, DAO et validateurs
+├── __tests__/             # Tests unitaires JavaScript (Jest)
+├── tests/                 # Tests unitaires PHP (PHPUnit)
+├── views/                 # Fichiers HTML et vues PHP (Back-office)
+├── accueil.html           # Point d'entrée principal
+├── manifest.json          # Configuration PWA (Progressive Web App)
+└── service-worker.js      # Gestion du cache et mode hors-ligne
 
 ## Utilisation
 
