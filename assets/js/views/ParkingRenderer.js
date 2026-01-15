@@ -264,7 +264,7 @@ export class ParkingRenderer {
         ${dispoPopup}
         <hr style="margin:5px 0;">
         <div class="popup-buttons">
-          <button onclick="window.mapController.routingService.demarrerGuidage(${p.lat}, ${p.lon}, '${nomSafe}', ()=>window.mapController.userLocationService.getLocation())">
+          <button onclick="window.mapController.lancerItineraireVers(${p.lat}, ${p.lon}, '${nomSafe}')">
             ${this.traduire("directions")}
           </button>
           ${

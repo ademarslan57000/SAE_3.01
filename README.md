@@ -2,7 +2,7 @@
 
 ## Contexte du projet
 
-**SAE 301 - BUT MMI 2ème année**\
+**SAE 301 - BUT Informatique 2ème année**\
 
 **Année universitaire** : 2025-2026\
 **Équipe** : ARSLAN - BENMOUFFEK - COLASSE -  MALLINGER - SWIATOKA 
@@ -10,8 +10,7 @@
 
 Ce projet a été réalisé dans le cadre de la SAE 301 du BUT Informatique. L'objectif était de concevoir et développer une application
 web complète permettant de faciliter le stationnement urbain à Metz et Londres,
-en exploitant les données ouvertes et en appliquant les bonnes pratiques de
-développement web.
+en exploitant les données ouvertes et en appliquant les bonnes pratiques de développement web.
 
 
 ### Fonctionnalités principales
@@ -41,7 +40,6 @@ connexion\
 vélo
 
 - Gestion de compte utilisateur sécurisée
-- Compatible Andet compétences mises en œuvre
 
 ### Stack technique
 
@@ -301,7 +299,7 @@ Ce projet nous a permis de :
 
 ```bash
 # 1. Cloner le projet
-git clone https://gitlab.univ-lorraine.fr/e10974u/sae301
+git clone https://gitlab.univ-lorraine.fr/e10974u/sae301.git
 cd sae301
 
 # 2. Configurer la base de données
@@ -320,16 +318,17 @@ chmod 755 -R sae301/
 ## Crédits et ressources
 
 **Projet académique**\
-SAE 301 - BUT MMI 2ème année\
+SAE 301 - BUT Informatique 2ème année\
 IUT de Metz - Université de Lorraine
 
 **Équipe de développement**\
-[Noms des membres]
+ARSLAN - BENMOUFFEK - COLASSE - MALLINGER - SWIATOKA
 
 **Sources de données**
 
 - Open Data Metz (parkings temps réel)
 - Transport for London (TfL API)
+- Overpass API
 
 **Technologies et librairies**
 
@@ -346,7 +345,7 @@ IUT de Metz - Université de Lorraine
 - Test sur différents navigateurs (Chrome, Firefox, Safari, Edge)
 - Test responsive sur mobile, tablette, desktop
 - Vérification de la sécurité (tentatives d'injection, XSS)
-- Zéro erreur de compilation après audit completpement
+- Zéro erreur de compilation après audit complètement
 
 Le code suit les bonnes pratiques de développement web :
 
@@ -365,25 +364,6 @@ Le code suit les bonnes pratiques de développement web :
   validation client active
 - **Données temps réel** : dépendent de la disponibilité des APIs externes
 
-## Contribution et développement
 
-Le projet est ouvert aux améliorations. Pour contribuer :
-
-1. Respecter la structure existante
-2. Commenter le code de manière claire
-3. Tester les fonctionnalités avant commit
-4. Suivre les conventions de nommage :
-   - Classes : `PascalCase`
-   - Fonctions : `camelCase`
-   - Constantes : `UPPER_SNAKE_CASE`
-   - CSS : `kebab-case`
-
-## Crédits
-
-**Projet académique** : SAE 301 - BUT MMI **Données** : Open Data Metz,
-Transport for London **Cartographie** : Leaflet.js, OpenStreetMap
-
----
-
-Pour toute question ou problème, consulter la documentation technique ou
+Pour toute question ou problème, consulter le guide d'utilisation technique ou
 contacter l'équipe de développement.

@@ -2,27 +2,50 @@
 let allParkings = [];
 let selectedParking = null;
 
-// Import des utilitaires
+// --- Traductions internes ---
+const i18n = {
+    choose_parking: { fr: "Choisir un parking...", en: "Choose a parking..." },
+    free: { fr: "GRATUIT", en: "FREE" },
+    paid: { fr: "Payant", en: "Paid" },
+    rate_unavailable: { fr: "Tarif non disponible", en: "Rate not available" },
+
+    bike_available: { fr: "places vélo disponibles", en: "bike spots available" },
+    bike_none: { fr: "Ce parking n'a pas d'emplacements vélo", en: "This parking has no bike spots" },
+
+    pmr_available: { fr: "places PMR disponibles", en: "accessible spots available" },
+    pmr_none: { fr: "Ce parking n'a pas de places PMR", en: "This parking has no accessible spots" },
+
+    charging_available: { fr: "bornes disponibles", en: "charging stations available" },
+    charging_none: { fr: "Aucune borne électrique disponible", en: "No charging station available" },
+
+    parking_full: { fr: "Parking complet actuellement", en: "Parking currently full" },
+    parking_available: { fr: "places disponibles", en: "available spaces" },
+
+    reservation_ok: { fr: "Réservation confirmée !", en: "Reservation confirmed !" },
+    loading_error: { fr: "Erreur de chargement", en: "Loading error" },
+
+    hour: { fr: "h", en: "h" },
+    minute: { fr: "m", en: "m" }
+};
+
+function t(key) {
+    return i18n[key]?.[langueActuelle] || key;
+}
+
+// --- Imports ---
 import { ApiHelper } from "./utils/ApiHelper.js";
 import { notificationManager } from "./utils/NotificationManager.js";
 import { networkManager } from "./utils/NetworkManager.js";
 
 // --- Constantes ---
-const PARKING_TYPES = {
-    PR: "park-and-ride",
-    FREE: "free",
-    PAID: "paid",
-};
-
 const PR_KEYWORDS = ["p+r", "p&r", "rochambeau", "foire expo", "woippy"];
 
-// --- Fonction pour détecter les parkings P+R ---
 function isParkAndRide(parking) {
     const name = (parking.name || parking.nom || "").toLowerCase();
-    return PR_KEYWORDS.some((keyword) => name.includes(keyword));
+    return PR_KEYWORDS.some(k => name.includes(k));
 }
 
-// --- Éléments du DOM ---
+// --- DOM ---
 const parkingSearch = document.getElementById("parkingSearch");
 const parkingSelect = document.getElementById("parkingSelect");
 const vehicleType = document.getElementById("vehicleType");
@@ -42,290 +65,199 @@ const dateError = document.getElementById("dateError");
 const notifEnabled = document.getElementById("notifEnabled");
 const notifOptions = document.getElementById("notifOptions");
 
-// --- 1. CHARGEMENT DES PARKINGS ---
-/**
- * Charge la liste des parkings depuis l'API
- * @returns {Promise<void>}
- */
+// --- 1. Chargement des parkings ---
 async function loadParkings() {
-    // Vérifier la connexion
     if (!networkManager.isOnline) {
-        notificationManager.error(
-            "Impossible de charger les parkings sans connexion Internet",
-        );
-        parkingSelect.innerHTML = '<option value="">Pas de connexion</option>';
+        notificationManager.error(t("loading_error"));
         return;
     }
 
-    try {
-        // Afficher un loader
-        parkingSelect.innerHTML =
-            '<option value="" disabled selected>⏳ Chargement...</option>';
+    parkingSelect.innerHTML = `<option disabled selected>⏳</option>`;
 
+    try {
         const response = await ApiHelper.fetchWithTimeout(
             "../api/GetParkingWithRealTime.php",
             {},
-            10000,
+            10000
         );
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         allParkings = await response.json();
-
-        console.log(`✅ ${allParkings.length} parkings chargés`);
-
         allParkings.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
         parkingSelect.innerHTML =
-            '<option value="" disabled selected>Choisir un parking...</option>';
+            `<option value="" disabled selected>${t("choose_parking")}</option>`;
 
-        allParkings.forEach((parking, index) => {
-            const parkingName = parking.name || parking.nom;
+        allParkings.forEach((p, i) => {
+            const flag = String(p.id || "").startsWith("LONDON_") ? "🇬🇧" : "🇫🇷";
+            let priceLabel = t("paid");
 
-            // Debug : afficher les parkings sans nom
-            if (!parkingName) {
-                console.warn("⚠️ Parking sans nom:", parking);
-            }
+            if (isParkAndRide(p)) priceLabel = "P+R";
+            else if (p.gratuit == 1) priceLabel = t("free");
+            else if (p.tarif_1h) priceLabel = `${p.tarif_1h}€/h`;
 
-            const parkingId = parking.id || parking.id_parking;
-            const flag = String(parkingId).startsWith("LONDON_") ? "🇬🇧" : "🇫🇷";
-
-            let prix;
-            if (isParkAndRide(parking)) {
-                prix = "P+R - Gratuit avec Métis";
-            } else if (parking.gratuit == 1) {
-                prix = "GRATUIT";
-            } else if (parking.tarif_1h) {
-                prix = `${parking.tarif_1h}€/h`;
-            } else {
-                prix = "Payant";
-            }
-
-            const option = document.createElement("option");
-            option.value = index;
-            option.textContent = `${flag} ${
-                parkingName || "Parking sans nom"
-            } - ${prix}`;
-            parkingSelect.appendChild(option);
+            const opt = document.createElement("option");
+            opt.value = i;
+            opt.textContent = `${flag} ${p.name || p.nom} - ${priceLabel}`;
+            parkingSelect.appendChild(opt);
         });
     } catch (e) {
-        console.error("Erreur chargement parkings:", e);
-        ApiHelper.handleApiError(e, "Chargement des parkings");
-        parkingSelect.innerHTML =
-            '<option value="">❌ Erreur de chargement - Réessayer</option>';
+        console.error(e);
+        notificationManager.error(t("loading_error"));
     }
 }
 
-// --- 2. MISE À JOUR INFOS PARKING ---
-/**
- * Met à jour l'affichage des informations du parking sélectionné
- * Principe: Single Responsibility - gère uniquement l'affichage des infos
- */
+// --- 2. Infos parking ---
 function updateParkingInfo() {
-    const selectedIndex = parkingSelect.value;
-    if (!selectedIndex || selectedIndex === "") return;
+    if (!parkingSelect.value) return;
 
-    selectedParking = allParkings[selectedIndex];
+    selectedParking = allParkings[parkingSelect.value];
     cityBadge.textContent = selectedParking.name || selectedParking.nom;
 
-    // Affichage du tarif horaire avec info spéciale P+R
     if (isParkAndRide(selectedParking)) {
-        rateDisplay.innerHTML =
-            '<span style="color: #e67e22; font-weight: 600;">P+R - Gratuit avec ticket Métis</span><br><small style="color: #666;">Sans ticket : tarif standard applicable</small>';
+        rateDisplay.textContent = "P+R - Gratuit avec ticket transport";
     } else if (selectedParking.gratuit == 1) {
-        rateDisplay.textContent = "Gratuit";
-        rateDisplay.style.color = "#28a745";
+        rateDisplay.textContent = t("free");
     } else if (selectedParking.tarif_1h) {
         rateDisplay.textContent = `${selectedParking.tarif_1h} €/h`;
-        rateDisplay.style.color = "";
     } else {
-        rateDisplay.textContent = "Non renseigné";
-        rateDisplay.style.color = "#666";
+        rateDisplay.textContent = t("rate_unavailable");
     }
 
     checkAvailability();
     calculatePrice();
 }
 
-// --- 3. VÉRIFICATION DISPONIBILITÉ ---
-/**
- * Vérifie la disponibilité des places selon le type de véhicule
- * Principe: Single Responsibility - gère uniquement la vérification de disponibilité
- */
+// --- 3. Disponibilité (CORRIGÉ) ---
 function checkAvailability() {
     if (!selectedParking) return;
 
-    // Nettoyage ancien message
-    const oldMessage = document.getElementById("availabilityMessage");
-    if (oldMessage) oldMessage.remove();
+    document.getElementById("availabilityMessage")?.remove();
 
     const type = vehicleType.value;
-    let message = "";
-    let available = true;
+    let messages = [];
+    let ok = true;
 
-    // Masquer l'immatriculation pour les vélos
+    // Vélo
     if (type === "velo") {
         immatGroup.style.display = "none";
         vehicleImmat.value = "VELO";
+
+        if (!selectedParking.nb_velo || selectedParking.nb_velo == 0) {
+            messages.push("⚠️ " + t("bike_none"));
+            ok = false;
+        } else {
+            messages.push(`✅ ${selectedParking.nb_velo} ${t("bike_available")}`);
+        }
     } else {
         immatGroup.style.display = "block";
-        if (vehicleImmat.value === "VELO") {
-            vehicleImmat.value = "";
-        }
+        if (vehicleImmat.value === "VELO") vehicleImmat.value = "";
     }
 
-    if (type === "electrique" || type === "hybride") {
+    // Électrique
+    if (type === "electrique") {
         borneElectriqueGroup.style.display = "block";
-        if (
-            !selectedParking.nb_voitures_electriques ||
-            selectedParking.nb_voitures_electriques == 0
-        ) {
-            borneInfo.textContent = "⚠️ Aucune borne disponible";
+
+        if (!selectedParking.nb_voitures_electriques || selectedParking.nb_voitures_electriques == 0) {
+            messages.push("⚠️ " + t("charging_none"));
+            borneInfo.textContent = t("charging_none");
             borneElectrique.disabled = true;
-            borneElectrique.checked = false;
+            ok = false;
         } else {
-            borneInfo.textContent = `✅ Bornes disponibles`;
+            messages.push(`✅ ${selectedParking.nb_voitures_electriques} ${t("charging_available")}`);
+            borneInfo.textContent = `${selectedParking.nb_voitures_electriques} ${t("charging_available")}`;
             borneElectrique.disabled = false;
         }
     } else {
         borneElectriqueGroup.style.display = "none";
     }
 
-    // Messages de places libres
-    if (
-        type === "velo" &&
-        (!selectedParking.nb_velo || selectedParking.nb_velo == 0)
-    ) {
-        message = "⚠️ Pas d'emplacements vélo";
-        available = false;
-    } else if (
-        selectedParking.place_libre !== undefined &&
-        selectedParking.place_libre == 0
-    ) {
-        message = "⚠️ Parking complet";
-        available = false;
-    } else {
-        message = "✅ Places disponibles";
+    // PMR
+    if (type === "pmr") {
+        if (!selectedParking.nb_pmr || selectedParking.nb_pmr == 0) {
+            messages.push("⚠️ " + t("pmr_none"));
+            ok = false;
+        } else {
+            messages.push(`✅ ${selectedParking.nb_pmr} ${t("pmr_available")}`);
+        }
     }
 
-    const msg = document.createElement("div");
-    msg.id = "availabilityMessage";
-    msg.style.cssText =
-        `padding:12px; margin:10px 0; border-radius:8px; text-align:center; font-weight:600; background:${
-            available ? "#e8f5e9" : "#ffebee"
-        }; color:${available ? "#2e7d32" : "#c62828"};`;
-    msg.textContent = message;
-    vehicleType.parentElement.after(msg);
+    // Places globales
+    if (selectedParking.place_libre === 0) {
+        messages.push("⚠️ " + t("parking_full"));
+        ok = false;
+    } else if (selectedParking.place_libre >0) {
+        messages.push(`✅ ${selectedParking.place_libre} ${t("parking_available")}`);
+    }
+
+    if (messages.length > 0) {
+        const div = document.createElement("div");
+        div.id = "availabilityMessage";
+        div.innerHTML = messages.join("<br>");
+        div.style.cssText = `
+            margin:10px 0;
+            padding:12px;
+            border-radius:8px;
+            background:${ok ? "#e8f5e9" : "#ffebee"};
+            color:${ok ? "#2e7d32" : "#c62828"};
+            font-weight:600;
+            text-align:center;
+        `;
+        vehicleType.parentElement.after(div);
+    }
 }
 
-// --- 4. CALCUL DU PRIX ---
-/**
- * Calcule le prix estimé de la réservation
- * Principe: Single Responsibility - gère uniquement le calcul du prix
- */
+// --- 4. Calcul prix ---
 function calculatePrice() {
     if (!selectedParking) return;
-    const startVal = startInput.value;
-    const endVal = endInput.value;
-    const immat = vehicleImmat.value.trim();
 
-    if (!startVal || !endVal) {
+    if (!startInput.value || !endInput.value) {
         submitBtn.disabled = true;
         return;
     }
 
-    const start = new Date(startVal);
-    const end = new Date(endVal);
-    const now = new Date();
-
-    // Vérifier que la date de début n'est pas dans le passé
-    if (start < now) {
-        dateError.textContent =
-            "⚠️ La date d'arrivée ne peut pas être dans le passé.";
-        dateError.style.display = "block";
-        submitBtn.disabled = true;
-        totalDisplay.innerText = "---";
-        durationDisplay.innerText = "0h 00m";
-        return;
-    }
+    const start = new Date(startInput.value);
+    const end = new Date(endInput.value);
 
     if (end <= start) {
-        dateError.textContent =
-            "⚠️ La date de fin doit être après la date de début.";
         dateError.style.display = "block";
         submitBtn.disabled = true;
-        totalDisplay.innerText = "---";
-        durationDisplay.innerText = "0h 00m";
         return;
     }
 
     dateError.style.display = "none";
 
-    // Durée
-    const diffHrs = (end - start) / (1000 * 60 * 60);
-    const hours = Math.floor(diffHrs);
-    const minutes = Math.round((diffHrs - hours) * 60);
-    durationDisplay.innerText = `${hours}h ${minutes}m`;
+    const diff = (end - start) / 36e5;
+    const h = Math.floor(diff);
+    const m = Math.round((diff - h) * 60);
 
-    // Prix (Approximation pour affichage)
-    let total = 0;
-    let displayText;
+    durationDisplay.textContent =
+        `${h}${t("hour")} ${String(m).padStart(2, "0")}${t("minute")}`;
 
-    if (isParkAndRide(selectedParking)) {
-        displayText = "Gratuit avec ticket Métis";
-        totalDisplay.style.color = "#e67e22";
-    } else if (selectedParking.gratuit == 1) {
-        displayText = "GRATUIT";
-        totalDisplay.style.color = "#28a745";
+    if (isParkAndRide(selectedParking) || selectedParking.gratuit == 1) {
+        totalDisplay.textContent = t("free");
     } else if (selectedParking.tarif_1h) {
-        total = diffHrs * parseFloat(selectedParking.tarif_1h);
-        displayText = `${total.toFixed(2)} €`;
-        totalDisplay.style.color = "";
+        totalDisplay.textContent = `${(diff * selectedParking.tarif_1h).toFixed(2)} €`;
     } else {
-        displayText = "Voir sur place";
-        totalDisplay.style.color = "";
+        totalDisplay.textContent = "---";
     }
 
-    totalDisplay.innerText = displayText;
-    // Ne pas bloquer pour les vélos (pas d'immatriculation requise)
-    const isVelo = vehicleType.value === "velo";
-    submitBtn.disabled = !isVelo && (immat === "");
+    submitBtn.disabled =
+        vehicleType.value !== "velo" && vehicleImmat.value.trim() === "";
 }
 
-// --- 5. GESTION DES NOTIFICATIONS (ACTIVER / DESACTIVER LA ZONE) ---
-
+// --- 5. Notifications ---
 function toggleNotifZone() {
-    const isEnabled = notifEnabled.checked;
-
-    if (isEnabled) {
-        // Affiche la zone
-        notifOptions.style.display = "block";
-    } else {
-        // Cache complètement la zone
-        notifOptions.style.display = "none";
-
-        // Optionnel : décocher les sous-options quand on ferme
-        const inputs = notifOptions.querySelectorAll("input");
-        inputs.forEach((input) => input.checked = false);
-    }
+    notifOptions.style.display = notifEnabled.checked ? "block" : "none";
 }
-
-// Écouteur de changement
 notifEnabled.addEventListener("change", toggleNotifZone);
-
-// Initialisation au chargement
 toggleNotifZone();
 
-// --- 6. ÉVÉNEMENTS ---
+// --- 6. Events ---
 parkingSearch.addEventListener("input", () => {
     const term = parkingSearch.value.toLowerCase();
-    Array.from(parkingSelect.options).forEach((opt) => {
-        if (opt.value === "") return;
-        opt.style.display = opt.textContent.toLowerCase().includes(term)
-            ? ""
-            : "none";
+    Array.from(parkingSelect.options).forEach(opt => {
+        if (!opt.value) return;
+        opt.style.display = opt.textContent.toLowerCase().includes(term) ? "" : "none";
     });
 });
 
@@ -334,96 +266,56 @@ vehicleType.addEventListener("change", () => {
     checkAvailability();
     calculatePrice();
 });
-vehicleImmat.addEventListener("input", calculatePrice); // Recalcule l'état du bouton
+vehicleImmat.addEventListener("input", calculatePrice);
 startInput.addEventListener("change", calculatePrice);
 endInput.addEventListener("change", calculatePrice);
 
-// --- 6. ENVOI DE LA RÉSERVATION (CONNEXION PHP) ---
+// --- 7. Envoi réservation ---
 submitBtn.addEventListener("click", async () => {
     if (!selectedParking) return;
-
-    // Vérifier la connexion avant l'envoi
-    if (
-        !networkManager.checkBeforeAction(
-            "submit",
-            "Impossible de réserver sans connexion Internet",
-        )
-    ) {
-        return;
-    }
+    if (!networkManager.checkBeforeAction("submit")) return;
 
     const data = {
         parkingId: selectedParking.id || selectedParking.id_parking,
         vehicleTypeRaw: vehicleType.value,
-        immatriculation: vehicleImmat.value.toUpperCase().trim(),
+        immatriculation: vehicleImmat.value.trim().toUpperCase(),
         dateDebut: startInput.value,
-        dateFin: endInput.value,
+        dateFin: endInput.value
     };
 
-    // UI Chargement
-    const originalText = submitBtn.textContent;
+    const loading = notificationManager.loading("⏳");
     submitBtn.disabled = true;
-    submitBtn.textContent = "⏳ Traitement en cours...";
-
-    // Notification de chargement
-    const loadingToast = notificationManager.loading(
-        "Envoi de votre réservation...",
-    );
 
     try {
-        // APPEL AU FICHIER PHP AVEC TIMEOUT
-        const response = await ApiHelper.fetchWithTimeout(
+        const res = await ApiHelper.fetchWithTimeout(
             "../api/reservation.php",
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify(data)
             },
-            15000, // Timeout de 15s pour une réservation
+            15000
         );
 
-        const result = await response.json();
+        const json = await res.json();
+        loading.remove();
 
-        // Fermer le toast de chargement
-        loadingToast.remove();
-
-        if (result.success) {
-            notificationManager.success("✅ " + result.message);
-            setTimeout(() => {
-                window.location.href = "index.html"; // Redirection accueil
-            }, 1500);
+        if (json.success) {
+            notificationManager.success(t("reservation_ok"));
+            setTimeout(() => window.location.href = "index.html", 1200);
         } else {
-            notificationManager.error("❌ " + result.message);
+            notificationManager.error(json.message);
             submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
         }
-    } catch (error) {
-        console.error("Erreur réservation:", error);
-        loadingToast.remove();
-        ApiHelper.handleApiError(error, "Envoi de la réservation");
+    } catch (e) {
+        loading.remove();
+        notificationManager.error("Erreur serveur");
         submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
     }
 });
 
-// Initialisation
+// --- Init ---
 loadParkings();
 
-// Définir la date/heure minimale pour empêcher les réservations dans le passé
-function setMinDateTime() {
-    const now = new Date();
-    // Formater la date au format YYYY-MM-DDThh:mm requis par datetime-local
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
 
-    startInput.setAttribute("min", minDateTime);
-    endInput.setAttribute("min", minDateTime);
-}
 
-setMinDateTime();
-// Actualiser toutes les minutes pour garder la date minimale à jour
-setInterval(setMinDateTime, 60000);

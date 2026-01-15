@@ -3,16 +3,23 @@ import { RoutingService } from "../service/RoutingService.js";
 import { ParkingRenderer } from "../views/ParkingRenderer.js";
 import { UserLocationService } from "../service/UserLocationService.js";
 
-
 export class MapController {
   constructor() {
+    this.DEFAULT_LOCATION = [49.12031084724555, 6.163799704645889];
+
     this.map = this.initMap();
     this.ICONS = this.initIcons();
 
-    this.parkingService = new ParkingService("../api/GetParkingWithRealTime.php");
+    this.parkingService = new ParkingService(
+      "../api/GetParkingWithRealTime.php",
+    );
     this.routingService = new RoutingService(this.map, this.ICONS);
     this.userLocationService = new UserLocationService(this.ICONS.user);
-    this.renderer = new ParkingRenderer(this.map, this.ICONS.destination, this.routingService);
+    this.renderer = new ParkingRenderer(
+      this.map,
+      this.ICONS.destination,
+      this.routingService,
+    );
     window.ParkingRenderer = this.renderer; // Pour accès global
     window.MapController = this;
     this.parkings = [];
@@ -113,66 +120,119 @@ export class MapController {
   }
 
   async lancerItineraireVers(lat, lon, nom) {
+    console.log("🎯 Tentative de lancement d'itinéraire vers:", nom);
+    let uLat, uLon;
+    let hasRealGPS = false;
     try {
-      console.log("📍 Obtention de la position utilisateur...");
-      const [uLat, uLon] = await this.userLocationService.getLocation();
-
-      console.log("🗺️ Démarrage du guidage GPS vers:", nom);
-      this.routingService.demarrerGuidage(lat, lon, nom);
-
-      // Afficher le bouton pour arrêter le guidage
-      document.getElementById("btn-stop-guidage").style.display =
-        "inline-block";
+      console.log("📍 Demande de géolocalisation...");
+      [uLat, uLon] = await this.userLocationService.getLocation();
+      hasRealGPS = true;
+      console.log("✅ GPS obtenu:", uLat, uLon);
     } catch (e) {
-      console.error("❌ Erreur position:", e);
+      console.log("⚠️ GPS refusé/timeout, utilisation position par défaut");
+      [uLat, uLon] = this.DEFAULT_LOCATION;
       alert(
-        "Impossible d'obtenir votre position. Veuillez activer la géolocalisation.",
+        "Position GPS indisponible. Départ du point par défaut (Metz Centre).",
       );
     }
+
+    console.log(
+      "🗺️ Démarrage de l'itinéraire vers:",
+      nom,
+      "depuis",
+      uLat,
+      uLon,
+    );
+
+    // Si on a le GPS réel, utiliser le guidage en temps réel
+    if (hasRealGPS) {
+      console.log("🚗 Mode guidage GPS en temps réel");
+      this.routingService.demarrerGuidage(lat, lon, nom, this.DEFAULT_LOCATION);
+    } else {
+      // Sinon, afficher un itinéraire statique depuis la position par défaut
+      console.log("🗺️ Mode itinéraire statique depuis position par défaut");
+      this.routingService.startRoute([uLat, uLon], [lat, lon], nom);
+    }
+
+    // Afficher le bouton stop guidage dans tous les cas
+    if (window.innerWidth < 768) {
+      document.getElementById("btn-stop-guidage-mobile").style.display =
+        "block";
+    } else {
+      document.getElementById("btn-stop-guidage").style.display =
+        "inline-block";
+    }
+
+    console.log("✅ Fonction lancerItineraireVers terminée");
   }
 
   async rechercheParking() {
     const q = document.getElementById("search").value.toLowerCase();
-    const filtered = this.parkings.filter(p => p.name.toLowerCase().includes(q));
+    const filtered = this.parkings.filter((p) =>
+      p.name.toLowerCase().includes(q)
+    );
     this.renderer.renderParkings(filtered);
-    if (filtered.length === 1) this.map.setView([filtered[0].lat, filtered[0].lon], 16);
+    if (filtered.length === 1) {
+      this.map.setView([filtered[0].lat, filtered[0].lon], 16);
+    }
   }
 
   async trierParProximite() {
+    let uLat, uLon;
     try {
-      const [uLat, uLon] = await this.userLocationService.getLocation();
-      const sorted = [...this.parkings].sort(
-        (a, b) => this.userLocationService.distance(uLat, uLon, a.lat, a.lon) -
-                  this.userLocationService.distance(uLat, uLon, b.lat, b.lon)
-      );
-      if (sorted.length > 0) this.renderer.openPopupAt(sorted[0], this.map);
+      [uLat, uLon] = await this.userLocationService.getLocation();
     } catch (e) {
-      alert("Impossible d'obtenir votre position : " + e);
+      // En cas d'échec, on trie par rapport au point par défaut
+      [uLat, uLon] = this.DEFAULT_LOCATION;
+      console.log("Tri effectué via le point par défaut.");
+      alert(
+        "Position GPS indisponible. Tri effectué depuis Metz Centre (position par défaut).",
+      );
+    }
+
+    const sorted = [...this.parkings].sort(
+      (a, b) =>
+        this.userLocationService.distance(uLat, uLon, a.lat, a.lon) -
+        this.userLocationService.distance(uLat, uLon, b.lat, b.lon),
+    );
+
+    if (sorted.length > 0) {
+      this.renderer.openPopupAt(sorted[0], this.map);
     }
   }
 
   async localiserUtilisateur() {
+    let lat, lon;
     try {
-      const [lat, lon] = await this.userLocationService.getLocation();
-      this.userLocationService.showMarker(lat, lon, this.map);
-      this.map.setView([lat, lon], 15);
-
-      // ✅ Sauvegarder la position pour le tri
-      window.userLocation = [lat, lon];
-      console.log("📍 Position sauvegardée pour le tri par distance");
+      [lat, lon] = await this.userLocationService.getLocation();
+      console.log("📍 Position GPS obtenue");
     } catch (e) {
-      alert("Impossible d'obtenir votre position : " + e);
+      console.warn(
+        "⚠️ Géolocalisation refusée ou impossible, utilisation du point par défaut.",
+      );
+      [lat, lon] = this.DEFAULT_LOCATION;
+      alert(
+        "Géolocalisation impossible. Utilisation de la position par défaut (Metz Centre).",
+      );
     }
+
+    this.userLocationService.showMarker(lat, lon, this.map);
+    this.map.setView([lat, lon], 15);
+    window.userLocation = [lat, lon];
   }
 
-  async afficherItineraire(lat, lon) {
+  async afficherItineraire(lat, lon, nom = "Destination") {
+    let uLat, uLon;
     try {
-      const [uLat, uLon] = await this.userLocationService.getLocation();
-      this.routingService.startRoute([uLat, uLon], [lat, lon]);
-      document.getElementById("btn-annuler-itineraire").style.display = "inline-block";
+      [uLat, uLon] = await this.userLocationService.getLocation();
     } catch (e) {
-      alert("Impossible d'obtenir votre position : " + e);
+      [uLat, uLon] = this.DEFAULT_LOCATION;
+      console.log("Utilisation de la position par défaut pour l'itinéraire");
     }
+
+    this.routingService.startRoute([uLat, uLon], [lat, lon], nom);
+    document.getElementById("btn-annuler-itineraire").style.display =
+      "inline-block";
   }
 
   ouvrirItineraire(lat, lon) {
@@ -181,6 +241,8 @@ export class MapController {
 
   supprimerItineraire() {
     this.routingService.clearRoute();
+    document.getElementById("btn-stop-guidage").style.display = "none";
+    document.getElementById("btn-stop-guidage-mobile").style.display = "none";
   }
 
   zoomToParking(lat, lon) {

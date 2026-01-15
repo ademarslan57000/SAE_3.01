@@ -1,4 +1,4 @@
-export class UserLocationService { 
+export class UserLocationService {
   constructor(userIcon) {
     this.userIcon = userIcon;
     this.userMarker = null;
@@ -6,11 +6,16 @@ export class UserLocationService {
 
   async getLocation() {
     return new Promise((resolve, reject) => {
-      if (!navigator.geolocation)
-        return reject(window.traduirePopup("geoNotSupported") || "Géolocalisation non supportée");
+      if (!navigator.geolocation) {
+        return reject(
+          window.traduirePopup("geoNotSupported") ||
+            "Géolocalisation non supportée",
+        );
+      }
       navigator.geolocation.getCurrentPosition(
-        pos => resolve([pos.coords.latitude, pos.coords.longitude]),
-        err => reject(err.message || err)
+        (pos) => resolve([pos.coords.latitude, pos.coords.longitude]),
+        (err) => reject(err.message || err),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
       );
     });
   }
@@ -19,8 +24,7 @@ export class UserLocationService {
     const R = 6371;
     const dLat = this.deg2rad(lat2 - lat1);
     const dLon = this.deg2rad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) ** 2 +
+    const a = Math.sin(dLat / 2) ** 2 +
       Math.cos(this.deg2rad(lat1)) *
         Math.cos(this.deg2rad(lat2)) *
         Math.sin(dLon / 2) ** 2;
@@ -32,29 +36,27 @@ export class UserLocationService {
     return deg * (Math.PI / 180);
   }
 
-  
   showMarker(lat, lon, map) {
+    const translatedText = window.traduirePopup("youAreHere");
+    const popupContent = translatedText !== "youAreHere"
+      ? translatedText
+      : "Vous êtes ici";
     this.userMarker = L.marker([lat, lon], { icon: this.userIcon })
       .addTo(map)
-      .bindPopup("Vous êtes ici") 
+      .bindPopup(popupContent)
       .openPopup();
   }
 
-  
   updatePopup() {
     if (!this.userMarker) return;
 
     const translatedText = window.traduirePopup("youAreHere");
-        this.userMarker.setPopupContent(
-      translatedText !== "youAreHere" ? translatedText : "Vous êtes ici"
+    this.userMarker.setPopupContent(
+      translatedText !== "youAreHere" ? translatedText : "Vous êtes ici",
     );
 
-    
     if (this.userMarker.isPopupOpen()) {
       this.userMarker.openPopup();
     }
   }
 }
-
-
-

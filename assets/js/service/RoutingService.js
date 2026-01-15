@@ -15,7 +15,7 @@ export class RoutingService {
     this.routingControl = null;
   }
 
-  demarrerGuidage(latDest, lonDest, nom) {
+  demarrerGuidage(latDest, lonDest, nom, defaultLocation = null) {
     const DISTANCE_RECALCUL = 0.015;
     let firstUpdate = true;
     this.lastPosition = null;
@@ -104,7 +104,38 @@ export class RoutingService {
           }
         });
       },
-      (err) => alert("Erreur GPS : " + err.message),
+      (err) => {
+        console.error("Erreur GPS lors du guidage:", err.message);
+        // Arrêter le watchPosition
+        if (this.watchId !== null) {
+          navigator.geolocation.clearWatch(this.watchId);
+          this.watchId = null;
+        }
+
+        // Basculer vers un itinéraire statique depuis la position par défaut
+        if (defaultLocation && defaultLocation.length === 2) {
+          console.log(
+            "Bascule vers itinéraire statique depuis position par défaut",
+          );
+          alert(
+            "GPS perdu. Affichage de l'itinéraire depuis la position par défaut (Metz Centre).",
+          );
+          this.startRoute(defaultLocation, [latDest, lonDest], nom);
+          // Garder les boutons stop guidage affichés
+          if (window.innerWidth < 768) {
+            document.getElementById("btn-stop-guidage-mobile").style.display =
+              "block";
+          } else {
+            document.getElementById("btn-stop-guidage").style.display =
+              "inline-block";
+          }
+        } else {
+          // Masquer les boutons seulement si on ne peut pas basculer
+          document.getElementById("btn-stop-guidage").style.display = "none";
+          document.getElementById("btn-stop-guidage-mobile").style.display =
+            "none";
+        }
+      },
       { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 },
     );
   }
@@ -116,5 +147,57 @@ export class RoutingService {
     document.getElementById("btn-stop-guidage").style.display = "none";
     document.getElementById("btn-stop-guidage-mobile").style.display = "none";
     alert("Guidage arrêté.");
+  }
+
+  startRoute(startLatLon, endLatLon, nom = "Destination") {
+    if (this.routingControl) {
+      this.map.removeControl(this.routingControl);
+    }
+
+    this.routingControl = L.Routing.control({
+      waypoints: [
+        L.latLng(startLatLon[0], startLatLon[1]),
+        L.latLng(endLatLon[0], endLatLon[1]),
+      ],
+      router: L.Routing.osrmv1({
+        serviceUrl: "https://router.project-osrm.org/route/v1",
+        profile: "driving",
+        timeout: 30 * 1000,
+        routingOptions: {
+          alternatives: true,
+          steps: true,
+          overview: "full",
+          continue_straight: false,
+          annotations: ["duration", "distance", "speed"],
+        },
+      }),
+      lineOptions: {
+        styles: [{ color: "#004cbe", weight: 6, opacity: 0.8 }],
+        extendToWaypoints: true,
+        missingRouteTolerance: 0,
+      },
+      routeWhileDragging: false,
+      addWaypoints: false,
+      showAlternatives: true,
+      altLineOptions: {
+        styles: [{ color: "#85189b", weight: 4, opacity: 0.5 }],
+      },
+      createMarker: (i, wp) =>
+        L.marker(wp.latLng, {
+          icon: i === 0 ? this.icons.user : this.icons.destination,
+        }).bindPopup(i === 0 ? "📍 Point de départ" : "🎯 " + nom),
+      fitSelectedRoutes: "smart",
+    }).addTo(this.map);
+
+    this.routingControl.on("routesfound", (e) => {
+      const routes = e.routes;
+      const summary = routes[0].summary;
+      const duration = Math.round(summary.totalTime / 60);
+      const distance = (summary.totalDistance / 1000).toFixed(1);
+
+      console.log(
+        `🚗 Itinéraire calculé: ${distance} km, ${duration} min`,
+      );
+    });
   }
 }

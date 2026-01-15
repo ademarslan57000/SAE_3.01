@@ -63,11 +63,13 @@ window.filterSidebarParkings = async () => {
       window.userLocation = [lat, lon];
       console.log("✅ Position obtenue:", lat, lon);
     } catch (e) {
-      alert(
-        "Impossible de trier par distance : veuillez activer la géolocalisation.",
+      console.log(
+        "⚠️ Géolocalisation refusée, utilisation de la position par défaut",
       );
-      document.getElementById("sortSidebar").value = "name";
-      return;
+      window.userLocation = mapController.DEFAULT_LOCATION;
+      alert(
+        "Position GPS indisponible. Tri effectué depuis Metz Centre (position par défaut).",
+      );
     }
   }
 
