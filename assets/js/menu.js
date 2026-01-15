@@ -1,4 +1,3 @@
-// Gestion du menu déroulant
 document.addEventListener("DOMContentLoaded", () => {
     const btnMenu = document.getElementById("btnMenu");
     const dropdownContent = document.getElementById("dropdownContent");
@@ -16,13 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Fonction pour afficher la liste des parkings
 function afficherListeParkings() {
     window.location.href = "liste-parkings.html";
     document.getElementById("dropdownContent").classList.remove("show");
 }
 
-// Fonction pour afficher la FAQ
 function afficherFAQ() {
     window.location.href = "FAQ.html";
     document.getElementById("dropdownContent").classList.remove("show");

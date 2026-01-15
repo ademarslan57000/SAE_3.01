@@ -1,4 +1,5 @@
 <?php
+//récuperer les infos du compte
 session_start();
 
 if(!isset($_SESSION['user_id'])) {

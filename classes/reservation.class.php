@@ -4,12 +4,11 @@ class Reservation
     private ?int $id = null;
     private int $idUtilisateur;
     private int $idVehicule;
-    private string $idParking; // varchar(20) dans ta BDD
+    private string $idParking;
     private string $dateDebut;
     private string $dateFin;
     private string $statut = 'active';
 
-    // Getters
     public function getId(): ?int
     {
         return $this->id;
@@ -39,7 +38,6 @@ class Reservation
         return $this->statut;
     }
 
-    // Setters
     public function setId(int $id): void
     {
         $this->id = $id;

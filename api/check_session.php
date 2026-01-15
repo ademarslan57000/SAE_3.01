@@ -1,4 +1,5 @@
 <?php
+//vérifie que l'utilisateur est connecté
 session_start();
 
 header('Content-Type: application/json');

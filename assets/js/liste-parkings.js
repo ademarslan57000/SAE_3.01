@@ -1,4 +1,3 @@
-// Import des utilitaires
 import { ApiHelper } from "./utils/ApiHelper.js";
 import { notificationManager } from "./utils/NotificationManager.js";
 import { networkManager } from "./utils/NetworkManager.js";
@@ -6,7 +5,6 @@ import { networkManager } from "./utils/NetworkManager.js";
 let allParkings = [];
 let filteredParkings = [];
 
-// 1. Dictionnaire de traduction (V1) enrichi avec les termes P+R
 const translations = {
     fr: {
         gratuit: "Gratuit",
@@ -67,7 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setupFilters();
 });
 
-// 2. Logique de détection P+R (V2)
 function isParkAndRide(parking) {
     const name = (parking.name || "").toLowerCase();
     return name.includes("p+r") || name.includes("p&r") ||
@@ -76,7 +73,6 @@ function isParkAndRide(parking) {
 }
 
 async function loadParkings() {
-    // Vérifier la connexion
     if (!networkManager.isOnline) {
         notificationManager.error(
             "Impossible de charger les parkings sans connexion Internet",
@@ -87,7 +83,6 @@ async function loadParkings() {
     }
 
     try {
-        // Afficher un loader
         document.getElementById("parkingList").innerHTML =
             `<div class="loader">⏳ Chargement des parkings...</div>`;
 
@@ -229,7 +224,7 @@ function createParkingCard(p) {
 }
 
 function getTarifs(p) {
-    // 1. Cas P+R (Prioritaire)
+    // Cas P+R (Prioritaire)
     if (isParkAndRide(p)) {
         return `
         <div class="tarifs-section">
@@ -259,7 +254,7 @@ function getTarifs(p) {
         </div>`;
     }
 
-    // 3. Cas Payant avec calcul de devise (V2)
+    // 3. Cas Payant avec calcul de devise
     const isLondon = String(p.id).startsWith("LONDON_");
     const currency = isLondon ? "£" : "€";
     let displayTarif = p.tarif_24h;
@@ -299,6 +294,7 @@ function getTarifs(p) {
     return "";
 }
 
+// Vérification de la disponibilité
 function getDisponibilite(p) {
     if (p.place_libre !== null && p.place_libre !== undefined) {
         const total = p.place_total_rt || p.nb_places;
@@ -328,6 +324,7 @@ function setupFilters() {
     });
 }
 
+// Filtres
 function applyFilters() {
     const searchTerm = document.getElementById("searchParking").value
         .toLowerCase();
@@ -376,14 +373,14 @@ function applyFilters() {
     updateCount(filteredParkings.length);
 }
 
+// Compte le nombre de parkings chargés
 function updateCount(count) {
     const plural = count > 1 ? "s" : "";
     document.getElementById("parkingCount").textContent = `${count} ${
         translations[lang].parkingAffiche
     }${plural}`;
 }
-
-// 3. Fonctions de Redirection (V2 avec logs de debug)
+ 
 function voirSurCarte(parkingId) {
     console.log("=== REDIRECTION CARTE ID:", parkingId);
     sessionStorage.setItem("targetParkingId", String(parkingId));

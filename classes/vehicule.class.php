@@ -7,7 +7,6 @@ class Vehicule
     private int $idUtilisateur;
     private int $idTypeVehicule;
 
-    // Getters
     public function getId(): ?int
     {
         return $this->id;
@@ -29,7 +28,6 @@ class Vehicule
         return $this->idTypeVehicule;
     }
 
-    // Setters
     public function setId(int $id): void
     {
         $this->id = $id;

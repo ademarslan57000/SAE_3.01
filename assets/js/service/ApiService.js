@@ -10,9 +10,6 @@ class ApiService {
         this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
     }
 
-    /**
-     * Requête GET avec gestion du cache
-     */
     async get(endpoint, options = {}) {
         const cacheKey = `${endpoint}${JSON.stringify(options)}`;
         
@@ -50,9 +47,7 @@ class ApiService {
         }
     }
 
-    /**
-     * Requête POST
-     */
+
     async post(endpoint, body, options = {}) {
         try {
             const url = this.buildUrl(endpoint);
@@ -74,9 +69,6 @@ class ApiService {
         }
     }
 
-    /**
-     * Requête PUT
-     */
     async put(endpoint, body, options = {}) {
         try {
             const url = this.buildUrl(endpoint);
@@ -98,9 +90,6 @@ class ApiService {
         }
     }
 
-    /**
-     * Requête DELETE
-     */
     async delete(endpoint, options = {}) {
         try {
             const url = this.buildUrl(endpoint);
@@ -121,9 +110,6 @@ class ApiService {
         }
     }
 
-    /**
-     * Construire l'URL complète
-     */
     buildUrl(endpoint, params = null) {
         let url = `${this.baseUrl}${endpoint}`;
         
@@ -135,9 +121,6 @@ class ApiService {
         return url;
     }
 
-    /**
-     * Obtenir les headers par défaut
-     */
     getHeaders(customHeaders = {}) {
         return {
             'Content-Type': 'application/json',
@@ -146,9 +129,6 @@ class ApiService {
         };
     }
 
-    /**
-     * Obtenir depuis le cache
-     */
     getFromCache(key) {
         const cached = this.cache.get(key);
         if (!cached) return null;
@@ -162,9 +142,6 @@ class ApiService {
         return cached.data;
     }
 
-    /**
-     * Mettre en cache
-     */
     setCache(key, data) {
         this.cache.set(key, {
             data,
@@ -172,16 +149,10 @@ class ApiService {
         });
     }
 
-    /**
-     * Vider le cache
-     */
     clearCache() {
         this.cache.clear();
     }
 
-    /**
-     * Requêtes parallèles
-     */
     async fetchMultiple(requests) {
         try {
             const promises = requests.map(req => {
@@ -190,7 +161,6 @@ class ApiService {
                 } else if (req.method === 'POST') {
                     return this.post(req.endpoint, req.body, req.options);
                 }
-                // Ajouter d'autres méthodes si nécessaire
             });
 
             return await Promise.all(promises);
@@ -201,7 +171,6 @@ class ApiService {
     }
 }
 
-// Instance singleton
 const apiService = new ApiService();
 
 // Export

@@ -3,9 +3,10 @@ import { RoutingService } from "../service/RoutingService.js";
 import { ParkingRenderer } from "../views/ParkingRenderer.js";
 import { UserLocationService } from "../service/UserLocationService.js";
 
+// Contrôleur principal de la carte
 export class MapController {
   constructor() {
-    this.DEFAULT_LOCATION = [49.12031084724555, 6.163799704645889];
+    this.DEFAULT_LOCATION = [49.12031084724555, 6.163799704645889];   //localisation par défaut : IUT de Metz
 
     this.map = this.initMap();
     this.ICONS = this.initIcons();
@@ -20,11 +21,12 @@ export class MapController {
       this.ICONS.destination,
       this.routingService,
     );
-    window.ParkingRenderer = this.renderer; // Pour accès global
+    window.ParkingRenderer = this.renderer;
     window.MapController = this;
     this.parkings = [];
   }
 
+  // Initialisation de la carte Leaflet
   initMap() {
     const map = L.map("map").setView([49.1193, 6.1757], 13);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -34,7 +36,6 @@ export class MapController {
   }
 
   initIcons() {
-    // Utiliser des icons Leaflet par défaut au lieu des URLs GitHub
     return {
       user: L.icon({
         iconUrl:
@@ -53,11 +54,9 @@ export class MapController {
     };
   }
 
+  // Initialisation du contrôleur
   async init() {
     this.parkings = await this.parkingService.loadParkings();
-
-    console.log("=== INIT MapController ===");
-    console.log("📍 Parkings chargés:", this.parkings.length);
 
     const urlParams = new URLSearchParams(window.location.search);
     let parkingId = urlParams.get("parking");
@@ -66,14 +65,14 @@ export class MapController {
     if (!parkingId) {
       parkingId = sessionStorage.getItem("targetParkingId");
       if (parkingId) {
-        console.log("🔍 Parking ID depuis sessionStorage:", parkingId);
+        console.log("Parking ID depuis sessionStorage:", parkingId);
         sessionStorage.removeItem("targetParkingId");
       }
     } else {
-      console.log("🔍 Parking ID depuis URL:", parkingId);
+      console.log("Parking ID depuis URL:", parkingId);
     }
 
-    // ✅ Render TOUS les parkings + sidebar
+    // Rendu des parkings et de la sidebar
     this.renderer.renderParkings(this.parkings, true);
     this.renderer.renderSidebar(this.parkings);
 
@@ -84,7 +83,7 @@ export class MapController {
         const destination = JSON.parse(destinationData);
         sessionStorage.removeItem("itineraireDestination");
 
-        console.log("🧭 Lancement de l'itinéraire vers:", destination.nom);
+        console.log("Lancement de l'itinéraire vers:", destination.nom);
 
         setTimeout(() => {
           this.lancerItineraireVers(
@@ -102,7 +101,7 @@ export class MapController {
       );
 
       if (parking && parking.lat && parking.lon) {
-        console.log("✅ Parking trouvé:", parking.name);
+        console.log("Parking trouvé:", parking.name);
 
         setTimeout(() => {
           this.map.setView([parking.lat, parking.lon], 18, { animate: false });
@@ -112,13 +111,14 @@ export class MapController {
           }, 1000);
         }, 500);
       } else {
-        console.error("❌ Parking non trouvé");
+        console.error("Parking non trouvé");
       }
 
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }
 
+  // Lancer un itinéraire vers une destination donnée
   async lancerItineraireVers(lat, lon, nom) {
     console.log("🎯 Tentative de lancement d'itinéraire vers:", nom);
     let uLat, uLon;
@@ -146,11 +146,11 @@ export class MapController {
 
     // Si on a le GPS réel, utiliser le guidage en temps réel
     if (hasRealGPS) {
-      console.log("🚗 Mode guidage GPS en temps réel");
+      console.log("Mode guidage GPS en temps réel");
       this.routingService.demarrerGuidage(lat, lon, nom, this.DEFAULT_LOCATION);
     } else {
       // Sinon, afficher un itinéraire statique depuis la position par défaut
-      console.log("🗺️ Mode itinéraire statique depuis position par défaut");
+      console.log("Mode itinéraire statique depuis position par défaut");
       this.routingService.startRoute([uLat, uLon], [lat, lon], nom);
     }
 
@@ -166,6 +166,7 @@ export class MapController {
     console.log("✅ Fonction lancerItineraireVers terminée");
   }
 
+  // Recherche de parkings par nom
   async rechercheParking() {
     const q = document.getElementById("search").value.toLowerCase();
     const filtered = this.parkings.filter((p) =>

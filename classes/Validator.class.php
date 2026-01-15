@@ -1,31 +1,21 @@
 <?php
-/**
- * Classe de validation des données
- * Principe SOLID : Single Responsibility Principle
- * Responsabilité unique : Valider et nettoyer les données
- */
+
 class Validator
 {
-    /**
-     * Nettoyer une chaîne de caractères
-     */
+    // Nettoyer une chaîne de caractères
     public static function sanitizeString(string $input): string
     {
         return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
     }
 
-    /**
-     * Valider une adresse email
-     */
+    // Valider une adresse email
     public static function validateEmail(string $email): bool
     {
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 
-    /**
-     * Valider un numéro de téléphone français
-     */
+    // Valider un numéro de téléphone français
     public static function validatePhone(string $phone): bool
     {
         // Format: 06 12 34 56 78 ou 0612345678 ou +33612345678
@@ -63,35 +53,23 @@ class Validator
         ];
     }
 
-    /**
-     * Valider une longueur de chaîne
-     */
     public static function validateLength(string $input, int $min, int $max): bool
     {
         $length = strlen($input);
         return $length >= $min && $length <= $max;
     }
 
-    /**
-     * Protéger contre les injections SQL (utiliser avec PDO prepared statements)
-     */
     public static function escapeSql(string $input): string
     {
         return self::sanitizeString($input);
     }
 
-    /**
-     * Valider un format de date
-     */
     public static function validateDate(string $date, string $format = 'Y-m-d'): bool
     {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) === $date;
     }
 
-    /**
-     * Valider que la date est dans le futur
-     */
     public static function isFutureDate(string $date): bool
     {
         $dateTime = new DateTime($date);
@@ -99,9 +77,6 @@ class Validator
         return $dateTime > $now;
     }
 
-    /**
-     * Nettoyer un tableau de données
-     */
     public static function sanitizeArray(array $data): array
     {
         $clean = [];
@@ -117,17 +92,11 @@ class Validator
         return $clean;
     }
 
-    /**
-     * Valider un nombre entier dans une plage
-     */
     public static function validateIntInRange(int $value, int $min, int $max): bool
     {
         return $value >= $min && $value <= $max;
     }
 
-    /**
-     * Générer un token CSRF sécurisé
-     */
     public static function generateCSRFToken(): string
     {
         if (!isset($_SESSION)) {
@@ -141,9 +110,6 @@ class Validator
         return $token;
     }
 
-    /**
-     * Vérifier un token CSRF
-     */
     public static function verifyCSRFToken(string $token): bool
     {
         if (!isset($_SESSION)) {

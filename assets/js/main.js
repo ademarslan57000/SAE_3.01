@@ -2,7 +2,6 @@ import { MapController } from "../js/controller/MapController.js";
 import { networkManager } from "./utils/NetworkManager.js";
 import { notificationManager } from "./utils/NotificationManager.js";
 
-// Initialiser le network manager
 networkManager.addListener((isOnline) => {
   console.log("État réseau changé:", isOnline ? "Online" : "Offline");
 });
@@ -55,16 +54,16 @@ window.filterSidebarParkings = async () => {
     return matchSearch && matchZone && matchType && matchEquip;
   });
 
-  // ✅ Si tri par distance et pas encore de position, demander la géolocalisation
+  // Si tri par distance et pas encore de position, demander la géolocalisation
   if (sortBy === "distance" && !window.userLocation) {
     try {
-      console.log("📍 Récupération de la position pour le tri...");
+      console.log("Récupération de la position pour le tri...");
       const [lat, lon] = await mapController.userLocationService.getLocation();
       window.userLocation = [lat, lon];
-      console.log("✅ Position obtenue:", lat, lon);
+      console.log("Position obtenue:", lat, lon);
     } catch (e) {
       console.log(
-        "⚠️ Géolocalisation refusée, utilisation de la position par défaut",
+        "Géolocalisation refusée, utilisation de la position par défaut",
       );
       window.userLocation = mapController.DEFAULT_LOCATION;
       alert(
@@ -73,7 +72,7 @@ window.filterSidebarParkings = async () => {
     }
   }
 
-  // ✅ TRI des parkings
+  // TRI des parkings
   filtered.sort((a, b) => {
     switch (sortBy) {
       case "name":
@@ -118,7 +117,6 @@ window.filterSidebarParkings = async () => {
     }
   });
 
-  // ✅ Mettre à jour la sidebar avec indication de distance si applicable
   const container = document.getElementById("sidebarContent");
   if (filtered.length === 0) {
     container.innerHTML =
@@ -128,7 +126,6 @@ window.filterSidebarParkings = async () => {
       .map((p) => {
         let item = mapController.renderer.createSidebarItem(p);
 
-        // Ajouter la distance si tri par distance
         if (sortBy === "distance" && window.userLocation) {
           const dist = mapController.userLocationService.distance(
             window.userLocation[0],
@@ -140,7 +137,6 @@ window.filterSidebarParkings = async () => {
             ? `${Math.round(dist * 1000)}m`
             : `${dist.toFixed(1)}km`;
 
-          // Insérer la distance dans l'item
           item = item.replace(
             '<div class="parking-item-info">',
             `<div class="parking-item-info"><div style="color:#667eea;font-weight:600;">📍 ${distText}</div>`,
@@ -166,7 +162,6 @@ window.filterSidebarParkings = async () => {
     });
   }
 
-  // ✅ Mettre à jour la carte
   mapController.renderer.renderParkings(filtered, filtered.length > 0);
 };
 
@@ -186,7 +181,6 @@ window.resetSidebarFilters = () => {
   }
 };
 
-// ✅ Sauvegarder la position de l'utilisateur pour le tri par distance
 window.saveUserLocation = async () => {
   try {
     const [lat, lon] = await mapController.userLocationService.getLocation();

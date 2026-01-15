@@ -11,7 +11,6 @@ class VehiculeDAO
         $this->_bd = new Connexion();
     }
 
-    // Insère le véhicule et récupère son ID automatiquement
     public function insert(Vehicule $v): void
     {
         $sql = "INSERT INTO Vehicule (nom_vehicule, immatriculation, id_utilisateur, id_type_vehicule)
@@ -24,7 +23,6 @@ class VehiculeDAO
             ":id_type" => $v->getIdTypeVehicule()
         ]);
 
-        // IMPORTANT : On récupère l'ID généré par la BDD pour mettre à jour l'objet
         $lastId = $this->_bd->getPDO()->lastInsertId();
         $v->setId((int) $lastId);
     }

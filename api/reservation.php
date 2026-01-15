@@ -5,14 +5,13 @@ header('Content-Type: application/json');
 
 session_start();
 
-// 1. Vérification de l'authentification
+// Vérification de l'authentification
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Utilisateur non connecté.']);
     exit;
 }
 $id_utilisateur = $_SESSION['user_id'];
 
-// 2. Import des classes
 try {
     require_once "../classes/connexion.class.php";
     require_once "../classes/vehicule.class.php";
@@ -25,7 +24,7 @@ try {
     exit;
 }
 
-// 3. Récupération des données JSON
+// Récupération des données JSON
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
 
@@ -47,7 +46,7 @@ if (isset($data['vehicleTypeRaw'])) {
 
 $reservationDAO = new ReservationDAO();
 
-// --- NOUVEAU : LOGIQUE DE SUPPRESSION ---
+// Suppression d'une réservation existante
 if (isset($data['action']) && $data['action'] === 'delete') {
     if (!isset($data['id_reservation'])) {
         echo json_encode(['success' => false, 'message' => 'ID de réservation manquant.']);
@@ -55,17 +54,17 @@ if (isset($data['action']) && $data['action'] === 'delete') {
     }
 
     $idRes = (int)$data['id_reservation'];
-    // On utilise les deux arguments pour la sécurité comme défini dans ton DAO
+
     $success = $reservationDAO->delete($idRes, (int)$id_utilisateur);
 
     echo json_encode([
         'success' => $success,
         'message' => $success ? 'Réservation annulée.' : 'Erreur lors de l\'annulation.'
     ]);
-    exit; // On arrête l'exécution ici pour ne pas lancer l'insertion
+    exit;
 }
 
-// --- LOGIQUE D'INSERTION EXISTANTE ---
+// Création d'une nouvelle réservation
 if (!isset($data['parkingId'], $data['immatriculation'], $data['dateDebut'], $data['dateFin'])) {
     echo json_encode(['success' => false, 'message' => 'Données incomplètes pour la création.']);
     exit;

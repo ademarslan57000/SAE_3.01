@@ -1,12 +1,10 @@
 <?php
 require_once "../api/compte.php";
-// On inclut le DAO pour récupérer les réservations
 require_once "../classes/reservationDAO.class.php";
 require_once "../api/compte.php";
 
 // On récupère la liste des réservations de l'utilisateur connecté
 $reservationDAO = new ReservationDAO();
-// On suppose que $user['id_utilisateur'] est disponible via compte.php, sinon on utilise $_SESSION['user_id']
 $idUser = $_SESSION['user_id'] ?? $user['id_utilisateur'];
 $mesReservations = $reservationDAO->getByUser($idUser);
 ?>
@@ -82,7 +80,6 @@ $mesReservations = $reservationDAO->getByUser($idUser);
             <tbody>
               <?php foreach ($mesReservations as $res): ?>
                 <?php
-                // Formatage des dates pour l'affichage (ex: 12/01 à 14:30)
                 $debut = new DateTime($res['date_debut']);
                 $fin = new DateTime($res['date_fin']);
                 ?>
@@ -115,7 +112,6 @@ $mesReservations = $reservationDAO->getByUser($idUser);
     if (!confirm("Voulez-vous vraiment annuler cette réservation ?")) return;
 
     try {
-        // Le chemin remonte de views/ vers le dossier parent, puis entre dans auth/
         const response = await fetch('../api/reservation.php', { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -125,10 +121,10 @@ $mesReservations = $reservationDAO->getByUser($idUser);
             })
         });
 
-        const text = await response.text(); // On récupère le texte brut d'abord
+        const text = await response.text();
         console.log("Réponse du serveur :", text);
 
-        const result = JSON.parse(text); // On transforme en JSON seulement si c'est possible
+        const result = JSON.parse(text);
 
         if (result.success) {
             alert("✅ " + result.message);

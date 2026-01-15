@@ -19,7 +19,7 @@ if (!isset($_POST["email"], $_POST["password"])) {
 
 // Sanitisation de l'email
 $email = Validator::sanitizeString($_POST["email"]);
-$password = $_POST["password"]; // Pas de sanitisation pour le mot de passe (vérifié par hash)
+$password = $_POST["password"];
 
 if (empty($email) || empty($password)) {
     header("Location: ../views/connexion.view.php?error=incomplete");

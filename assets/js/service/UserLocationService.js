@@ -4,6 +4,7 @@ export class UserLocationService {
     this.userMarker = null;
   }
 
+  // Obtenir la position actuelle de l'utilisateur
   async getLocation() {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
@@ -20,9 +21,8 @@ export class UserLocationService {
     });
   }
 
-  /**
-   * Calculates distance between two points using the Haversine formula
-   */
+ 
+  // Calculer la distance entre deux points GPS en km
   distance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
     const dLat = this.deg2rad(lat2 - lat1);
@@ -40,6 +40,7 @@ export class UserLocationService {
     return deg * (Math.PI / 180);
   }
 
+  // Afficher un marqueur à la position de l'utilisateur
   showMarker(lat, lon, map) {
     const translatedText = window.traduirePopup("youAreHere");
     const popupContent = translatedText !== "youAreHere" ? translatedText : "Vous êtes ici";
@@ -50,6 +51,7 @@ export class UserLocationService {
       .openPopup();
   }
 
+  // Mettre à jour le texte du popup du marqueur utilisateur
   updatePopup() {
     if (!this.userMarker) return;
 

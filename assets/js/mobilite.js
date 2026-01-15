@@ -1,4 +1,4 @@
-// Gestion des onglets
+
 const tabButtons = document.querySelectorAll(".tab-btn");
 const tabContents = document.querySelectorAll(".tab-content");
 
@@ -6,7 +6,6 @@ tabButtons.forEach((button) => {
     button.addEventListener("click", () => {
         const targetTab = button.getAttribute("data-tab");
 
-        // Retirer la classe active de tous les boutons et contenus
         tabButtons.forEach((btn) => btn.classList.remove("active"));
         tabContents.forEach((content) => content.classList.remove("active"));
 
@@ -16,7 +15,6 @@ tabButtons.forEach((button) => {
     });
 });
 
-// Animation au scroll
 const observerOptions = {
     threshold: 0.1,
     rootMargin: "0px 0px -50px 0px",
@@ -31,7 +29,6 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Observer tous les éléments avec animation
 document.querySelectorAll(".service-card, .tip-card, .planner-card").forEach(
     (el) => {
         el.style.opacity = "0";

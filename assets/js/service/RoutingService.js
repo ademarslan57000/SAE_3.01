@@ -9,12 +9,14 @@ export class RoutingService {
     this.lastPosition = null;
   }
 
+  // Supprimer l'itinéraire de la carte
   clearRoute() {
     if (!this.routingControl) return;
     this.map.removeControl(this.routingControl);
     this.routingControl = null;
   }
 
+  // Démarrer le guidage en temps réel
   demarrerGuidage(latDest, lonDest, nom, defaultLocation = null) {
     const DISTANCE_RECALCUL = 0.015;
     let firstUpdate = true;
@@ -39,12 +41,13 @@ export class RoutingService {
         if (
           this.lastPosition &&
           distanceGPS(
-              userLat,
-              userLon,
-              this.lastPosition.lat,
-              this.lastPosition.lon,
-            ) < DISTANCE_RECALCUL
-        ) return;
+            userLat,
+            userLon,
+            this.lastPosition.lat,
+            this.lastPosition.lon
+          ) < DISTANCE_RECALCUL
+        )
+          return;
 
         this.lastPosition = { lat: userLat, lon: userLon };
 
@@ -56,14 +59,14 @@ export class RoutingService {
           waypoints: [L.latLng(userLat, userLon), L.latLng(latDest, lonDest)],
           router: L.Routing.osrmv1({
             serviceUrl: "https://router.project-osrm.org/route/v1",
-            profile: "driving", // 'driving' ou 'car' pour le trafic routier
+            profile: "driving",
             timeout: 30 * 1000,
             routingOptions: {
-              alternatives: true, // Calculer des itinéraires alternatifs
-              steps: true, // Obtenir les instructions détaillées
-              overview: "full", // Vue complète de l'itinéraire
-              continue_straight: false, // Permettre les demi-tours si nécessaire
-              annotations: ["duration", "distance", "speed"], // Annotations de trafic
+              alternatives: true,
+              steps: true,
+              overview: "full",
+              continue_straight: false,
+              annotations: ["duration", "distance", "speed"],
             },
           }),
           lineOptions: {
@@ -73,7 +76,7 @@ export class RoutingService {
           },
           routeWhileDragging: false,
           addWaypoints: false,
-          showAlternatives: true, // Afficher les itinéraires alternatifs
+          showAlternatives: true,
           altLineOptions: {
             styles: [{ color: "#85189b", weight: 4, opacity: 0.5 }],
           },
@@ -84,22 +87,20 @@ export class RoutingService {
           fitSelectedRoutes: "smart",
         }).addTo(this.map);
 
-        // Ajouter un écouteur pour afficher les informations de trafic
         this.routingControl.on("routesfound", (e) => {
           const routes = e.routes;
           const summary = routes[0].summary;
-          const duration = Math.round(summary.totalTime / 60); // en minutes
-          const distance = (summary.totalDistance / 1000).toFixed(1); // en km
+          const duration = Math.round(summary.totalTime / 60);
+          const distance = (summary.totalDistance / 1000).toFixed(1);
 
           console.log(
-            `🚗 Itinéraire calculé: ${distance} km, ${duration} min (trafic en temps réel)`,
+            `Itinéraire calculé: ${distance} km, ${duration} min (trafic en temps réel)`
           );
 
-          // Afficher une notification avec les infos de trafic
           if (routes.length > 1) {
             const altDuration = Math.round(routes[1].summary.totalTime / 60);
             console.log(
-              `🛣️ Itinéraire alternatif disponible: ${altDuration} min`,
+              `Itinéraire alternatif disponible: ${altDuration} min`
             );
           }
         });
@@ -112,16 +113,15 @@ export class RoutingService {
           this.watchId = null;
         }
 
-        // Basculer vers un itinéraire statique depuis la position par défaut
         if (defaultLocation && defaultLocation.length === 2) {
           console.log(
-            "Bascule vers itinéraire statique depuis position par défaut",
+            "Bascule vers itinéraire statique depuis position par défaut"
           );
           alert(
-            "GPS perdu. Affichage de l'itinéraire depuis la position par défaut (Metz Centre).",
+            "GPS perdu. Affichage de l'itinéraire depuis la position par défaut (Metz Centre)."
           );
           this.startRoute(defaultLocation, [latDest, lonDest], nom);
-          // Garder les boutons stop guidage affichés
+
           if (window.innerWidth < 768) {
             document.getElementById("btn-stop-guidage-mobile").style.display =
               "block";
@@ -130,13 +130,12 @@ export class RoutingService {
               "inline-block";
           }
         } else {
-          // Masquer les boutons seulement si on ne peut pas basculer
           document.getElementById("btn-stop-guidage").style.display = "none";
           document.getElementById("btn-stop-guidage-mobile").style.display =
             "none";
         }
       },
-      { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 },
+      { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 }
     );
   }
 
@@ -195,9 +194,7 @@ export class RoutingService {
       const duration = Math.round(summary.totalTime / 60);
       const distance = (summary.totalDistance / 1000).toFixed(1);
 
-      console.log(
-        `🚗 Itinéraire calculé: ${distance} km, ${duration} min`,
-      );
+      console.log(`🚗 Itinéraire calculé: ${distance} km, ${duration} min`);
     });
   }
 }

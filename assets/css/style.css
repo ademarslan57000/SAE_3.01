@@ -6,7 +6,6 @@ body {
   flex-direction: column;
 }
 
-/* Bouton d'installation PWA */
 .install-pwa-btn {
   position: fixed;
   bottom: 80px;
@@ -78,13 +77,11 @@ button:hover {
   display: none;
 }
 
-/* Boutons stop guidage cachés par défaut */
 #btn-stop-guidage,
 #btn-stop-guidage-mobile {
   display: none;
 }
 
-/* Style pour le lien installBtn */
 #installBtn {
   color: #27ae60;
   font-weight: bold;
@@ -294,12 +291,11 @@ header {
   );
 }
 
-/* Sidebar */
 .sidebar {
   position: fixed;
   top: 74px;
   left: 0;
-  width: 350px; /* largeur normale */
+  width: 350px;
   height: calc(100% - 74px);
   background: #fff;
   overflow-y: auto;
@@ -347,7 +343,6 @@ header {
   margin: 0;
 }
 
-/* Nouveaux filtres sidebar */
 .sidebar-filters {
   padding: 15px;
   background: #f8f9fa;
@@ -408,7 +403,6 @@ header {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Image */
 .parking-item-image {
   width: 100%;
   height: 100px !important;
@@ -417,7 +411,6 @@ header {
   display: block;
 }
 
-/* Header */
 .parking-item-header {
   display: flex;
   justify-content: space-between;
@@ -431,7 +424,6 @@ header {
   color: #333;
 }
 
-/* Prix */
 .parking-item-price {
   background: linear-gradient(90deg, #00d0ff, #006aff);
   color: white;
@@ -449,7 +441,6 @@ header {
   background: #e67e22;
 }
 
-/* Info P+R */
 .pr-info {
   font-size: 11px;
   color: #e67e22;
@@ -461,12 +452,10 @@ header {
   font-weight: 500;
 }
 
-/* Bordure colorée pour les parkings P+R */
 .sidebar-parking-item.park-ride {
   border-left: 4px solid #e67e22;
 }
 
-/* Infos */
 .parking-item-info {
   font-size: 12px;
   color: #666;
@@ -480,7 +469,6 @@ header {
   color: #667eea;
 }
 
-/* Disponibilité */
 .parking-item-dispo {
   font-weight: 600;
 }
@@ -498,11 +486,6 @@ header {
   width: 100%;
   transition: margin-left 0.3s ease, width 0.3s ease;
 }
-
-/* .sidebar.collapsed ~ #map {
-  margin-left: 0;
-  width: 100%;
-} */
 
 .price-label {
   background: white;
@@ -529,7 +512,6 @@ header {
   color: #dc3545;
 }
 
-/* Styles pour les marqueurs P+R */
 .leaflet-tooltip.park-ride {
   background: #e67e22 !important;
   color: white !important;
@@ -543,12 +525,6 @@ header {
     top: 60px;
     height: calc(100vh - 60px);
   }
-
-  /* .sidebar.collapsed {
-     transform: translateX(-100%);
-     width: 0;
-     overflow: hidden;
-   } */
 
   .sidebar.open {
     transform: translateX(0);
@@ -577,11 +553,6 @@ header {
     margin-left: 0 !important;
     width: 100% !important;
   }
-
-  /* .sidebar.collapsed ~ #map {
-    margin-left: 40px;
-    width: calc(100%-40px);
-  } */
 
   .search-buttons-desktop {
     display: none;
@@ -612,11 +583,11 @@ header {
   }
 
   .btn-toggle-sidebar {
-    display: flex; /* optionnel mais recommandé*/
+    display: flex;
   }
 
   .header-right {
-    position: relative; /* pour que les boutons se positionnent par rapport au header */
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -624,10 +595,10 @@ header {
 
   .search-buttons-desktop {
     position: relative;
-    top: 0; /* en haut du header-right */
+    top: 0;
     display: flex;
     gap: 8px;
-    z-index: 101; /* au-dessus du dropdown */
+    z-index: 101;
   }
 
   .search-buttons-desktop button {
@@ -645,12 +616,12 @@ header {
   }
 
   .dropdown-menu {
-    margin-left: 0; /* supprimer tout décalage */
-    position: relative; /* pour que le dropdown-content reste aligné à droite du bouton */
+    margin-left: 0;
+    position: relative;
   }
 
   .dropdown-content {
-    right: 0; /* s'assurer que le menu déroulant reste attaché au bouton */
+    right: 0;
   }
 
   .header-right {

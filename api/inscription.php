@@ -12,7 +12,7 @@ if (!isset($_POST["register"])) {
     exit;
 }
 
-// Sanitisation de toutes les données d'entrée
+// Récupération et sanitisation des données
 $nom = Validator::sanitizeString($_POST["lastname"] ?? "");
 $prenom = Validator::sanitizeString($_POST["firstname"] ?? "");
 $adresse = Validator::sanitizeString($_POST["adresse"] ?? "");

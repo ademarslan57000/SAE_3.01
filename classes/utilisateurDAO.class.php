@@ -3,11 +3,6 @@ require_once __DIR__."/connexion.class.php";
 require_once __DIR__."/utilisateur.class.php";
 require_once __DIR__."/Validator.class.php";
 
-/**
- * Classe UtilisateurDAO
- * Principe SOLID : Single Responsibility + Dependency Injection
- * Gestion des opérations CRUD sur les utilisateurs avec validation
- */
 class UtilisateurDAO
 {
     private Connexion $_bd;
@@ -17,13 +12,8 @@ class UtilisateurDAO
         $this->_bd = $connexion ?? new Connexion();
     }
 
-    /**
-     * Insérer un utilisateur avec validation
-     * @throws Exception si la validation échoue
-     */
     public function insert(Utilisateur $u): void
     {
-        // Validation des données
         $this->validateUtilisateur($u);
 
         $sql = "INSERT INTO Utilisateur (nom, prenom, adresse, tel, mail, mot_de_passe)
@@ -35,13 +25,11 @@ class UtilisateurDAO
             ":adresse" => $u->getAdresse() ? Validator::sanitizeString($u->getAdresse()) : null,
             ":tel" => $u->getTel(),
             ":mail" => $u->getEmail(),
-            ":mot_de_passe" => $u->getPassword() // Déjà hashé
+            ":mot_de_passe" => $u->getPassword()
         ]);
     }
 
-    /**
-     * Vérifier si un email existe
-     */
+
     public function emailExiste(string $email): bool
     {
         if (!Validator::validateEmail($email)) {
@@ -53,9 +41,6 @@ class UtilisateurDAO
         return !empty($res);
     }
 
-    /**
-     * Récupérer un utilisateur par email
-     */
     public function getByEmail(string $email): ?array
     {
         if (!Validator::validateEmail($email)) {
@@ -71,9 +56,6 @@ class UtilisateurDAO
         return count($res) > 0 ? $res[0] : null;
     }
 
-    /**
-     * Récupérer un utilisateur par ID
-     */
     public function getById(int $id): ?array
     {
         $sql = "SELECT id_utilisateur, nom, prenom, mail, adresse, tel 
@@ -85,9 +67,6 @@ class UtilisateurDAO
         return count($res) > 0 ? $res[0] : null;
     }
 
-    /**
-     * Mettre à jour un utilisateur
-     */
     public function update(Utilisateur $u): void
     {
         $this->validateUtilisateur($u, false);
@@ -108,19 +87,12 @@ class UtilisateurDAO
         ]);
     }
 
-    /**
-     * Supprimer un utilisateur
-     */
     public function delete(int $id): void
     {
         $sql = "DELETE FROM Utilisateur WHERE id_utilisateur = :id";
         $this->_bd->execSQL($sql, [":id" => $id]);
     }
 
-    /**
-     * Valider les données d'un utilisateur
-     * @throws Exception si la validation échoue
-     */
     private function validateUtilisateur(Utilisateur $u, bool $checkPassword = true): void
     {
         $errors = [];
@@ -158,9 +130,6 @@ class UtilisateurDAO
         }
     }
 
-    /**
-     * Vérifier les credentials de connexion
-     */
     public function verifyCredentials(string $email, string $password): ?array
     {
         $user = $this->getByEmail($email);
@@ -170,7 +139,6 @@ class UtilisateurDAO
         }
 
         if (password_verify($password, $user['mot_de_passe'])) {
-            // Ne pas retourner le mot de passe
             unset($user['mot_de_passe']);
             return $user;
         }

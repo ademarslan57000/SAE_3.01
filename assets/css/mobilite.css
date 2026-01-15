@@ -102,14 +102,12 @@ button.btn-langue:hover,
     background: #2c5fad;
 }
 
-/* Container */
 .container {
     max-width: 1200px;
     margin: 30px auto;
     padding: 0 20px;
 }
 
-/* Tabs */
 .tabs {
     display: flex;
     gap: 10px;
@@ -141,7 +139,6 @@ button.btn-langue:hover,
     border-color: var(--secondary);
 }
 
-/* Tab Content */
 .tab-content {
     display: none;
     animation: fadeIn 0.5s;
@@ -162,7 +159,6 @@ button.btn-langue:hover,
     }
 }
 
-/* City Section */
 .city-section {
     margin-bottom: 40px;
 }
@@ -174,7 +170,6 @@ button.btn-langue:hover,
     border-bottom: 3px solid var(--secondary);
 }
 
-/* Service Card */
 .service-card {
     background: var(--card-bg);
     border-radius: 12px;
@@ -248,7 +243,6 @@ button.btn-langue:hover,
     background: #229954;
 }
 
-/* Alert & Info Boxes */
 .alert-box, .info-box {
     background: var(--card-bg);
     border-left: 5px solid;
@@ -298,7 +292,6 @@ button.btn-langue:hover,
     font-weight: 600;
 }
 
-/* Multimodal Section */
 .multimodal-hero {
     text-align: center;
     padding: 40px 20px;
@@ -362,7 +355,6 @@ button.btn-langue:hover,
     font-weight: bold;
 }
 
-/* Journey Planner */
 .journey-planner {
     background: var(--card-bg);
     border-radius: 12px;
@@ -416,7 +408,6 @@ button.btn-langue:hover,
     color: #666;
 }
 
-/* Responsive */
 @media (max-width: 1024px) {
     .container {
         padding: 0 15px;
@@ -662,9 +653,6 @@ button.btn-langue:hover,
 
     .planner-icon {
         font-size: 1.8rem;
-    }
-}
-        grid-template-columns: 1fr;
     }
 
     .planner-links {

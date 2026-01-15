@@ -1,6 +1,4 @@
-/**
- * NetworkManager - Gestion de l'état du réseau et détection mode avion
- */
+
 export class NetworkManager {
     constructor() {
         this.isOnline = navigator.onLine;
@@ -9,7 +7,6 @@ export class NetworkManager {
     }
 
     init() {
-        // Écoute les changements d'état du réseau
         window.addEventListener("online", () => this.handleOnline());
         window.addEventListener("offline", () => this.handleOffline());
     }
@@ -29,9 +26,6 @@ export class NetworkManager {
         );
     }
 
-    /**
-     * Enregistre un listener pour être notifié des changements réseau
-     */
     addListener(callback) {
         this.listeners.push(callback);
     }
@@ -40,9 +34,6 @@ export class NetworkManager {
         this.listeners.forEach((callback) => callback(isOnline));
     }
 
-    /**
-     * Affiche un indicateur visuel de l'état réseau
-     */
     showNetworkStatus(message, type) {
         const existing = document.getElementById("network-status-indicator");
         if (existing) existing.remove();
@@ -53,7 +44,6 @@ export class NetworkManager {
         indicator.textContent = message;
         document.body.appendChild(indicator);
 
-        // Auto-masquer après 5 secondes pour les succès
         if (type === "success") {
             setTimeout(() => {
                 if (indicator.parentNode) {
@@ -64,9 +54,7 @@ export class NetworkManager {
         }
     }
 
-    /**
-     * Vérifie si le réseau est disponible avant d'effectuer une action
-     */
+
     checkBeforeAction(
         action,
         errorMessage = "Impossible sans connexion Internet",
@@ -78,9 +66,7 @@ export class NetworkManager {
         return true;
     }
 
-    /**
-     * Masque l'indicateur réseau
-     */
+
     hideNetworkStatus() {
         const existing = document.getElementById("network-status-indicator");
         if (existing) {
@@ -90,5 +76,4 @@ export class NetworkManager {
     }
 }
 
-// Instance singleton
 export const networkManager = new NetworkManager();

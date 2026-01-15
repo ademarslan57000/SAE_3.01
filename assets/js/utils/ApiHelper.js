@@ -1,6 +1,4 @@
-/**
- * ApiHelper - Utilitaire pour les appels API avec timeout et gestion d'erreurs
- */
+
 import { networkManager } from "./NetworkManager.js";
 import { notificationManager } from "./NotificationManager.js";
 

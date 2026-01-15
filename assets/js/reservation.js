@@ -1,4 +1,3 @@
-// --- Variables globales ---
 let allParkings = [];
 let selectedParking = null;
 
@@ -32,12 +31,10 @@ function t(key) {
     return i18n[key]?.[langueActuelle] || key;
 }
 
-// --- Imports ---
 import { ApiHelper } from "./utils/ApiHelper.js";
 import { notificationManager } from "./utils/NotificationManager.js";
 import { networkManager } from "./utils/NetworkManager.js";
 
-// --- Constantes ---
 const PR_KEYWORDS = ["p+r", "p&r", "rochambeau", "foire expo", "woippy"];
 
 function isParkAndRide(parking) {
@@ -45,7 +42,6 @@ function isParkAndRide(parking) {
     return PR_KEYWORDS.some(k => name.includes(k));
 }
 
-// --- DOM ---
 const parkingSearch = document.getElementById("parkingSearch");
 const parkingSelect = document.getElementById("parkingSelect");
 const vehicleType = document.getElementById("vehicleType");
@@ -65,7 +61,6 @@ const dateError = document.getElementById("dateError");
 const notifEnabled = document.getElementById("notifEnabled");
 const notifOptions = document.getElementById("notifOptions");
 
-// --- 1. Chargement des parkings ---
 async function loadParkings() {
     if (!networkManager.isOnline) {
         notificationManager.error(t("loading_error"));
@@ -106,7 +101,6 @@ async function loadParkings() {
     }
 }
 
-// --- 2. Infos parking ---
 function updateParkingInfo() {
     if (!parkingSelect.value) return;
 
@@ -127,7 +121,7 @@ function updateParkingInfo() {
     calculatePrice();
 }
 
-// --- 3. Disponibilité (CORRIGÉ) ---
+// Disponibilité
 function checkAvailability() {
     if (!selectedParking) return;
 
@@ -206,7 +200,6 @@ function checkAvailability() {
     }
 }
 
-// --- 4. Calcul prix ---
 function calculatePrice() {
     if (!selectedParking) return;
 
@@ -245,14 +238,12 @@ function calculatePrice() {
         vehicleType.value !== "velo" && vehicleImmat.value.trim() === "";
 }
 
-// --- 5. Notifications ---
 function toggleNotifZone() {
     notifOptions.style.display = notifEnabled.checked ? "block" : "none";
 }
 notifEnabled.addEventListener("change", toggleNotifZone);
 toggleNotifZone();
 
-// --- 6. Events ---
 parkingSearch.addEventListener("input", () => {
     const term = parkingSearch.value.toLowerCase();
     Array.from(parkingSelect.options).forEach(opt => {
@@ -270,7 +261,7 @@ vehicleImmat.addEventListener("input", calculatePrice);
 startInput.addEventListener("change", calculatePrice);
 endInput.addEventListener("change", calculatePrice);
 
-// --- 7. Envoi réservation ---
+// envoie de la réservation
 submitBtn.addEventListener("click", async () => {
     if (!selectedParking) return;
     if (!networkManager.checkBeforeAction("submit")) return;
@@ -314,7 +305,6 @@ submitBtn.addEventListener("click", async () => {
     }
 });
 
-// --- Init ---
 loadParkings();
 
 

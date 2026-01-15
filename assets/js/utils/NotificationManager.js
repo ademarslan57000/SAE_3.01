@@ -1,6 +1,4 @@
-/**
- * NotificationManager - Système de notifications toast pour l'utilisateur
- */
+
 export class NotificationManager {
     constructor() {
         this.container = null;
@@ -8,7 +6,6 @@ export class NotificationManager {
     }
 
     init() {
-        // Créer le conteneur de notifications
         this.container = document.createElement("div");
         this.container.id = "toast-container";
         this.container.className = "toast-container";
@@ -34,10 +31,8 @@ export class NotificationManager {
 
         this.container.appendChild(toast);
 
-        // Animation d'entrée
         setTimeout(() => toast.classList.add("toast-show"), 10);
 
-        // Auto-fermeture
         if (duration > 0) {
             setTimeout(() => {
                 toast.classList.remove("toast-show");
@@ -75,16 +70,10 @@ export class NotificationManager {
         return this.show(message, "info", duration);
     }
 
-    /**
-     * Affiche une notification de chargement
-     */
     loading(message = "Chargement...") {
         return this.show(message, "loading", 0);
     }
 
-    /**
-     * Ferme toutes les notifications
-     */
     clearAll() {
         const toasts = this.container.querySelectorAll(".toast");
         toasts.forEach((toast) => {
@@ -94,5 +83,4 @@ export class NotificationManager {
     }
 }
 
-// Instance singleton
 export const notificationManager = new NotificationManager();

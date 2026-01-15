@@ -1,10 +1,9 @@
 :root {
-    --primary-color: #2c3e50; /* Bleu Nuit (Comme avant) */
-    --accent-color: #3498db; /* Bleu clair pour les actions */
-    --bg-color: #f4f6f9; /* Fond gris clair (Comme avant) */
+    --primary-color: #2c3e50;
+    --accent-color: #3498db;
+    --bg-color: #f4f6f9;
     --text-color: #333;
 
-    /* Le dégradé Violet pour le bouton uniquement */
     --btn-gradient: linear-gradient(90deg, #00d0ff, #006aff);
 }
 
@@ -19,7 +18,6 @@ body {
     padding-bottom: 40px;
 }
 
-/* --- EN-TÊTE (Comme avant : Bleu foncé) --- */
 header {
     background-color: var(--primary-color);
     color: white;
@@ -35,7 +33,6 @@ header h1 {
     text-align: center;
 }
 
-/* --- LE BOUTON RETOUR (Style "Liste Parking") --- */
 .btn-retour {
     padding: 10px 25px;
     background: var(--btn-gradient);
@@ -79,7 +76,6 @@ button.btn-langue:hover {
     background: #2c5fad;
 }
 
-/* Styles pour le header personnalisé */
 header.faq-header {
     background: white;
     padding: 20px;
@@ -150,7 +146,6 @@ header.faq-header .btn-retour {
     transform: scale(1.01);
 }
 
-/* --- CONTENEUR FAQ --- */
 .faq-container {
     max-width: 800px;
     margin: 30px auto;
@@ -173,7 +168,6 @@ header.faq-header .btn-retour {
     font-size: 1.5rem;
 }
 
-/* --- ACCORDÉON (Cartes blanches) --- */
 .faq-item {
     background: white;
     border-radius: 8px;
@@ -217,7 +211,6 @@ header.faq-header .btn-retour {
     transition: max-height 0.3s ease, padding 0.3s ease;
 }
 
-/* État Actif */
 .faq-item.active .faq-answer {
     max-height: 300px;
     padding-bottom: 20px;
@@ -228,14 +221,12 @@ header.faq-header .btn-retour {
     color: var(--accent-color);
 }
 
-/* --- PIED DE PAGE --- */
 .contact-support {
     text-align: center;
     margin-top: 40px;
     color: #888;
 }
 
-/* --- RESPONSIVE --- */
 @media (max-width: 600px) {
     header {
         flex-direction: column;

@@ -1,21 +1,11 @@
 <?php
-// -------------------------------------------------------------------------
-// CONFIGURATION ET DÉBOGAGE
-// -------------------------------------------------------------------------
-// Affiche les erreurs PHP (utile pour voir si "ça ne marche pas")
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-
-// En-tête JSON
 header('Content-Type: application/json; charset=utf-8');
 
-// Inclusion de la connexion
 require_once __DIR__ . "/../classes/connexion.class.php";
 $conn = new Connexion();
-
-// -------------------------------------------------------------------------
-// FONCTIONS UTILITAIRES
-// -------------------------------------------------------------------------
 
 // Normalisation des noms pour la comparaison (Metz BDD vs Metz API)
 function normalize_name($s)
@@ -52,10 +42,7 @@ function fetchAPI($url)
     return $json["features"] ?? [];
 }
 
-// -------------------------------------------------------------------------
-// FONCTIONS LONDRES (TfL + OSM)
-// -------------------------------------------------------------------------
-
+// Fetch API Tfl (pour Londres)
 function fetchLondonParkings()
 {
     $app_key = "7c19be0a44704afd8f3b84e585a897a7";
@@ -154,6 +141,7 @@ function fetchLondonParkings()
     return $list;
 }
 
+// Fetch Overpass API (pour Londres)
 function fetchOverpassLondonParkings()
 {
     $bbox = "51.40,-0.30,51.60,0.10";
@@ -170,7 +158,7 @@ function fetchOverpassLondonParkings()
     ]);
     $data = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch); // Fermeture propre du curl
+    curl_close($ch);
 
     if ($httpCode !== 200)
         return [];
@@ -215,13 +203,9 @@ function fetchOverpassLondonParkings()
     return $list;
 }
 
-// -------------------------------------------------------------------------
-// MAIN (LOGIQUE PRINCIPALE)
-// -------------------------------------------------------------------------
+
 try {
-    // 1. REQUÊTE SQL METZ (Avec Jointure)
-    // On sélectionne les infos de 'parking' et les capacités de 'type_place'
-    // La liaison se fait via 'id_parking' qui est présent dans les deux tables.
+    // Jointure entre la BDD locale et l'API Metz pour obtenir les parkings avec données temps réel
 
     $sql = "SELECT 
                 p.id_parking AS id, 
@@ -247,11 +231,11 @@ try {
 
     $parkings = $conn->execSQL($sql);
 
-    // 2. FETCH API METZ (Temps réel)
+    // Fetch API Metz (temps réel)
     $apiUrl = "https://maps.eurometropolemetz.eu/public/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=public:pub_tsp_sta&srsName=EPSG:4326&outputFormat=application/json";
     $features = fetchAPI($apiUrl);
 
-    // Indexation pour recherche rapide
+    // Indexation des données API par ID et par nom normalisé
     $byId = [];
     $byName = [];
     foreach ($features as $f) {
@@ -262,7 +246,7 @@ try {
             $byName[normalize_name($pr["lib"])] = $pr;
     }
 
-    // 3. FUSION DONNÉES METZ
+    // Fusion des données BDD + API
     $out = [];
 
     // Si la requête SQL n'a rien retourné (tableau vide), on ne rentre pas dans la boucle
@@ -298,12 +282,12 @@ try {
         }
     }
 
-    // 4. AJOUT DE LONDRES
+    // Fetch API Londres (TfL + Overpass)
     $london_tfl = fetchLondonParkings();
     $london_osm = fetchOverpassLondonParkings();
     $london_all = array_merge($london_tfl, $london_osm);
 
-    // Dédoublonnage Londres
+    // On évite les doublons basés sur des coordonnées arrondies à 4 décimales
     $seen_coords = [];
     foreach ($london_all as $p) {
         $key = round($p['lat'], 4) . "_" . round($p['lon'], 4);
@@ -313,13 +297,11 @@ try {
         }
     }
 
-    // 5. SORTIE JSON
-    // On nettoie le tampon de sortie pour éviter les caractères parasites (espaces, warnings PHP)
+    // Envoi du JSON final
     ob_clean();
     echo json_encode($out, JSON_UNESCAPED_UNICODE);
 
 } catch (Exception $e) {
-    // En cas d'erreur grave, on renvoie un JSON d'erreur
     ob_clean();
     echo json_encode(["error" => $e->getMessage()]);
 }

@@ -5,23 +5,21 @@ export class ParkingRenderer {
     this.routingService = routingService;
     this.markers = [];
 
-    // Remplacer l'ancien binding par une fonction sécurisée
     this.traduire = (key) => {
       if (typeof window.traduirePopup === "function") {
         return window.traduirePopup(key);
       }
-      // Fallback si la traduction n'est pas encore prête
       return key;
     };
   }
 
-  // Fonction pour détecter les parkings P+R
   isParkAndRide(parking) {
     const PR_KEYWORDS = ["p+r", "p&r", "rochambeau", "foire expo", "woippy"];
     const name = (parking.name || parking.nom || "").toLowerCase();
     return PR_KEYWORDS.some((keyword) => name.includes(keyword));
   }
 
+  // Parkings sur la map
   renderParkings(data, fitBounds = true) {
     this.clearMarkers();
     this.shouldFitBounds = fitBounds;
@@ -78,6 +76,7 @@ export class ParkingRenderer {
     }
   }
 
+  // Créer le label de prix pour un parking
   createPriceLabel(parking) {
     if (this.isParkAndRide(parking)) return "P+R";
     if (parking.gratuit) return this.traduire("free");
@@ -86,6 +85,7 @@ export class ParkingRenderer {
     return this.traduire("paid");
   }
 
+  // Barre latérale
   renderSidebar(parkings) {
     const container = document.getElementById("sidebarContent");
     if (!container) return;
@@ -122,6 +122,7 @@ export class ParkingRenderer {
     });
   }
 
+  // Créer un élément de la barre latérale pour un parking
   createSidebarItem(p) {
     const isPR = this.isParkAndRide(p);
     const gratuit = p.gratuit || p.gratuit === 1;
@@ -183,6 +184,7 @@ export class ParkingRenderer {
     `;
   }
 
+  // Image du parking
   getParkingImage(parking) {
     if (parking.image) return parking.image;
 
@@ -198,16 +200,19 @@ export class ParkingRenderer {
     return `../assets/image/parkings/${parkingName}.jpg`;
   }
 
+  // Image par défaut du parking si nous n'avons pas trouvé d'image
   getDefaultImage(parking) {
     return "../assets/image/parkings/no-image-park.jpg";
   }
 
+  // Retire les marqueurs de la map
   clearMarkers() {
     if (this.markerClusterGroup) this.map.removeLayer(this.markerClusterGroup);
     this.markers.forEach((m) => this.map.removeLayer(m));
     this.markers = [];
   }
 
+  // Pop up du parking
   buildPopup(p) {
     const nomSafe = (p.name || this.traduire("parking")).replace(/'/g, "\\'")
       .replace(/"/g, "");
