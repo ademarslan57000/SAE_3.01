@@ -163,31 +163,6 @@ vélo
 ├── manifest.json          # Configuration PWA (Progressive Web App)
 └── service-worker.js      # Gestion du cache et mode hors-ligne
 
-## Utilisation
-
-### Pour les développeurs
-
-**Ajouter une nouvelle page**
-
-1. Créer les fichiers de base :
-   ```bash
-   touch views/ma-page.html
-   touch css/ma-page.css
-   touch js/ma-page.js
-   ```
-
-2. Ajouter les traductions :
-   ```bash
-   touch lang/ma-page.fr.json
-   touch lang/ma-page.en.json
-   ```
-
-3. Utiliser les modules existants dans votre JavaScript :
-   ```javascript
-   const translation = new TranslationModule("../lang/ma-page");
-   translation.init();
-   ```
-
 **Sécurité**
 
 Le projet intègre plusieurs mécanismes de sécurité :
