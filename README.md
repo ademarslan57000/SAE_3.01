@@ -251,12 +251,9 @@ JSDoc/PHPDoc\
 
 ### Améliorations possibles
 
-🔄 **Notifications push** pour rappels de fin de stationnement\
 🔄 **Paiement en ligne** intégré directement dans l'application\
 🔄 **Historique détaillé** avec statistiques de stationnement\
 🔄 **API REST** pour ouverture à des applications tierces\
-🔄 **Tests automatisés** (unitaires, intégration, E2E)\
-🔄 **PWA++ ** avec fonctionnalités avancées (background sync, share API)
 
 ### Apprentissages
 
@@ -278,23 +275,20 @@ Ce projet nous a permis de :
 
 ### Procédure d'installation
 
-```bash
+
 # 1. Cloner le projet
 git clone https://gitlab.univ-lorraine.fr/e10974u/sae301.git
 cd sae301
 
-# 2. Configurer la base de données
-# Créer la base MySQL et importer le schéma fourni
-
-# 3. Configurer les accès BDD
-# Modifier classes/connexion.class.php ou utiliser variables d'environnement
+# 2. Configurer les accès BDD
+# Modifier classes/connexion.class.php ou utiliser les Informations déjà présente
 
 # 4. Vérifier les permissions
 chmod 755 -R sae301/
 
 # 5. Accéder à l'application
-# Ouvrir https://votre-domaine.com dans un navigateur
-```
+# Lancer en localhost ou le mettre sur un serveur comme devWeb
+
 
 ## Crédits et ressources
 
@@ -319,13 +313,12 @@ ARSLAN - BENMOUFFEK - COLASSE - MALLINGER - SWIATOKA
 
 ---
 
-**Date de rendu** : Janvier 2026\
+**Date de rendu** : 16 Janvier 2026\
 **Version** : 1.0.0
 
 - Validation manuelle de tous les parcours utilisateur
 - Test sur différents navigateurs (Chrome, Firefox, Safari, Edge)
 - Test responsive sur mobile, tablette, desktop
-- Vérification de la sécurité (tentatives d'injection, XSS)
 - Zéro erreur de compilation après audit complètement
 
 Le code suit les bonnes pratiques de développement web :
