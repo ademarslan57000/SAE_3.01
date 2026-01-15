@@ -20,11 +20,15 @@ export class UserLocationService {
     });
   }
 
+  /**
+   * Calculates distance between two points using the Haversine formula
+   */
   distance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
+    const R = 6371; // Radius of the earth in km
     const dLat = this.deg2rad(lat2 - lat1);
     const dLon = this.deg2rad(lon2 - lon1);
-    const a = Math.sin(dLat / 2) ** 2 +
+    const a =
+      Math.sin(dLat / 2) ** 2 +
       Math.cos(this.deg2rad(lat1)) *
         Math.cos(this.deg2rad(lat2)) *
         Math.sin(dLon / 2) ** 2;
@@ -38,9 +42,8 @@ export class UserLocationService {
 
   showMarker(lat, lon, map) {
     const translatedText = window.traduirePopup("youAreHere");
-    const popupContent = translatedText !== "youAreHere"
-      ? translatedText
-      : "Vous êtes ici";
+    const popupContent = translatedText !== "youAreHere" ? translatedText : "Vous êtes ici";
+
     this.userMarker = L.marker([lat, lon], { icon: this.userIcon })
       .addTo(map)
       .bindPopup(popupContent)
@@ -51,9 +54,9 @@ export class UserLocationService {
     if (!this.userMarker) return;
 
     const translatedText = window.traduirePopup("youAreHere");
-    this.userMarker.setPopupContent(
-      translatedText !== "youAreHere" ? translatedText : "Vous êtes ici",
-    );
+    const popupContent = translatedText !== "youAreHere" ? translatedText : "Vous êtes ici";
+    
+    this.userMarker.setPopupContent(popupContent);
 
     if (this.userMarker.isPopupOpen()) {
       this.userMarker.openPopup();
