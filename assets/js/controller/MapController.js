@@ -6,7 +6,7 @@ import { UserLocationService } from "../service/UserLocationService.js";
 // Contrôleur principal de la carte
 export class MapController {
   constructor() {
-    this.DEFAULT_LOCATION = [49.12031084724555, 6.163799704645889];   //localisation par défaut : IUT de Metz
+    this.DEFAULT_LOCATION = [49.12031084724555, 6.163799704645889]; //localisation par défaut : IUT de Metz
 
     this.map = this.initMap();
     this.ICONS = this.initIcons();
@@ -56,7 +56,51 @@ export class MapController {
 
   // Initialisation du contrôleur
   async init() {
-    this.parkings = await this.parkingService.loadParkings();
+    // Déterminer la zone en fonction de la position
+    let city = Math.random() < 0.5 ? "metz" : "london"; // Aléatoire par défaut
+    try {
+      const [lat, lon] = await this.userLocationService.getLocation();
+      const distMetz = this.userLocationService.distance(
+        lat,
+        lon,
+        49.1193,
+        6.1757,
+      );
+      const distLondon = this.userLocationService.distance(
+        lat,
+        lon,
+        51.5074,
+        -0.1278,
+      );
+
+      if (distMetz < 150) {
+        city = "metz";
+      } else if (distLondon < 150) {
+        city = "london";
+      } else {
+        city = "all";
+      }
+      console.log(
+        `📍 Position: ${lat.toFixed(4)}, ${
+          lon.toFixed(4)
+        } - Chargement: ${city.toUpperCase()}`,
+      );
+    } catch (err) {
+      console.warn(`⚠️ Géolocalisation refusée, chargement aléatoire de ${city.toUpperCase()}`);
+    }
+
+    console.log(`🅿️ Chargement des parkings pour: ${city.toUpperCase()}`);
+    this.parkings = await this.parkingService.loadParkings(city);
+
+    // Centrer la carte sur la zone chargée
+    if (city === 'london') {
+      this.map.setView([51.5074, -0.1278], 12); // Centre de Londres
+      console.log('🗺️ Carte centrée sur Londres');
+    } else if (city === 'metz') {
+      this.map.setView([49.1193, 6.1757], 13); // Centre de Metz
+      console.log('🗺️ Carte centrée sur Metz');
+    }
+    // Pour 'all', on garde la position initiale de Metz
 
     const urlParams = new URLSearchParams(window.location.search);
     let parkingId = urlParams.get("parking");

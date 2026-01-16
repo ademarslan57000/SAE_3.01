@@ -1,15 +1,14 @@
 {
-    
     "listeParking": "📋 List of parkings",
-    "serviceMobilite":"🚇 Mobility service",
+    "serviceMobilite": "🚇 Mobility service",
     "FAQ": "❓ Q&A",
-    "reservation":"☑️ Bookings",
+    "reservation": "☑️ Bookings",
     "monCompte": "👤 My account",
     "deconnexion": "🚪 Log out",
     "RechercheParking": "Search for a parking...",
     "maPosition": "My location",
     "parkingProche": "Nearest Parking",
-    "annulerItineraire":"Cancel itinerary",
+    "annulerItineraire": "Cancel itinerary",
     "arreterGuidage": "Stop guidance",
     "parkingDisponibles": "Available Parkings",
     "rechercher": "🔍 Search...",
@@ -18,8 +17,9 @@
     "uk": "🇬🇧 United Kingdom (London)",
     "allType": "💰 All Types",
     "gratuit": "Free only",
-    "payant":"Paid only",
+    "payant": "Paid only",
     "allEquip": "🔧 All Equipments",
+    "filterEquipLabel": "🔧 Equipments",
     "pmr": "♿ Disabled Parking Spaces",
     "electrique": "🔌 Electrical Charging Stations",
     "velo": "🚲 Bicycle Parking Spaces",
@@ -27,11 +27,11 @@
     "prixAsc": "💰 Rising price",
     "prixDesc": "💰 Price decreasing",
     "placesDisponibles": "🅿️ Available parking spaces ↓",
-    "capaciteTotale":"📊 Total capacity ↓",
+    "capaciteTotale": "📊 Total capacity ↓",
     "distance": "📍 Distance (if located)",
     "reset": "↺ Reset",
     "chargement": "Loading...",
-    "installerApp":"📱 Download the mobile app",
+    "installerApp": "📱 Download the mobile app",
     "youAreHere": "You are here",
     "geo_not_supported": "Location not supported",
 
@@ -49,7 +49,3 @@
     "address_not_available": "Address not available",
     "no_parking_found": "No parking found"
 }
-
-
-
-

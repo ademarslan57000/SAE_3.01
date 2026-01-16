@@ -1,6 +1,6 @@
 {
-    "name": "Smart Parking Metz",
-    "short_name": "SmartParking",
+    "name": "ParkGuide",
+    "short_name": "ParkGuide",
     "description": "Trouvez et réservez votre place de parking à Metz et Londres en temps réel",
     "start_url": "/index.html",
     "display": "standalone",
@@ -28,8 +28,8 @@
     "related_applications": [
         {
             "platform": "play",
-            "url": "https://play.google.com/store/apps/details?id=com.smartparking.metz",
-            "id": "com.smartparking.metz"
+            "url": "https://play.google.com/store/apps/details?id=com.parkguide.app",
+            "id": "com.parkguide.app"
         }
     ],
     "shortcuts": [

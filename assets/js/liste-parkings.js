@@ -86,8 +86,53 @@ async function loadParkings() {
         document.getElementById("parkingList").innerHTML =
             `<div class="loader">⏳ Chargement des parkings...</div>`;
 
+        // Déterminer la zone
+        let city = Math.random() < 0.5 ? 'metz' : 'london'; // Aléatoire par défaut
+        try {
+            if (navigator.geolocation) {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0,
+                    });
+                });
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+
+                const distance = (lat1, lon1, lat2, lon2) => {
+                    const R = 6371;
+                    const dLat = (lat2 - lat1) * Math.PI / 180;
+                    const dLon = (lon2 - lon1) * Math.PI / 180;
+                    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(lat1 * Math.PI / 180) *
+                            Math.cos(lat2 * Math.PI / 180) *
+                            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                };
+
+                const distMetz = distance(lat, lon, 49.1193, 6.1757);
+                const distLondon = distance(lat, lon, 51.5074, -0.1278);
+
+                if (distMetz < 150) city = "metz";
+                else if (distLondon < 150) city = "london";
+                else city = "all";
+
+                console.log(
+                    `📍 Position: ${lat.toFixed(4)}, ${
+                        lon.toFixed(4)
+                    } - Zone: ${city.toUpperCase()}`,
+                );
+            }
+        } catch (err) {
+            console.warn(
+                `⚠️ Géolocalisation refusée, chargement aléatoire de ${city.toUpperCase()}`,
+            );
+        }
+
+        console.log(`🅿️ Chargement des parkings: ${city.toUpperCase()}`);
         const response = await ApiHelper.fetchWithTimeout(
-            "../api/GetParkingWithRealTime.php",
+            `../api/GetParkingWithRealTime.php?city=${city}`,
             {},
             10000,
         );
@@ -380,7 +425,7 @@ function updateCount(count) {
         translations[lang].parkingAffiche
     }${plural}`;
 }
- 
+
 function voirSurCarte(parkingId) {
     console.log("=== REDIRECTION CARTE ID:", parkingId);
     sessionStorage.setItem("targetParkingId", String(parkingId));

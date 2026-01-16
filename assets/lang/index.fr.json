@@ -1,15 +1,14 @@
 {
-    
     "listeParking": "📋 Liste des parkings",
-    "serviceMobilite":"🚇 Services de mobilité",
+    "serviceMobilite": "🚇 Services de mobilité",
     "monCompte": "👤 Mon compte",
     "FAQ": "❓ FAQ",
-    "reservation":"☑️ Réservation",
+    "reservation": "☑️ Réservation",
     "deconnexion": "🚪 Déconnexion",
     "RechercheParking": "Rechercher un parking...",
     "maPosition": "Ma position",
     "parkingProche": "Parking proche",
-    "annulerItineraire":"Annuler l'itinéraire",
+    "annulerItineraire": "Annuler l'itinéraire",
     "arreterGuidage": "Stop guidage",
     "parkingDisponibles": "Parkings disponibles",
     "rechercher": "🔍 Rechercher...",
@@ -18,8 +17,9 @@
     "uk": "🇬🇧 Royaume-Uni (Londres)",
     "allType": "💰 Tous les types",
     "gratuit": "Gratuits uniquement",
-    "payant":"Payants uniquement",
+    "payant": "Payants uniquement",
     "allEquip": "🔧 Tous équipements",
+    "filterEquipLabel": "🔧 Équipements",
     "pmr": "♿ Places PMR",
     "electrique": "🔌 Bornes électriques",
     "velo": "🚲 Places vélo",
@@ -27,14 +27,13 @@
     "prixAsc": "💰 Prix croissant",
     "prixDesc": "💰 Prix décroissant",
     "placesDisponibles": "🅿️ Places disponibles ↓",
-    "capaciteTotale":"📊 Capacité totale ↓",
+    "capaciteTotale": "📊 Capacité totale ↓",
     "distance": "📍 Distance (si localisé)",
     "reset": "↺ Réinitialiser",
     "chargement": "Chargement...",
-    "installerApp":"📱 Installer l'application",
+    "installerApp": "📱 Installer l'application",
     "youAreHere": "Vous êtes ici",
     "geo_not_supported": "Géolocalisation non supportée",
-
 
     "free": "GRATUIT",
     "paid": "Payant",
@@ -49,6 +48,4 @@
     "places": "places",
     "address_not_available": "Adresse non disponible",
     "no_parking_found": "Aucun parking trouvé"
-
-
 }

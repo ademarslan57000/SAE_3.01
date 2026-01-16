@@ -8,23 +8,47 @@ const i18n = {
     paid: { fr: "Payant", en: "Paid" },
     rate_unavailable: { fr: "Tarif non disponible", en: "Rate not available" },
 
-    bike_available: { fr: "places vélo disponibles", en: "bike spots available" },
-    bike_none: { fr: "Ce parking n'a pas d'emplacements vélo", en: "This parking has no bike spots" },
+    bike_available: {
+        fr: "places vélo disponibles",
+        en: "bike spots available",
+    },
+    bike_none: {
+        fr: "Ce parking n'a pas d'emplacements vélo",
+        en: "This parking has no bike spots",
+    },
 
-    pmr_available: { fr: "places PMR disponibles", en: "accessible spots available" },
-    pmr_none: { fr: "Ce parking n'a pas de places PMR", en: "This parking has no accessible spots" },
+    pmr_available: {
+        fr: "places PMR disponibles",
+        en: "accessible spots available",
+    },
+    pmr_none: {
+        fr: "Ce parking n'a pas de places PMR",
+        en: "This parking has no accessible spots",
+    },
 
-    charging_available: { fr: "bornes disponibles", en: "charging stations available" },
-    charging_none: { fr: "Aucune borne électrique disponible", en: "No charging station available" },
+    charging_available: {
+        fr: "bornes disponibles",
+        en: "charging stations available",
+    },
+    charging_none: {
+        fr: "Aucune borne électrique disponible",
+        en: "No charging station available",
+    },
 
-    parking_full: { fr: "Parking complet actuellement", en: "Parking currently full" },
+    parking_full: {
+        fr: "Parking complet actuellement",
+        en: "Parking currently full",
+    },
     parking_available: { fr: "places disponibles", en: "available spaces" },
 
-    reservation_ok: { fr: "Réservation confirmée !", en: "Reservation confirmed !" },
+    reservation_ok: {
+        fr: "Réservation confirmée !",
+        en: "Reservation confirmed !",
+    },
     loading_error: { fr: "Erreur de chargement", en: "Loading error" },
 
     hour: { fr: "h", en: "h" },
-    minute: { fr: "m", en: "m" }
+    minute: { fr: "m", en: "m" },
 };
 
 function t(key) {
@@ -34,12 +58,15 @@ function t(key) {
 import { ApiHelper } from "./utils/ApiHelper.js";
 import { notificationManager } from "./utils/NotificationManager.js";
 import { networkManager } from "./utils/NetworkManager.js";
+import { UserLocationService } from "./service/UserLocationService.js";
+
+const userLocationService = new UserLocationService(null);
 
 const PR_KEYWORDS = ["p+r", "p&r", "rochambeau", "foire expo", "woippy"];
 
 function isParkAndRide(parking) {
     const name = (parking.name || parking.nom || "").toLowerCase();
-    return PR_KEYWORDS.some(k => name.includes(k));
+    return PR_KEYWORDS.some((k) => name.includes(k));
 }
 
 const parkingSearch = document.getElementById("parkingSearch");
@@ -70,17 +97,65 @@ async function loadParkings() {
     parkingSelect.innerHTML = `<option disabled selected>⏳</option>`;
 
     try {
+        // Déterminer la zone en fonction de la position de l'utilisateur
+        let city = Math.random() < 0.5 ? "metz" : "london"; // Aléatoire par défaut
+        try {
+            const [lat, lon] = await userLocationService.getLocation();
+
+            // Coordonnées approximatives
+            // Metz: 49.1193, 6.1757
+            // Londres: 51.5074, -0.1278
+
+            // Si proche de Metz (< 150km)
+            const distMetz = userLocationService.distance(
+                lat,
+                lon,
+                49.1193,
+                6.1757,
+            );
+            // Si proche de Londres (< 150km)
+            const distLondon = userLocationService.distance(
+                lat,
+                lon,
+                51.5074,
+                -0.1278,
+            );
+
+            if (distMetz < 150) {
+                city = "metz";
+            } else if (distLondon < 150) {
+                city = "london";
+            } else {
+                // Si l'utilisateur n'est ni près de Metz ni de Londres, charger tout
+                city = "all";
+            }
+
+            console.log(
+                `📍 Position détectée: ${lat.toFixed(4)}, ${
+                    lon.toFixed(4)
+                } - Chargement: ${city.toUpperCase()}`,
+            );
+        } catch (err) {
+            console.warn(
+                `⚠️ Géolocalisation refusée/échouée, chargement aléatoire de ${city.toUpperCase()}`,
+                err,
+            );
+            // En cas d'erreur de géolocalisation, utiliser la ville aléatoire
+        }
+
+        console.log(`🅿️ Chargement des parkings pour: ${city.toUpperCase()}`);
         const response = await ApiHelper.fetchWithTimeout(
-            "../api/GetParkingWithRealTime.php",
+            `../api/GetParkingWithRealTime.php?city=${city}`,
             {},
-            10000
+            10000,
         );
 
         allParkings = await response.json();
         allParkings.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
-        parkingSelect.innerHTML =
-            `<option value="" disabled selected>${t("choose_parking")}</option>`;
+        parkingSelect.innerHTML = `<option value="" disabled selected>${
+            t("choose_parking")
+        }</option>`;
 
         allParkings.forEach((p, i) => {
             const flag = String(p.id || "").startsWith("LONDON_") ? "🇬🇧" : "🇫🇷";
@@ -140,7 +215,9 @@ function checkAvailability() {
             messages.push("⚠️ " + t("bike_none"));
             ok = false;
         } else {
-            messages.push(`✅ ${selectedParking.nb_velo} ${t("bike_available")}`);
+            messages.push(
+                `✅ ${selectedParking.nb_velo} ${t("bike_available")}`,
+            );
         }
     } else {
         immatGroup.style.display = "block";
@@ -148,17 +225,27 @@ function checkAvailability() {
     }
 
     // Électrique
-    if (type === "electrique") {
+    if (type === "electrique" || type === "pmr") {
         borneElectriqueGroup.style.display = "block";
 
-        if (!selectedParking.nb_voitures_electriques || selectedParking.nb_voitures_electriques == 0) {
+        if (
+            !selectedParking.nb_voitures_electriques ||
+            selectedParking.nb_voitures_electriques == 0
+        ) {
             messages.push("⚠️ " + t("charging_none"));
             borneInfo.textContent = t("charging_none");
             borneElectrique.disabled = true;
             ok = false;
         } else {
-            messages.push(`✅ ${selectedParking.nb_voitures_electriques} ${t("charging_available")}`);
-            borneInfo.textContent = `${selectedParking.nb_voitures_electriques} ${t("charging_available")}`;
+            messages.push(
+                `✅ ${selectedParking.nb_voitures_electriques} ${
+                    t("charging_available")
+                }`,
+            );
+            borneInfo.textContent =
+                `${selectedParking.nb_voitures_electriques} ${
+                    t("charging_available")
+                }`;
             borneElectrique.disabled = false;
         }
     } else {
@@ -173,14 +260,27 @@ function checkAvailability() {
         } else {
             messages.push(`✅ ${selectedParking.nb_pmr} ${t("pmr_available")}`);
         }
+
+        // Si PMR avec borne électrique cochée, vérifier la disponibilité
+        if (borneElectrique.checked) {
+            if (
+                !selectedParking.nb_voitures_electriques ||
+                selectedParking.nb_voitures_electriques == 0
+            ) {
+                messages.push("⚠️ " + t("charging_none"));
+                ok = false;
+            }
+        }
     }
 
     // Places globales
     if (selectedParking.place_libre === 0) {
         messages.push("⚠️ " + t("parking_full"));
         ok = false;
-    } else if (selectedParking.place_libre >0) {
-        messages.push(`✅ ${selectedParking.place_libre} ${t("parking_available")}`);
+    } else if (selectedParking.place_libre > 0) {
+        messages.push(
+            `✅ ${selectedParking.place_libre} ${t("parking_available")}`,
+        );
     }
 
     if (messages.length > 0) {
@@ -223,19 +323,39 @@ function calculatePrice() {
     const h = Math.floor(diff);
     const m = Math.round((diff - h) * 60);
 
-    durationDisplay.textContent =
-        `${h}${t("hour")} ${String(m).padStart(2, "0")}${t("minute")}`;
+    durationDisplay.textContent = `${h}${t("hour")} ${
+        String(m).padStart(2, "0")
+    }${t("minute")}`;
 
     if (isParkAndRide(selectedParking) || selectedParking.gratuit == 1) {
         totalDisplay.textContent = t("free");
     } else if (selectedParking.tarif_1h) {
-        totalDisplay.textContent = `${(diff * selectedParking.tarif_1h).toFixed(2)} €`;
+        totalDisplay.textContent = `${
+            (diff * selectedParking.tarif_1h).toFixed(2)
+        } €`;
     } else {
         totalDisplay.textContent = "---";
     }
 
-    submitBtn.disabled =
-        vehicleType.value !== "velo" && vehicleImmat.value.trim() === "";
+    // Vérifier les conditions de disponibilité
+    let canBook = true;
+
+    // Pour vélo, pas besoin d'immatriculation
+    if (vehicleType.value !== "velo" && vehicleImmat.value.trim() === "") {
+        canBook = false;
+    }
+
+    // Pour PMR avec borne électrique, vérifier la disponibilité
+    if (vehicleType.value === "pmr" && borneElectrique.checked) {
+        if (
+            !selectedParking.nb_voitures_electriques ||
+            selectedParking.nb_voitures_electriques == 0
+        ) {
+            canBook = false;
+        }
+    }
+
+    submitBtn.disabled = !canBook;
 }
 
 function toggleNotifZone() {
@@ -246,14 +366,20 @@ toggleNotifZone();
 
 parkingSearch.addEventListener("input", () => {
     const term = parkingSearch.value.toLowerCase();
-    Array.from(parkingSelect.options).forEach(opt => {
+    Array.from(parkingSelect.options).forEach((opt) => {
         if (!opt.value) return;
-        opt.style.display = opt.textContent.toLowerCase().includes(term) ? "" : "none";
+        opt.style.display = opt.textContent.toLowerCase().includes(term)
+            ? ""
+            : "none";
     });
 });
 
 parkingSelect.addEventListener("change", updateParkingInfo);
 vehicleType.addEventListener("change", () => {
+    checkAvailability();
+    calculatePrice();
+});
+borneElectrique.addEventListener("change", () => {
     checkAvailability();
     calculatePrice();
 });
@@ -271,7 +397,7 @@ submitBtn.addEventListener("click", async () => {
         vehicleTypeRaw: vehicleType.value,
         immatriculation: vehicleImmat.value.trim().toUpperCase(),
         dateDebut: startInput.value,
-        dateFin: endInput.value
+        dateFin: endInput.value,
     };
 
     const loading = notificationManager.loading("⏳");
@@ -283,9 +409,9 @@ submitBtn.addEventListener("click", async () => {
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
             },
-            15000
+            15000,
         );
 
         const json = await res.json();
@@ -306,6 +432,3 @@ submitBtn.addEventListener("click", async () => {
 });
 
 loadParkings();
-
-
-

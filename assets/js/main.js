@@ -9,6 +9,34 @@ networkManager.addListener((isOnline) => {
 window.mapController = new MapController();
 window.mapController.init();
 
+window.toggleEquipementDropdown = () => {
+  const dropdown = document.getElementById("equipementDropdown");
+  dropdown.classList.toggle("show");
+};
+
+window.updateEquipementFilter = () => {
+  const filterPmr = document.getElementById("filterPmr").checked;
+  const filterElectrique = document.getElementById("filterElectrique").checked;
+  const filterVelo = document.getElementById("filterVelo").checked;
+
+  const selectLabel = document.querySelector(".select-label");
+  const selected = [];
+
+  if (filterPmr) selected.push("PMR");
+  if (filterElectrique) selected.push("Électrique");
+  if (filterVelo) selected.push("Vélo");
+
+  if (selected.length === 0) {
+    selectLabel.textContent = "🔧 Tous équipements";
+    selectLabel.setAttribute("data-i18n", "allEquip");
+  } else {
+    selectLabel.textContent = `🔧 ${selected.join(", ")}`;
+    selectLabel.removeAttribute("data-i18n");
+  }
+
+  window.filterSidebarParkings();
+};
+
 window.rechercheParking = () => mapController.rechercheParking();
 window.trierParProximite = () => mapController.trierParProximite();
 window.localiserUtilisateur = () => mapController.localiserUtilisateur();
@@ -22,7 +50,9 @@ window.filterSidebarParkings = async () => {
     .value.toLowerCase();
   const filterZone = document.getElementById("filterZoneSidebar").value;
   const filterType = document.getElementById("filterTypeSidebar").value;
-  const filterEquip = document.getElementById("filterEquipements").value;
+  const filterPmr = document.getElementById("filterPmr").checked;
+  const filterElectrique = document.getElementById("filterElectrique").checked;
+  const filterVelo = document.getElementById("filterVelo").checked;
   const sortBy = document.getElementById("sortSidebar").value;
 
   if (!window.allSidebarParkings) return;
@@ -44,11 +74,16 @@ window.filterSidebarParkings = async () => {
     }
 
     let matchEquip = true;
-    if (filterEquip === "pmr") matchEquip = p.nb_pmr && p.nb_pmr > 0;
-    else if (filterEquip === "electrique") {
-      matchEquip = p.nb_voitures_electriques && p.nb_voitures_electriques > 0;
-    } else if (filterEquip === "velo") {
-      matchEquip = p.nb_velo && p.nb_velo > 0;
+    // Si au moins un filtre équipement est activé
+    if (filterPmr || filterElectrique || filterVelo) {
+      matchEquip = false;
+      // Le parking doit avoir AU MOINS un des équipements cochés
+      if (filterPmr && p.nb_pmr && p.nb_pmr > 0) matchEquip = true;
+      if (
+        filterElectrique && p.nb_voitures_electriques &&
+        p.nb_voitures_electriques > 0
+      ) matchEquip = true;
+      if (filterVelo && p.nb_velo && p.nb_velo > 0) matchEquip = true;
     }
 
     return matchSearch && matchZone && matchType && matchEquip;
@@ -169,8 +204,17 @@ window.resetSidebarFilters = () => {
   document.getElementById("sidebarSearch").value = "";
   document.getElementById("filterZoneSidebar").value = "all";
   document.getElementById("filterTypeSidebar").value = "all";
-  document.getElementById("filterEquipements").value = "all";
+  document.getElementById("filterPmr").checked = false;
+  document.getElementById("filterElectrique").checked = false;
+  document.getElementById("filterVelo").checked = false;
   document.getElementById("sortSidebar").value = "name";
+
+  // Réinitialiser le label du dropdown équipements
+  const selectLabel = document.querySelector(".select-label");
+  if (selectLabel) {
+    selectLabel.textContent = "🔧 Tous équipements";
+    selectLabel.setAttribute("data-i18n", "allEquip");
+  }
 
   if (window.allSidebarParkings) {
     const container = document.getElementById("sidebarContent");
@@ -195,13 +239,26 @@ window.addEventListener("DOMContentLoaded", () => {
   const sidebarSearch = document.getElementById("sidebarSearch");
   const filterZone = document.getElementById("filterZoneSidebar");
   const filterType = document.getElementById("filterTypeSidebar");
-  const filterEquip = document.getElementById("filterEquipements");
+  const filterPmr = document.getElementById("filterPmr");
+  const filterElectrique = document.getElementById("filterElectrique");
+  const filterVelo = document.getElementById("filterVelo");
   const sortSidebar = document.getElementById("sortSidebar");
 
   [sidebarSearch].forEach(
     (el) => el && el.addEventListener("input", window.filterSidebarParkings),
   );
-  [filterZone, filterType, filterEquip, sortSidebar].forEach(
-    (el) => el && el.addEventListener("change", window.filterSidebarParkings),
-  );
+  [filterZone, filterType, filterPmr, filterElectrique, filterVelo, sortSidebar]
+    .forEach(
+      (el) => el && el.addEventListener("change", window.filterSidebarParkings),
+    );
+
+  // Fermer le dropdown quand on clique ailleurs
+  document.addEventListener("click", (e) => {
+    const dropdown = document.getElementById("equipementDropdown");
+    const selectContainer = document.querySelector(".custom-select-container");
+
+    if (dropdown && selectContainer && !selectContainer.contains(e.target)) {
+      dropdown.classList.remove("show");
+    }
+  });
 });
